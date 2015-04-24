@@ -6,6 +6,15 @@ By Alejandro Santos @alejolp, the Argentum Online, and the Dakara Online develop
 
 This is the Dakara Online C++ server. The source code is a migration from the original Visual Basic 6 by using a source code translator.
 
+## Building
+
+You need CMake, Libevent2, and boost >= 1.49.
+
+    mkdir build
+    cd build
+    cmake ..
+    make
+
 ## Contributing
 
 Join the mailing list at: https://groups.google.com/d/forum/dakara-online-dev
