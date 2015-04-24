@@ -1,0 +1,11 @@
+.project
+.cproject
+.settings
+bin
+Debug
+Release
+buildsettingslocal.py
+build
+*.pyc
+server-resources
+
