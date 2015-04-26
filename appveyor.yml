@@ -6,8 +6,9 @@ platform:
   - x64
 
 environment:
-  BOOST_ROOT: c:/Libraries/boost
-  BOOST_LIBRARYDIR: c:/Libraries/boost/stage/lib
+  BOOST_ROOT: c:\Libraries\boost
+  BOOST_LIBRARYDIR: c:\Libraries\boost\stage\lib
+  BUILD_TYPE: Release
 
 init:
   - cmd: cmake --version
