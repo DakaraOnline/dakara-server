@@ -8,4 +8,5 @@ buildsettingslocal.py
 build
 *.pyc
 server-resources
+*.swp
 

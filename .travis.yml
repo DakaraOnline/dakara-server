@@ -10,8 +10,9 @@ before_install:
 
 install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get-repository ppa:boost-latest/ppa -y
   - sudo apt-get update -qq
-  - sudo apt-get install -y cmake libboost-all-dev libevent-dev 
+  - sudo apt-get install -y cmake libboost-filesystem1.55-dev  libboost-locale1.55-dev libboost-date-time1.55-dev  libboost-system1.55-dev  libevent-dev 
   - if [ "$CXX" = "clang++" ]; then sudo apt-get install -qq libstdc++-4.8-dev; fi
   - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi  
