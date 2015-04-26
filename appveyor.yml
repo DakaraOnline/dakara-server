@@ -16,16 +16,20 @@ init:
   - cmd: msbuild /version
   - cmd: echo %platform%
 
+install:
+  - mkdir deps
+  - mkdir deps\include
+  - mkdir deps\lib
+  - nuget install libevent_vc120 -OutputDirectory deps -ExcludeVersion 
+
 before_build:
-  - md build
-  - cd build
-#  - cmake -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" .. 
-#  - cmake --build . 
-#  - cmd: if "%platform%"=="Win32" cmake -G "Visual Studio 12" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBoost_USE_STATIC_LIBS="ON" ..
-#  - cmd: if "%platform%"=="x64" cmake -G "Visual Studio 12 Win64" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBOOST_TEST_HEADER_ONLY="ON" ..
+  - cmd: md build
+  - cmd: cd build
   - cmd: dir %BOOST_ROOT% 
   - cmd: dir %BOOST_LIBRARYDIR% 
-  - cmd: cmake -G "Visual Studio 12" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBoost_USE_STATIC_LIBS=ON ..  
+  - cmd: dir /s ../deps
+  - cmd: if "%platform%"=="Win32" cmake -G "Visual Studio 12" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBoost_USE_STATIC_LIBS="ON" ..
+  - cmd: if "%platform%"=="x64" cmake -G "Visual Studio 12 Win64" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBOOST_TEST_HEADER_ONLY="ON" -DBoost_USE_STATIC_LIBS="ON" ..
 
 build:
   project: C:\projects\dakara-server\build\dakaraserver.sln
