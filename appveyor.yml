@@ -25,7 +25,7 @@ before_build:
 #  - cmd: if "%platform%"=="x64" cmake -G "Visual Studio 12 Win64" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBOOST_TEST_HEADER_ONLY="ON" ..
   - cmd: dir %BOOST_ROOT% 
   - cmd: dir %BOOST_LIBRARYDIR% 
-  - cmd: cmake -G "Visual Studio 12" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" ..  
+  - cmd: cmake -G "Visual Studio 12" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBoost_USE_STATIC_LIBS="ON" ..  
 
 build:
   project: C:\projects\dakara-server\build\dakaraserver.sln
