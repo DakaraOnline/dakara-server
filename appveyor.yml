@@ -1,10 +1,11 @@
 version: "{branch}-ci-{build}"
 clone_depth: 5 
+os: unstable
 
 environment:
   BOOST_ROOT: c:/Libraries/boost
   BOOST_INCLUDE_DIR: C:/Projects/boost_1_56_0/boost_1_56_0
-  BOOST_LIBRARYDIR: C:\Projects\boost_1_56_0\boost_1_56_0\stage\lib
+  BOOST_LIBRARYDIR: C:/Projects/boost_1_56_0/boost_1_56_0/stage/lib
 
 build_script:
   - mkdir build
