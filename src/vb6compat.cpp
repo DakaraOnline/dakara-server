@@ -26,12 +26,8 @@
 
 /* FIXME: This is broken. See boost issue #10038 */
 
-/*
-#if BOOST_VERSION <= 104900
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #define BOOST_NO_SCOPED_ENUMS
-#endif
-*/
 
 #include <boost/filesystem.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
