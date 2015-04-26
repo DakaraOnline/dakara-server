@@ -20,7 +20,7 @@ set(Boost_USE_STATIC_LIBS       OFF)
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
 
-find_package( Boost 1.49.0 REQUIRED COMPONENTS date_time filesystem system locale )
+find_package( Boost 1.46.0 REQUIRED COMPONENTS date_time filesystem system locale )
 include_directories(${Boost_INCLUDE_DIRS})
 
 find_package( Libevent2 REQUIRED )
