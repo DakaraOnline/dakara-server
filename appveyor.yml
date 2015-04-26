@@ -1,5 +1,9 @@
 version: "{branch}-ci-{build}"
 clone_depth: 5 
+
+environment:
+  BOOST_ROOT: c:\Libraries\boost
+
 build_script:
   - mkdir build
   - cd build
