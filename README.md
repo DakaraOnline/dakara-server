@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/DakaraOnline/dakara-server.svg?branch=master)](https://travis-ci.org/DakaraOnline/dakara-server)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/thbn4jv0wie078g3)](https://ci.appveyor.com/project/alejolp/dakara-server)
+
 # Dakara Online Server (English)
 
 http://www.dakaraonline.org/
