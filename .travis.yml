@@ -1,0 +1,23 @@
+language: cpp
+
+compiler:
+  - gcc
+  - clang
+
+before_install:
+  - echo $LANG
+  - echo $LC_ALL
+
+install:
+  - sudo apt-get update
+  - sudo apt-get install -y g++-4.8 llvm-3.4 llvm-3.4-dev libstdc++-4.8-dev cmake libboost-all-dev libevent-dev 
+
+script: mkdir build && cd build && cmake .. && make 
+
+branches:
+  only:
+    - master
+
+os:
+  - linux
+
