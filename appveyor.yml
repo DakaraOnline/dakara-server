@@ -10,6 +10,8 @@ environment:
     BOOST_ROOT: c:\Libraries\boost
     BOOST_LIBRARYDIR: c:\Libraries\boost\stage\lib
     BUILD_TYPE: Release
+    CMAKE_INCLUDE_PATH: C:\projects\dakara-server\deps\libevent_vc120\build\native\include
+    CMAKE_LIBRARY_PATH: C:\projects\dakara-server\deps\libevent_vc120\build\native\bin
 
 init:
   - cmd: cmake --version
