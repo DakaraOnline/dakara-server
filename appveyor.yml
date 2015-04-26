@@ -10,11 +10,18 @@ init:
   - cmd: cmake --version
   - cmd: msbuild /version
 
-build_script:
+before_build:
   - md build
   - cd build
-  - cmake -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" .. 
-  - cmake --build . 
+#  - cmake -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" .. 
+#  - cmake --build . 
+  - cmd: if "%platform%"=="Win32" cmake -G "Visual Studio 12" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBoost_USE_STATIC_LIBS="ON" ..
+  - cmd: if "%platform%"=="x64" cmake -G "Visual Studio 12 Win64" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBOOST_TEST_HEADER_ONLY="ON" ..
+
+build:
+  project: C:\projects\dakara-server\build\dakaraserver.sln
+  parallel: true
+  verbosity: detailed
 
 branches:
   only:
