@@ -9,8 +9,12 @@ before_install:
   - echo $LC_ALL
 
 install:
-  - sudo apt-get update
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -qq
   - sudo apt-get install -y cmake libboost-all-dev libevent-dev 
+  - if [ "$CXX" = "clang++" ]; then sudo apt-get install -qq libstdc++-4.8-dev; fi
+  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi  
 
 script: mkdir build && cd build && cmake .. && make 
 
