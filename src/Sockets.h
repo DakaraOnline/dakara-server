@@ -36,6 +36,10 @@ public:
 	explicit Timer(bool persist = true);
 	virtual ~Timer();
 
+	// Noncopyable
+	Timer(const Timer&) = delete;
+	Timer& operator=(const Timer&) = delete;
+
 	void register_timer(struct timeval* tv);
 
 	void register_timer(double seconds);
@@ -46,8 +50,6 @@ private:
 	struct event *ev;
 	bool persist_;
 };
-
-void TimerRegister(Timer* t, struct timeval* tv);
 
 /** A Dakara Socket.
  *
