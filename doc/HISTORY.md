@@ -38,7 +38,7 @@ Many people contributed back then, and my memory does not serves me well to reme
 
 Many people argue that rewriting a software project from scratch is a bad idea. One of such arguments was done by Joel Spolsky, who today is known as the founder and CEO of the Stack Overflow network. In his essay "Things You Should Never Do, Part I", he claims that rewriting a software product from scratch is "the single worst strategic mistake that any software company can make". He further argues:
 
-    The idea that new code is better than old is patently absurd. Old code has been used. It has been tested. Lots of bugs have been found, and they've been fixed. There's nothing wrong with it. It doesn't acquire bugs just by sitting around on your hard drive. Au contraire, baby! Is software supposed to be like an old Dodge Dart, that rusts just sitting in the garage? Is software like a teddy bear that's kind of gross if it's not made out of all new material?
+> The idea that new code is better than old is patently absurd. Old code has been used. It has been tested. Lots of bugs have been found, and they've been fixed. There's nothing wrong with it. It doesn't acquire bugs just by sitting around on your hard drive. Au contraire, baby! Is software supposed to be like an old Dodge Dart, that rusts just sitting in the garage? Is software like a teddy bear that's kind of gross if it's not made out of all new material?
 
 I learned his advice the hard way: by not following it.
 
