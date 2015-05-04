@@ -1,12 +1,12 @@
-= Dakara Online
+# Dakara Online
 
 Alejandro Santos @alejolp - May 2015.
 
 Dakara Online is a Massively Multiplayer Online Role Playing Game, or MMORPG for short. It is a volunteer-based project of people known to each other only through Internet forums and mailing lists. The game is free to play and requires a personal computer running Microsoft Windows XP or later. The game server is a migration from the original Argentum Online Visual Basic 6.0 source code to the modern C++11 by the means of a source code translator program. The game client source code still remains written in Visual Basic 6.0. The main reason to migrate away from Visual Basic 6.0 is the lack of official support from Microsoft for its tools, compiler, and libraries, which ended in the year 2005. In this document it is described how Dakara Online was created and how is run today.
 
-= Argentum Online
+# Argentum Online
 
-== The early days
+## The early days
 
 Argentum Online is an Online Game first developed by a small group of enthusiasts during the years 2000-2002 in Argentina, and it is believed to be the first game of its kind created by game developers based on the country. Pablo Márquez and Fernando Testa, founders of Noland Studios, were back then the two original authors who in their free time decided to create an online game where people for free would be able to interact and make friends while having fun.
 
@@ -18,7 +18,7 @@ December 2001 has a very special place in Argentina history books. Between the 2
 
 Time went by, and by the end of 2002 the development team of Noland Studios decided that the game was mostly finished. After fixing bugs and issues, in December 2002 the source code was released in the spirit of giving back to a community that made the game to grow, and for everyone to start its own game server. More details on the history of the game can be found at the "Brief history.txt" document available inside the Dec-2002 release package of the SourceForge project "MORGOAO", and at Argentum Online's webpage.
 
-= The first years after December 2002
+# The first years after December 2002
 
 After the source code release, players began making contributions. Starting from the source code, small and medium tasks were being done by players, mostly inspired on already existing games, to solve concrete issues in their need, or just improve the game mechanics. Online games started to be available on the Internet at that time, and a popular one was Ultima Online, which when it hit the gaming market a few years back, it shown to be a huge improvement over existing games.
 
@@ -32,9 +32,9 @@ By the end of 2004 my personal life was a mess, I was struggling to keep up with
 
 Many people contributed back then, and my memory does not serves me well to remember the many names of the many contributors to the game, not only on programming but also graphics, sounds, game design, etc. There is a list of names on today's Argentum Online website [AOSTAFF] which I'm told contains the historic names since the beginning.
 
-= Source Code Migration
+# Source Code Migration
 
-== Rewriting Software Projects
+## Rewriting Software Projects
 
 Many people argue that rewriting a software project from scratch is a bad idea. One of such arguments was done by Joel Spolsky, who today is known as the founder and CEO of the Stack Overflow network. In his essay ``Things You Should Never Do, Part I'', he claims that rewriting a software product from scratch is ``the single worst strategic mistake that any software company can make''. He further argues:
 
@@ -42,7 +42,7 @@ The idea that new code is better than old is patently absurd. Old code has been 
 
 I learned his advice the hard way: by not following it.
 
-== Rewriting Argentum Online
+## Rewriting Argentum Online
 
 It is my understanding that I am solely the single person who has attempted the most number of times to rewrite Argentum Online to a modern programming technology. 
 
@@ -74,7 +74,7 @@ Later on and closer to the year 2013 a new attempt was made, this time by one fr
 
 There were other attempts by other Argentum Online players to rewrite the game in a modern programming environment. To my knowledge, the first one was AOJava by Gorlok. Then AOXP, which was an ambitious Java project. A lot of people were actively involved in the project, and many of them were members of the Official Team of programmers of the original Argentum Online source code. Another one called Argentum Online C by Parra, created in the C programmming language, shares some aspects of the game but it also deviates from the original game design since is has 3D features.
 
-== Migration is not rewriting
+## Migration is not rewriting
 
 A few years ago, Joel Spolsky surprised us again with an interesting project they had on his company. They sell a web application software for project management, FogBugz, mostly focused on software engineering project. It is like a bug tracker with many more features. 
 
@@ -84,7 +84,7 @@ Microsoft decided to pull the plug on Visual Basic 6.0 to force programmers into
 
 The idea of having a source code translator to a new and modern programming technology was very appealing to me, specially to migrate the source code of Argentum Online away from Visual Basic 6.0, but I was missing some Compilers theory and practice.
 
-== My first Compiler
+## My first Compiler
 
 In my attempt to actually graduate from University, I had started a project with a university professor I used to work with. She is one of the two professors of my Data Structures and Algorithms, where in that course I was a TA and later a Lecturer. In my personal quest of learning about compilers, I had the idea to write a simple compiler to translate a Python program to a C++ equivalent. One of the few language contructs that we were not going to support was eval(), since C++ does not easily allow the implementation of eval() of a C++ program.
 
@@ -94,7 +94,7 @@ I dedicated a period of almost two years over my weekends and free time to write
 
 In the process I learned that the CPython Grammar is not LL(1), contrary to the claims of the documentation. The reference implementation of the official CPython parser depends on the traversal of a non-deterministic graph, effectively implementing the parser with backtracking. LL(1) parsers shall not use backtracking.
 
-== My second Translator
+## My second Translator
 
 The distinction I like to make between a compiler and a translator is that every compiler is a translator, but not every translator is a compiler. I like to call a «Compiler» a program that given some well defined grammar in some BNF-equivalent form produces a tree as its output, and a translator to everything else. I don't know, however, if my definition is accurate enough on an academic level.
 
@@ -141,15 +141,15 @@ or
 
 At this moment I had already invested too much time and effort in manually fixing many translation problems, and going back and fixing my translator was not an option anymore. I would have lost all my manual changes. In the end, to fix this issue I wrote another translator, a C++ tokenizer which wraps every inline quoted string with an std::string constructor. Continuing with the example, my new translator would output the following code:
 
-std::string A;
-int X;
-A = std::string("Value") + X;
+    std::string A;
+    int X;
+    A = std::string("Value") + X;
 
 Which produces a compilation error every time there is an addition of a string to an int, making me happy to have an automatic way to detect 100\% of the cases of the issue.
 
 Another key difference between Visual Basic and C++ is that in Visual Basic the logic, bitwise and boolean operators are syntactically written the same, but not in C++. Using the and operator on an Integer variable is a bitwise operation, like the & operator in C++. But using the and operator with boolean operands would result in a boolean operation, like the && operator in C++. However, my translator was not powerful enough to detect this semantic distinction between boolean and bitwise operations. The translation was on a token level, and to fix this problem a compiler capable of type inference was needed.
 
-= A working server in Linux
+# A working server in Linux
 
 After having a game server (barely) compiling I started removing and rewriting specific parts to accomodate to the new programming language. The first part I had to write was file I/O since my translation was missing those specific Visual Basic 6.0 constructs. File I/O in Visual Basic 6.0 is a syntactic feature, and the translator produced the original Visual Basic 6 code commented out.
 
@@ -165,7 +165,7 @@ My friend was in charge of updating the game maps for a public release, and then
 
 After that moment, other people and friends joined our development effort. Some of them we met 10-12 years ago, in the very game. We now have a webpage for Dakara Online with a forum where we want to form a community of players.
 
-= Next steps
+# Next steps
 
 Dakara Online is a volunteer based project, where the effort and action only takes place on the weekends and free time during holidays. Today I am the only active software developer, and in the past I had help of a couple of friends on the C++ development effort. We are, however, a small team, and some of our own players are starting to offer help on various aspects of the development effort. For example we have two players that have been writing the game documentation on our wiki. 
 
