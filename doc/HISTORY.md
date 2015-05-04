@@ -36,9 +36,9 @@ Many people contributed back then, and my memory does not serves me well to reme
 
 ## Rewriting Software Projects
 
-Many people argue that rewriting a software project from scratch is a bad idea. One of such arguments was done by Joel Spolsky, who today is known as the founder and CEO of the Stack Overflow network. In his essay ``Things You Should Never Do, Part I'', he claims that rewriting a software product from scratch is ``the single worst strategic mistake that any software company can make''. He further argues:
+Many people argue that rewriting a software project from scratch is a bad idea. One of such arguments was done by Joel Spolsky, who today is known as the founder and CEO of the Stack Overflow network. In his essay "Things You Should Never Do, Part I", he claims that rewriting a software product from scratch is "the single worst strategic mistake that any software company can make". He further argues:
 
-The idea that new code is better than old is patently absurd. Old code has been used. It has been tested. Lots of bugs have been found, and they've been fixed. There's nothing wrong with it. It doesn't acquire bugs just by sitting around on your hard drive. Au contraire, baby! Is software supposed to be like an old Dodge Dart, that rusts just sitting in the garage? Is software like a teddy bear that's kind of gross if it's not made out of all new material?
+    The idea that new code is better than old is patently absurd. Old code has been used. It has been tested. Lots of bugs have been found, and they've been fixed. There's nothing wrong with it. It doesn't acquire bugs just by sitting around on your hard drive. Au contraire, baby! Is software supposed to be like an old Dodge Dart, that rusts just sitting in the garage? Is software like a teddy bear that's kind of gross if it's not made out of all new material?
 
 I learned his advice the hard way: by not following it.
 
@@ -46,7 +46,7 @@ I learned his advice the hard way: by not following it.
 
 It is my understanding that I am solely the single person who has attempted the most number of times to rewrite Argentum Online to a modern programming technology. 
 
-The first attempt was called "SeDeArOn" (which means ``Servidor De Argentum Online'' in Spanish and can be translated as ``Argentum Online Server'' in English). Its source code lies on some back-up CDs on my parent's house. It was a failure and concrete proof on how not to write a game server. It was written in C++ and had one thread for each client connection. 
+The first attempt was called "SeDeArOn" (which means "Servidor De Argentum Online" in spanish and can be translated as "Argentum Online Server" in english). Its source code lies on some back-up CDs on my parent's house. It was a failure and concrete proof on how not to write a game server. It was written in C++ and had one thread for each client connection. 
 
 At that time, my knowledge of C++ systems programming was poor and bad. I was just finishing high school and with some free time on my hands before starting my university classes, I took my (very low) C++ programming knowledge and created a simple project that was «class oriented programming», without any kind of design. By «class oriented» I mean that instead of having a global C function I'd use classes as containers of similar functions. C++ is an «object oriented» programming language and I was lacking OOP knowledge and training, specifically «object oriented polymorphism». I luckily abandoned its development before wasting too much time on it.
 
