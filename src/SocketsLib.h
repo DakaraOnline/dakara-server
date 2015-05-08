@@ -21,6 +21,7 @@
 #include <string>
 #include <cstdint>
 #include <memory>
+#include <functional>
 
 
 namespace dakara {
@@ -52,9 +53,21 @@ public:
 	virtual void write(const char* data, size_t data_len) = 0;
 	virtual size_t getOutputLength() = 0;
 	virtual void close(bool force = false) = 0;
+	virtual size_t getId() = 0;
 };
 
-typedef void (*SignalHandler)(short event, void* arg);
+class Timer {
+public:
+	Timer();
+	virtual ~Timer();
+
+	// Noncopyable
+	Timer(const Timer&) = delete;
+	Timer& operator=(const Timer&) = delete;
+};
+
+typedef std::function<void(short event, void* arg)> SignalHandler;
+typedef std::function<void()> TimerHandler;
 
 class SocketServer {
 public:
@@ -66,7 +79,7 @@ public:
 	SocketServer& operator=(const SocketServer&) = delete;
 
 	virtual void addListener(std::string addr, int port) = 0;
-	virtual void addTimer() = 0;
+	virtual std::unique_ptr<Timer> addTimer(size_t milliseconds, TimerHandler f) = 0;
 	virtual void addSignalHandler(int signal, SignalHandler f, void* arg) = 0;
 	virtual void loop() = 0;
 

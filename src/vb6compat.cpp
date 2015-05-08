@@ -21,13 +21,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
-
-#include <boost/version.hpp>
-
-/* FIXME: This is broken. See boost issue #10038 */
-
-#define BOOST_NO_CXX11_SCOPED_ENUMS
-#define BOOST_NO_SCOPED_ENUMS
+#include <iostream>
+#include <fstream>
 
 #include <boost/filesystem.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -87,7 +82,17 @@ void Kill(std::string FileName) {
 void FileCopy(std::string oldfile, std::string newfile) {
 	// throw std::runtime_error("FileCopy not implemented");
 	// boost::system::error_code ec;
-	boost::filesystem::copy_file(oldfile, newfile, boost::filesystem::copy_option::overwrite_if_exists);
+
+	// BOOST copy_file is broken while using from C++11. I don't really care about performance here so
+	// I'm just using C++ stdlib.
+
+	// boost::filesystem::copy_file(oldfile, newfile, boost::filesystem::copy_option::overwrite_if_exists);
+
+    std::ifstream  src(oldfile, std::ios::binary);
+    std::ofstream  dst(newfile, std::ios::binary);
+
+    dst << src.rdbuf();
+    dst.close();
 }
 
 
