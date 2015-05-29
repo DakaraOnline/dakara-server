@@ -15,9 +15,13 @@ install:
   - sudo apt-get install -y cmake libboost-filesystem1.55-dev  libboost-locale1.55-dev libboost-date-time1.55-dev  libboost-system1.55-dev  libevent-dev 
   - if [ "$CXX" = "clang++" ]; then sudo apt-get install -qq libstdc++-4.8-dev; fi
   - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi  
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 
-script: mkdir build && cd build && cmake .. && make -j 4 
+before_script:
+  - mkdir build
+  - cd build
+
+script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then cmake .. && cmake --build . ; fi 
 
 branches:
   only:
@@ -26,3 +30,18 @@ branches:
 os:
   - linux
 
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "adIsE5hOf8AB6+4FeCYQA4Eq3FfFZNdz7Cm7wKsfjRg6IXfGAmVwPmAOBIy8X1qASi8bWA2iZhpopM8aI9lQqospFttpvLvj+LiWN0cPHaNY6J9epkMvQLB0WcuQc6ZNFp+pT/zSxSCfIPdY8wg8qp5mNDJIyyZj9+TNdryEbaA="
+
+addons:
+  coverity_scan:
+    project:
+      name: "DakaraOnline/dakara-server"
+      description: "Build submitted via Travis CI"
+    notification_email: alejolp@gmail.com
+    build_command_prepend: cmake ..
+    build_command: cmake --build .
+    branch_pattern: master
