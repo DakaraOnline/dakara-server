@@ -2,6 +2,8 @@ Travis (Linux): [![Build Status](https://travis-ci.org/DakaraOnline/dakara-serve
 
 AppVeyor (Windows): [![Build status](https://ci.appveyor.com/api/projects/status/thbn4jv0wie078g3)](https://ci.appveyor.com/project/alejolp/dakara-server)
 
+Coverity: [![Coverity](https://scan.coverity.com/projects/5284/badge.svg)](https://scan.coverity.com/projects/dakaraonline-dakara-server)
+
 # Dakara Online Server (English)
 
 http://www.dakaraonline.org/
