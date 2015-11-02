@@ -14638,7 +14638,7 @@ void HandleSetIniVar(int UserIndex) {
 
 	WriteConsoleMsg(UserIndex, "Comando deshabilitado.", FontTypeNames_FONTTYPE_INFO);
 	return;
-
+#if 0
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		std::string sTmp;
 
@@ -14667,7 +14667,7 @@ void HandleSetIniVar(int UserIndex) {
 	}
 
 	/* 'If we got here then packet is complete, copy data back to original queue */
-
+#endif
 }
 
 /* '' */

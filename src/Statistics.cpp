@@ -510,7 +510,7 @@ void InitializeStatistics() {
  
  /* FIXME: OPEN App . Path & "\\logs\\huffman.log" FOR OUTPUT AS handle */
  
- double Total;
+ double Total = 0;
  
  /* 'Compute total characters */
   for (i = (0); i <= (255); i++) {
