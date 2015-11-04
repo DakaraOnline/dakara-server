@@ -20,6 +20,11 @@
 
 #include <fstream>
 
+ConsultasPopulares :: ConsultasPopulares() {
+	pEncuestaActualNum=0;
+	pNivelRequerido=0;
+}
+
 void ConsultasPopulares::Numero(int NumEncuesta) {
 	pEncuestaActualNum = NumEncuesta;
 }

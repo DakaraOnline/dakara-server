@@ -420,7 +420,9 @@ void SocketServerLibEvent::addListener(std::string addr, int port) {
 #ifndef WIN32
 	{
 		int one = 1;
-		setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)) == -1 )
+			throw std::runtime_error("setsockopt del listener");
+
 	}
 #endif
 

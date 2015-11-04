@@ -34,6 +34,8 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 	/* '14/11/2010: ZaMa - Now denounces can be desactivated. */
 	/* '************************************************************** */
 
+	if (sndData.empty())
+		return;
 	int LoopC;
 
 	switch (sndRoute) {

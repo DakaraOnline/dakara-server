@@ -318,7 +318,7 @@ bool SendPosts(int UserIndex, std::string & ForoID) {
 }
 
 bool EsAnuncio(int ForumType) {
-	bool retval;
+	bool retval = false;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 22/02/2010 */

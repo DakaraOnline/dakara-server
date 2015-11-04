@@ -1553,11 +1553,11 @@ void WriteShowForumForm(int UserIndex) {
 	Visibilidad = eForumVisibility_ieGENERAL_MEMBER;
 
 	if (esCaos(UserIndex) || EsGm(UserIndex)) {
-		Visibilidad = Visibilidad || eForumVisibility_ieCAOS_MEMBER;
+		Visibilidad = Visibilidad | eForumVisibility_ieCAOS_MEMBER;
 	}
 
 	if (esArmada(UserIndex) || EsGm(UserIndex)) {
-		Visibilidad = Visibilidad || eForumVisibility_ieREAL_MEMBER;
+		Visibilidad = Visibilidad | eForumVisibility_ieREAL_MEMBER;
 	}
 
 	UserList[UserIndex].outgoingData->WriteByte(Visibilidad);

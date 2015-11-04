@@ -63,7 +63,7 @@ void NpcEnvenenarUser(int UserIndex);
 
 int SpawnNpc(int NpcIndex, struct WorldPos Pos, bool FX, bool Respawn);
 
-void ReSpawnNpc(struct npc MiNPC);
+void ReSpawnNpc(const struct npc &MiNPC);
 
 void NPCTirarOro(struct npc & MiNPC);
 

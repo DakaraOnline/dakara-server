@@ -86,7 +86,7 @@ static void atexit_func() {
 }
 
 int main(int argc, char **argv) {
-    // std::set_terminate(handler);
+// std::set_terminate(handler);
 	cout << "Dakara Server" << endl; // prints !!!Hello World!!!
 
 	atexit(atexit_func);
