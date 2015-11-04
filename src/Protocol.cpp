@@ -1553,11 +1553,11 @@ void WriteShowForumForm(int UserIndex) {
 	Visibilidad = eForumVisibility_ieGENERAL_MEMBER;
 
 	if (esCaos(UserIndex) || EsGm(UserIndex)) {
-		Visibilidad = Visibilidad || eForumVisibility_ieCAOS_MEMBER;
+		Visibilidad = Visibilidad | eForumVisibility_ieCAOS_MEMBER;
 	}
 
 	if (esArmada(UserIndex) || EsGm(UserIndex)) {
-		Visibilidad = Visibilidad || eForumVisibility_ieREAL_MEMBER;
+		Visibilidad = Visibilidad | eForumVisibility_ieREAL_MEMBER;
 	}
 
 	UserList[UserIndex].outgoingData->WriteByte(Visibilidad);
@@ -2549,14 +2549,8 @@ std::string PrepareMessageConsoleMsg(std::string Chat, FontTypeNames FontIndex) 
 	auxiliarBuffer.WriteByte(ServerPacketID_ConsoleMsg);
 	auxiliarBuffer.WriteUnicodeString(Chat);
 	auxiliarBuffer.WriteByte(FontIndex);
-	try {
-		retval = auxiliarBuffer.ReadBinaryFixed(auxiliarBuffer.length());
-	} catch (bytequeue_data_error& ex) {
-		std::cerr << "bytequeue_data_error en consoleMsj " + Chat << std::endl
-				<< " y fontindex " + FontIndex << std::endl << ex.what()
-				<< std::endl;
-		retval = "";
-	}
+
+	retval = auxiliarBuffer.ReadBinaryFixed(auxiliarBuffer.length());
 	return retval;
 }
 

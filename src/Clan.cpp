@@ -40,7 +40,7 @@ ALINEACION_GUILD clsClan::Alineacion() {
 
 int clsClan::PuntosAntifaccion() {
 	int retval;
-	retval = vb6::val(GetVar(GUILDINFOFILE, "GUILD" + vb6::CStr(p_GuildNumber), "Antifaccion"));
+	retval = (int) vb6::val(GetVar(GUILDINFOFILE, "GUILD" + vb6::CStr(p_GuildNumber), "Antifaccion"));
 	return retval;
 }
 

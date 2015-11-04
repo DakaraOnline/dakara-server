@@ -371,7 +371,7 @@ int GetNickColor(int UserIndex) {
 	}
 
 	if (UserList[UserIndex].flags.AtacablePor > 0) {
-		retval = retval || eNickColor_ieAtacable;
+		retval = retval | eNickColor_ieAtacable;
 	}
 
 	return retval;
@@ -2032,7 +2032,7 @@ void WarpMascotas(int UserIndex) {
 	/* '************************************************ */
 	int i;
 	int petType;
-	bool PetRespawn;
+	bool PetRespawn = false;
 	int PetTiempoDeVida;
 	int NroPets;
 	int InvocadosMatados = 0;

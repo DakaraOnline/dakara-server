@@ -15151,7 +15151,7 @@ void HandleAlterGuildName(int UserIndex) {
 		} else {
 			/* 'Revisa si el nombre nuevo del clan existe */
 			if ((vb6::InStrB(newGuildName, "+") != 0)) {
-				GuildName = vb6::Replace(newGuildName, "+", " ");
+				newGuildName = vb6::Replace(newGuildName, "+", " ");
 			}
 
 			GuildIndex = GetGuildIndex(newGuildName);

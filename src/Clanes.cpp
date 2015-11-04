@@ -1937,13 +1937,7 @@ void SendDetallesPersonaje(int UserIndex, std::string Personaje) {
 		if (NroAsp == 0) {
 			list = guilds[GI]->GetMemberList();
 
-			for (i = (0); i <= (vb6::UBound(list)); i++) {
-				if (Personaje == list[i]) {
-					break; /* FIXME: EXIT FOR */
-				}
-			}
-
-			if (i > vb6::UBound(list)) {
+			if (std::find(list.begin(), list.end(), Personaje) == list.end()) {
 				WriteConsoleMsg(UserIndex,
 						"El personaje no es ni aspirante ni miembro del clan.",
 						FontTypeNames_FONTTYPE_INFO);
@@ -1994,9 +1988,10 @@ void SendDetallesPersonaje(int UserIndex, std::string Personaje) {
 				vb6::CInt(UserFile->GetValue("FACCIONES", "CrimMatados")));
 
 		UserFile.reset();
-	} catch (...) {
-		/* ERROR : */
-		UserFile.reset();
+	}
+	catch (std::runtime_error &ex) {
+		std::cerr << "runtime_error: " << ex.what() << std::endl;
+		LogError(ex.what());
 		if (!(FileExist(GetCharPath(Personaje), 0))) {
 			LogError(
 					"El usuario " + UserList[UserIndex].Name + " ("
@@ -2006,15 +2001,14 @@ void SendDetallesPersonaje(int UserIndex, std::string Personaje) {
 
 			/* ' Fuerzo el borrado de la lista, lo deberia hacer el programa que borra pjs.. */
 			guilds[GI]->RemoveMemberName(Personaje);
-		} else {
-			LogError(
-					vb6::CStr("[ + Err.Number + ]  + Err.description ")
-							+ " En la rutina SendDetallesPersonaje, por el usuario "
-							+ UserList[UserIndex].Name + " ("
-							+ vb6::CStr(UserIndex)
-							+ " ), pidiendo información sobre el personaje "
-							+ Personaje);
 		}
+	} catch (...) {
+		LogError(
+				vb6::CStr("[ + Err.Number + ]  + Err.description ")
+						+ " En la rutina SendDetallesPersonaje, por el usuario "
+						+ UserList[UserIndex].Name + " (" + vb6::CStr(UserIndex)
+						+ " ), pidiendo información sobre el personaje "
+						+ Personaje);
 	}
 	return;
 }
