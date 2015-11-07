@@ -58,11 +58,13 @@ std::string string_format(const std::string fmt_str, ...) {
 }
 
 void InitializeTickCount() {
-	tickCountStart = boost::posix_time::second_clock::local_time();
+
+	tickCountStart = boost::posix_time::microsec_clock::local_time();
 }
 
 std::size_t GetTickCount() {
-	boost::posix_time::time_duration diff = boost::posix_time::second_clock::local_time() - tickCountStart;
+
+	boost::posix_time::time_duration diff =	boost::posix_time::microsec_clock::local_time() - tickCountStart;
 	return diff.total_milliseconds();
 }
 
