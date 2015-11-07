@@ -1565,12 +1565,6 @@ void HechizoEstadoNPC(int NpcIndex, int SpellIndex, bool & HechizoCasteado, int 
 						HechizoCasteado = false;
 						return;
 					}
-
-					WriteConsoleMsg(UserIndex,
-							"Solo puedes remover la parálisis de los NPCs que te consideren su amo.",
-							FontTypeNames_FONTTYPE_INFO);
-					HechizoCasteado = false;
-					return;
 				} else {
 					if (Npclist[NpcIndex].NPCtype == eNPCType_Guardiascaos) {
 						if (esCaos(UserIndex)) {
@@ -2525,10 +2519,6 @@ bool CanSupportNpc(int CasterIndex, int TargetIndex) {
 		return retval;
 
 	}
-
-	retval = true;
-
-	return retval;
 }
 
 void ChangeUserHechizo(int UserIndex, int Slot, int Hechizo) {

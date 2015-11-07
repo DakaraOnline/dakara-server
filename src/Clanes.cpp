@@ -1905,106 +1905,112 @@ void SendDetallesPersonaje(int UserIndex, std::string Personaje) {
 	std::vector<std::string> list;
 	int i;
 
-	/* FIXME: ON ERROR GOTO ERROR */
-	GI = UserList[UserIndex].GuildIndex;
+	try {
+		GI = UserList[UserIndex].GuildIndex;
 
-	Personaje = vb6::UCase(Personaje);
+		Personaje = vb6::UCase(Personaje);
 
-	if (GI <= 0 || GI > CANTIDADDECLANES) {
-		WriteConsoleMsg(UserIndex, "No perteneces a ningún clan.", FontTypeNames_FONTTYPE_INFO);
-		return;
-	}
-
-	if (!m_EsGuildLeader(UserList[UserIndex].Name, GI)) {
-		WriteConsoleMsg(UserIndex, "No eres el líder de tu clan.", FontTypeNames_FONTTYPE_INFO);
-		return;
-	}
-
-	if (vb6::InStrB(Personaje, "/") != 0) {
-		Personaje = vb6::Replace(Personaje, "/", "");
-	}
-	if (vb6::InStrB(Personaje, "/") != 0) {
-		Personaje = vb6::Replace(Personaje, "/", "");
-	}
-	if (vb6::InStrB(Personaje, ".") != 0) {
-		Personaje = vb6::Replace(Personaje, ".", "");
-	}
-
-	NroAsp = guilds[GI]->NumeroDeAspirante(Personaje);
-
-	if (NroAsp == 0) {
-		list = guilds[GI]->GetMemberList();
-
-		for (i = (0); i <= (vb6::UBound(list)); i++) {
-			if (Personaje == list[i]) {
-				break; /* FIXME: EXIT FOR */
-			}
-		}
-
-		if (i > vb6::UBound(list)) {
-			WriteConsoleMsg(UserIndex, "El personaje no es ni aspirante ni miembro del clan.",
+		if (GI <= 0 || GI > CANTIDADDECLANES) {
+			WriteConsoleMsg(UserIndex, "No perteneces a ningún clan.",
 					FontTypeNames_FONTTYPE_INFO);
 			return;
 		}
+
+		if (!m_EsGuildLeader(UserList[UserIndex].Name, GI)) {
+			WriteConsoleMsg(UserIndex, "No eres el líder de tu clan.",
+					FontTypeNames_FONTTYPE_INFO);
+			return;
+		}
+
+		if (vb6::InStrB(Personaje, "/") != 0) {
+			Personaje = vb6::Replace(Personaje, "/", "");
+		}
+		if (vb6::InStrB(Personaje, "/") != 0) {
+			Personaje = vb6::Replace(Personaje, "/", "");
+		}
+		if (vb6::InStrB(Personaje, ".") != 0) {
+			Personaje = vb6::Replace(Personaje, ".", "");
+		}
+
+		NroAsp = guilds[GI]->NumeroDeAspirante(Personaje);
+
+		if (NroAsp == 0) {
+			list = guilds[GI]->GetMemberList();
+
+			if (std::find(list.begin(), list.end(), Personaje) == list.end()) {
+				WriteConsoleMsg(UserIndex,
+						"El personaje no es ni aspirante ni miembro del clan.",
+						FontTypeNames_FONTTYPE_INFO);
+				return;
+			}
+		}
+
+		/* 'ahora traemos la info */
+
+		UserFile.reset(new clsIniManager());
+
+		UserFile->Initialize(GetCharPath(Personaje));
+
+		/* ' Get the character's current guild */
+		GuildActual = vb6::val(UserFile->GetValue("GUILD", "GuildIndex"));
+		if (GuildActual > 0 && GuildActual <= CANTIDADDECLANES) {
+			GuildName = "<" + guilds[GuildActual]->GuildName() + ">";
+		} else {
+			GuildName = "Ninguno";
+		}
+
+		/* 'Get previous guilds */
+		Miembro = UserFile->GetValue("GUILD", "Miembro");
+		if (vb6::Len(Miembro) > 400) {
+			Miembro = ".." + vb6::Right(Miembro, 400);
+		}
+
+		WriteCharacterInfo(UserIndex, Personaje,
+				static_cast<eRaza>(vb6::CInt(UserFile->GetValue("INIT", "Raza"))),
+				static_cast<eClass>(vb6::CInt(
+						UserFile->GetValue("INIT", "Clase"))),
+				static_cast<eGenero>(vb6::CInt(
+						UserFile->GetValue("INIT", "Genero"))),
+				vb6::CInt(UserFile->GetValue("STATS", "ELV")),
+				vb6::CInt(UserFile->GetValue("STATS", "GLD")),
+				vb6::CInt(UserFile->GetValue("STATS", "Banco")),
+				vb6::CInt(UserFile->GetValue("REP", "Promedio")),
+				UserFile->GetValue("GUILD", "Pedidos"), GuildName, Miembro,
+				vb6::CBool(
+						vb6::CInt(
+								UserFile->GetValue("FACCIONES",
+										"EjercitoReal"))),
+				vb6::CBool(
+						vb6::CInt(
+								UserFile->GetValue("FACCIONES",
+										"EjercitoCaos"))),
+				vb6::CInt(UserFile->GetValue("FACCIONES", "CiudMatados")),
+				vb6::CInt(UserFile->GetValue("FACCIONES", "CrimMatados")));
+
+		UserFile.reset();
 	}
+	catch (std::runtime_error &ex) {
+		std::cerr << "runtime_error: " << ex.what() << std::endl;
+		LogError(ex.what());
+		if (!(FileExist(GetCharPath(Personaje), 0))) {
+			LogError(
+					"El usuario " + UserList[UserIndex].Name + " ("
+							+ vb6::CStr(UserIndex)
+							+ " ) ha pedido los detalles del personaje "
+							+ Personaje + " que no se encuentra.");
 
-	/* 'ahora traemos la info */
-
-	UserFile.reset(new clsIniManager());
-
-	UserFile->Initialize(GetCharPath(Personaje));
-
-	/* ' Get the character's current guild */
-	GuildActual = vb6::val(UserFile->GetValue("GUILD", "GuildIndex"));
-	if (GuildActual > 0 && GuildActual <= CANTIDADDECLANES) {
-		GuildName = "<" + guilds[GuildActual]->GuildName() + ">";
-	} else {
-		GuildName = "Ninguno";
-	}
-
-	/* 'Get previous guilds */
-	Miembro = UserFile->GetValue("GUILD", "Miembro");
-	if (vb6::Len(Miembro) > 400) {
-		Miembro = ".." + vb6::Right(Miembro, 400);
-	}
-
-	WriteCharacterInfo(UserIndex,
-			Personaje,
-			static_cast<eRaza>(vb6::CInt(UserFile->GetValue("INIT", "Raza"))),
-			static_cast<eClass>(vb6::CInt(UserFile->GetValue("INIT", "Clase"))),
-			static_cast<eGenero>(vb6::CInt(UserFile->GetValue("INIT", "Genero"))),
-			vb6::CInt(UserFile->GetValue("STATS", "ELV")),
-			vb6::CInt(UserFile->GetValue("STATS", "GLD")),
-			vb6::CInt(UserFile->GetValue("STATS", "Banco")),
-			vb6::CInt(UserFile->GetValue("REP", "Promedio")),
-			UserFile->GetValue("GUILD", "Pedidos"),
-			GuildName,
-			Miembro,
-			vb6::CBool(vb6::CInt(UserFile->GetValue("FACCIONES", "EjercitoReal"))),
-			vb6::CBool(vb6::CInt(UserFile->GetValue("FACCIONES", "EjercitoCaos"))),
-			vb6::CInt(UserFile->GetValue("FACCIONES", "CiudMatados")),
-			vb6::CInt(UserFile->GetValue("FACCIONES", "CrimMatados")));
-
-	UserFile.reset();
-
-	return;
-	/* ERROR : */
-	UserFile.reset();
-	if (!(FileExist(GetCharPath(Personaje), 0))) {
-		LogError(
-				"El usuario " + UserList[UserIndex].Name + " (" + vb6::CStr(UserIndex)
-						+ " ) ha pedido los detalles del personaje " + Personaje + " que no se encuentra.");
-
-		/* FIXME: ON ERROR RESUME NEXT */
-		/* ' Fuerzo el borrado de la lista, lo deberia hacer el programa que borra pjs.. */
-		guilds[GI]->RemoveMemberName(Personaje);
-	} else {
+			/* ' Fuerzo el borrado de la lista, lo deberia hacer el programa que borra pjs.. */
+			guilds[GI]->RemoveMemberName(Personaje);
+		}
+	} catch (...) {
 		LogError(
 				vb6::CStr("[ + Err.Number + ]  + Err.description ")
-						+ " En la rutina SendDetallesPersonaje, por el usuario " + UserList[UserIndex].Name
-						+ " (" + vb6::CStr(UserIndex) + " ), pidiendo información sobre el personaje "
+						+ " En la rutina SendDetallesPersonaje, por el usuario "
+						+ UserList[UserIndex].Name + " (" + vb6::CStr(UserIndex)
+						+ " ), pidiendo información sobre el personaje "
 						+ Personaje);
 	}
+	return;
 }
 
 bool a_NuevoAspirante(int UserIndex, std::string & clan, std::string & Solicitud, std::string & refError) {

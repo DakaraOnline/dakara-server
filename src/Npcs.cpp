@@ -860,7 +860,7 @@ int SpawnNpc(int NpcIndex, struct WorldPos Pos, bool FX, bool Respawn) {
 	return retval;
 }
 
-void ReSpawnNpc(struct npc MiNPC) {
+void ReSpawnNpc(const struct npc &MiNPC) {
 	/* '*************************************************** */
 	/* 'Author: Unknown */
 	/* 'Last Modification: - */

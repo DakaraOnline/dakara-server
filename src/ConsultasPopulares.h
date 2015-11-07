@@ -26,45 +26,23 @@
 class ConsultasPopulares {
 private:
 	int pEncuestaActualNum;
-private:
 	std::string pEncuestaActualTex;
-private:
 	int pNivelRequerido;
-private:
 	std::vector<std::string> pOpciones;
-
-public:
-	void Numero(int NumEncuesta);
-
-public:
-	int Numero();
-
-public:
-	void texto(std::string Descripcion);
-
-public:
-	std::string texto();
-
-public:
-	void LoadData();
-
-public:
-	std::string doVotar(int UserIndex, int opcion);
-
-public:
-	std::string SendInfoEncuesta(int UserIndex);
-
-private:
 	void MarcarPjComoQueYaVoto(int UserIndex);
-
-private:
 	bool MailYaVoto(std::string email);
-
-private:
 	void MarcarMailComoQueYaVoto(std::string email);
-
-private:
 	bool OpcionValida(int opcion);
+
+public:
+	ConsultasPopulares();
+	void Numero(int NumEncuesta);
+	int Numero();
+	void texto(std::string Descripcion);
+	std::string texto();
+	void LoadData();
+	std::string doVotar(int UserIndex, int opcion);
+	std::string SendInfoEncuesta(int UserIndex);
 
 };
 #endif

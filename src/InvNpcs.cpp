@@ -162,7 +162,7 @@ int EncontrarCant(int NpcIndex, int ObjIndex) {
 	for (i = (1); i <= (MAX_INVENTORY_SLOTS); i++) {
 		ln = GetVar(npcfile, "NPC" + vb6::CStr(Npclist[NpcIndex].Numero), "Obj" + vb6::CStr(i));
 		if (ObjIndex == vb6::val(ReadField(1, ln, 45))) {
-			retval = vb6::val(ReadField(2, ln, 45));
+			retval = (int) vb6::val(ReadField(2, ln, 45));
 			return retval;
 		}
 	}

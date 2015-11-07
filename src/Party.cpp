@@ -294,13 +294,10 @@ bool clsParty::HacerLeader(int UserIndex) {
 		}
 	}
 
-	if (!retval) {
-		return retval;
-	}
-
 	if (UserIndexIndex == 0) {
 		/* 'catastrofe! esto no deberia pasar nunca! pero como es AO.... :p */
 		LogError("INCONSISTENCIA DE PARTIES");
+		std::cerr << ("INCONSISTENCIA DE PARTIES en HacerLeader") << std::endl;
 		SendData(SendTarget_ToAdmins, 0,
 				PrepareMessageConsoleMsg(
 						"¡¡¡Inconsistencia de parties en HACERLEADER (UII = 0), AVISE A UN PROGRAMADOR ESTO ES UNA CATASTROFE!!!!",
