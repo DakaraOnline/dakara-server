@@ -68,7 +68,7 @@ void HandleIncomingDataOnePacket(int UserIndex) {
 	/* '*************************************************** */
 	int packetID;
 
-	packetID = UserList[UserIndex].sockctx->incomingData->PeekByte();
+	packetID = UserList[UserIndex].sockctx->incomingData->PeekUnsignedByte();
 
 	/* 'Does the packet requires a logged user?? */
 	if (!(packetID == ClientPacketID_ThrowDices || packetID == ClientPacketID_LoginExistingChar
@@ -884,7 +884,7 @@ void HandleGMCommands(int UserIndex) {
 
 	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
-	Command = UserList[UserIndex].sockctx->incomingData->PeekByte();
+	Command = UserList[UserIndex].sockctx->incomingData->PeekUnsignedByte();
 
 	switch (Command) {
 	/* '/GMSG */
@@ -1852,9 +1852,9 @@ void HandleLoginExistingChar(int UserIndex) {
 	/* # END IF */
 
 	{
-		int vera = buffer->ReadByte();
-		int verb = buffer->ReadByte();
-		int verc = buffer->ReadByte();
+		int vera = buffer->ReadUnsignedByte();
+		int verb = buffer->ReadUnsignedByte();
+		int verc = buffer->ReadUnsignedByte();
 
 		/* 'Convert version number to string */
 		version = vb6::CStr(vera) + "." + vb6::CStr(verb) + "." + vb6::CStr(verc);
@@ -3082,7 +3082,7 @@ void HandleWork(int UserIndex) {
 
 	eSkill Skill;
 
-	Skill = static_cast<eSkill> (UserList[UserIndex].sockctx->incomingData->ReadByte());
+	Skill = static_cast<eSkill> (UserList[UserIndex].sockctx->incomingData->ReadUnsignedByte());
 
 	if (UserList[UserIndex].flags.Muerto == 1) {
 		return;
@@ -3912,7 +3912,7 @@ void HandleChangeHeading(int UserIndex) {
 	int posX = 0;
 	int posY = 0;
 
-	heading = static_cast<eHeading> (UserList[UserIndex].sockctx->incomingData->ReadByte());
+	heading = static_cast<eHeading> (UserList[UserIndex].sockctx->incomingData->ReadUnsignedByte());
 
 	if (UserList[UserIndex].flags.Paralizado == 1 && UserList[UserIndex].flags.Inmovilizado == 0) {
 		switch (heading) {
@@ -7597,7 +7597,7 @@ void HandleGuildFundation(int UserIndex) {
 	eClanType clanType;
 	std::string ERROR;
 
-	clanType = static_cast<eClanType>(UserList[UserIndex].sockctx->incomingData->ReadByte());
+	clanType = static_cast<eClanType>(UserList[UserIndex].sockctx->incomingData->ReadUnsignedByte());
 
 	if (HasFound(UserList[UserIndex].Name)) {
 		WriteConsoleMsg(UserIndex, "¡Ya has fundado un clan, no puedes fundar otro!",
@@ -9113,7 +9113,7 @@ void HandleEditChar(int UserIndex) {
 		tUser = NameIndex(UserName);
 	}
 
-	opcion = buffer->ReadByte();
+	opcion = buffer->ReadUnsignedByte();
 	Arg1 = buffer->ReadUnicodeString();
 	Arg2 = buffer->ReadUnicodeString();
 
@@ -14078,7 +14078,7 @@ void HandleImperialArmour(int UserIndex) {
 	int index;
 	int ObjIndex;
 
-	index = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	index = UserList[UserIndex].sockctx->incomingData->ReadUnsignedByte();
 	ObjIndex = UserList[UserIndex].sockctx->incomingData->ReadInteger();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {

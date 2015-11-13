@@ -133,6 +133,12 @@ public:
 		return tmp;
 	}
 
+	inline std::uint8_t ReadUnsignedByte() {
+		std::uint8_t tmp = PeekUnsignedByte();
+		readPos += sizeof(tmp);
+		return tmp;
+	}
+
 	inline std::int16_t ReadInteger() {
 		std::int16_t tmp = PeekInteger();
 		readPos += sizeof(tmp);
@@ -173,6 +179,10 @@ public:
 
 	inline std::int8_t PeekByte() {
 		return PeekRaw<std::int8_t>();
+	}
+
+	inline std::uint8_t PeekUnsignedByte() {
+		return PeekRaw<std::uint8_t>();
 	}
 
 	inline std::int16_t PeekInteger() {

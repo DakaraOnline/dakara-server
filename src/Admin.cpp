@@ -165,6 +165,8 @@ void WorldSave() {
 	SendData(SendTarget_ToAll, 0,
 			PrepareMessageConsoleMsg("Servidor> WorldSave ha concluído.",
 					FontTypeNames_FONTTYPE_SERVER));
+
+	Logger::getInstance().flushAll();
 }
 
 void ServerShutdown() {
