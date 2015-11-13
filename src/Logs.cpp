@@ -24,174 +24,202 @@
 #include "FileIO.h"
 #include "vb6compat.h"
 
+
+void Logger::log(const std::string& file, const std::string& msg){
+
+	if ( logStreams.find( file ) == logStreams.end() ){
+		std::shared_ptr< std::ofstream > f(new std::ofstream);
+		logStreams[file] = f;
+		(*f).open(file, std::ios::app | std::ios::ate);
+		if ((*f).fail())
+			throw std::runtime_error("Archivo " + file + " No se puede abrir");
+	}
+
+	std::shared_ptr< std::ofstream > & fileStream = logStreams[file];
+	(*fileStream) << msg;
+}
+
+void Logger::flush(const std::string& file){
+	if ( logStreams.find( file ) == logStreams.end() )
+		throw std::runtime_error("Se trato de flushear " + file + " que no fue abierto");
+	(*logStreams[file]).flush();
+}
+
+// Funcion llamada en el worldsave (tambien se flushean automaticamente por ofstream si alcanza un determinado tamaño,
+// podria modificarlo para ser flusheados luego de alcanzar menos tamaño si es que consume mucha memoria)
+void Logger::flushAll(){
+	for (std::map<std::string, std::shared_ptr< std::ofstream > >::iterator it = logStreams.begin(); it != logStreams.end(); ++it)
+	  (*(it->second)).flush();
+}
+
+void Logger::closeAll(){
+	for (std::map<std::string, std::shared_ptr< std::ofstream > >::iterator it = logStreams.begin(); it != logStreams.end(); ++it)
+	  (*(it->second)).close();
+}
+
 void LogApiSock(std::string str) {
-	std::ofstream f;
-	f.open(GetLogFileName("sockets"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << str << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("sockets"),f.str());
 }
 
 void LogBugReport(int UserIndex, const std::string& s) {
-	std::ofstream f;
-	f.open(GetLogFileName("bugs"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << "[" << vb6::Now() << "] Ususario: " << UserList[UserIndex].Name << std::endl;
 	f << s << std::endl;
 	f << std::endl;
-	f.close();
+
+	Logger::getInstance().log(GetLogFileName("bugs"),f.str());
+
+	// errores se flushean inmediatamente
+	Logger::getInstance().flush(GetLogFileName("bugs"));
 }
 
 void LogMain(const std::string& s) {
-	std::ofstream f;
-	f.open(GetLogFileName("main"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << s << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("main"),f.str());
+
 }
 
 void LogConnect(int UserIndex, bool Join) {
-	std::ofstream f;
-	f.open(GetLogFileName("connect"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << UserList[UserIndex].Name << " ha " << (Join ? "entrado al" : "salido del") << " juego. NumUsers:" << NumUsers << " UserIndex:" << UserIndex << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("connect"),f.str());
 }
 
 void LogBackUp() {
-	std::ofstream out;
-	out.open(GetLogFileName("BackUps"), std::ios::app | std::ios::ate);
-	out << vb6::Now() << std::endl;
-	out.close();
+	std::stringstream f;
+	f << vb6::Now() << std::endl;
+	Logger::getInstance().log(GetLogFileName("BackUps"),f.str());
 }
 
 void LogNumUsers() {
-	std::ofstream f;
-	f.open(GetLogFileName("numusers"), std::ios::out | std::ios::trunc);
-	f << NumUsers << std::endl;
-	f.close();
+	std::stringstream f;
+	f << vb6::Now() << " " << NumUsers << std::endl;
+	Logger::getInstance().log(GetLogFileName("numusers"),f.str());
+
 }
 
 void LogCriticEvent(std::string desc) {
-	std::ofstream f;
-	f.open(GetLogFileName("eventos"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << desc << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("eventos"),f.str());
 }
 
 void LogEjercitoReal(std::string desc) {
-	std::ofstream f;
-	f.open(GetLogFileName("ejercito_real"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << desc << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("ejercito_real"),f.str());
 }
 
 void LogEjercitoCaos(std::string desc) {
-	std::ofstream f;
-	f.open(GetLogFileName("ejercito_caos"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << desc << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("ejercuto_caos"),f.str());
+
 }
 
 void LogIndex(int index, std::string desc) {
-	std::ofstream f;
-	f.open(GetLogFileName("index_" + vb6::CStr(index)), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << desc << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("index_" + vb6::CStr(index)),f.str());
 }
 
 void LogError(std::string desc) {
-	std::ofstream f;
-	f.open(GetLogFileName("errores"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << desc << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("errores"),f.str());
+
+	// errores se flushean inmediatamente
+	Logger::getInstance().flush(GetLogFileName("errores"));
 }
 
 void LogStatic(std::string desc) {
-	std::ofstream f;
-	f.open(GetLogFileName("stats"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << desc << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("stats"),f.str());
 }
 
 void LogTarea(std::string desc) {
-	std::ofstream f;
-	f.open(GetLogFileName("haciendo"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << desc << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("haciendo"),f.str());
 }
 
 void LogClanes(std::string desc) {
-	std::ofstream f;
-	f.open(GetLogFileName("clanes"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << desc << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("clanes"),f.str());
 }
 
 void LogIP(std::string str) {
-	std::ofstream f;
-	f.open(GetLogFileName("ip"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << str << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("ip"),f.str());
 }
 
 void LogDesarrollo(std::string str) {
-	std::ofstream f;
-	f.open(GetLogFileName("desarrollo"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << str << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("desarollo"),f.str());
 }
 
 void LogGM(std::string Nombre, std::string texto) {
-	std::ofstream f;
-	f.open(GetLogFileName("gm_" + vb6::UCase(Nombre)), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << texto << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("gm_" + vb6::UCase(Nombre)),f.str());
 }
 
 void LogAsesinato(std::string texto) {
-	std::ofstream f;
-	f.open(GetLogFileName("asesinatos"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << texto << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("asesinatos"),f.str());
 }
 
 void logVentaCasa(std::string texto) {
-	std::ofstream f;
-	f.open(GetLogFileName("propiedades"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << texto << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("propiedades"),f.str());
 }
 
 void LogHackAttemp(std::string texto) {
-	std::ofstream f;
-	f.open(GetLogFileName("hackattempt"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << texto << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("hackattempt"),f.str());
+
+	// cheats se flushean inmediatamente
+	Logger::getInstance().flush(GetLogFileName("hackattempt"));
 }
 
 void LogCheating(std::string texto) {
-	std::ofstream f;
-	f.open(GetLogFileName("cheat"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << texto << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("cheat"),f.str());
+	// cheats se flushean inmediatamente
+	Logger::getInstance().flush(GetLogFileName("cheat"));
 }
 
 void LogCriticalHackAttemp(std::string texto) {
-	std::ofstream f;
-	f.open(GetLogFileName("criticalhack"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << texto << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("criticalhack"),f.str());
+	// cheats se flushean inmediatamente
+	Logger::getInstance().flush(GetLogFileName("criticalhack"));
 }
 
 void LogAntiCheat(std::string texto) {
-	std::ofstream f;
-	f.open(GetLogFileName("anticheat"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << texto << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("anticheat"),f.str());
 }
 
 void LogGenteBanned(std::string Nombre) {
-	std::ofstream f;
-	f.open(GetLogFileName("GenteBanned"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << Nombre << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("GenteBanned"),f.str());
+	// bans se flushean inmediatamente
+	Logger::getInstance().flush(GetLogFileName("GenteBanned"));
 }
 
 void LogBan(int BannedIndex, int UserIndex, std::string Motivo) {
@@ -211,8 +239,7 @@ void LogBanFromName(std::string BannedName, int UserIndex, std::string Motivo) {
 }
 
 void LogCentinela(std::string texto) {
-	std::ofstream f;
-	f.open(GetLogFileName("centinela"), std::ios::app | std::ios::ate);
+	std::stringstream f;
 	f << vb6::Now() << " " << texto << std::endl;
-	f.close();
+	Logger::getInstance().log(GetLogFileName("centinela"),f.str());
 }

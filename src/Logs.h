@@ -20,7 +20,34 @@
 #ifndef LOGS_H_
 #define LOGS_H_
 
+#include <iostream> // sacar
+#include <map>
 #include <string>
+#include <utility>
+#include <fstream>
+#include <memory>
+
+class Logger {
+public:
+	~Logger() {
+		this->closeAll();
+	}
+
+	static Logger& getInstance() {
+		static Logger instance;
+		return instance;
+	}
+
+	void log(const std::string& file, const std::string& msg);
+	void flush(const std::string& file);
+	void flushAll();
+
+private:
+	std::map<std::string,std::shared_ptr< std::ofstream > >logStreams; // logfiles , nombre, ofstream, flush time
+	void closeAll();
+};
+
+
 
 void LogApiSock(std::string str);
 

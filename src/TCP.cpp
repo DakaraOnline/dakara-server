@@ -1200,7 +1200,6 @@ bool ConnectUser(int UserIndex, const std::string & Name, const std::string & Pa
 
 	MostrarNumUsers();
 
-	LogNumUsers();
 	LogConnect(UserIndex, true);
 
 	retval = true;
