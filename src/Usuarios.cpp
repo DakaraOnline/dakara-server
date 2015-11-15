@@ -17,6 +17,7 @@
 
 #include "Usuarios.h"
 #include "allheaders.h"
+#include "boost/date_time/posix_time/posix_time.hpp"
 
 void ActStats(int VictimIndex, int AttackerIndex) {
 	/* '*************************************************** */
@@ -1062,16 +1063,17 @@ void SendUserStatsTxt(int sendIndex, int UserIndex) {
 	}
 
 	/* # IF ConUpTime THEN */
-	vb6::Date TempDate;
+	boost::posix_time::time_duration TempDate;
 	int TempSecs;
 	// std::string TempStr;
 	TempDate = vb6::Now() - UserList[UserIndex].LogOnTime;
-	//TempSecs = (UserList[UserIndex].UpTime+(vb6::Abs(vb6::Day(TempDate)-30)*24*3600)+(vb6::Hour(TempDate)*3600)+(vb6::Minute(TempDate)*60)+vb6::Second(TempDate));
-	TempSecs = TempDate; // FIXME
-	// TempStr = (TempSecs/86400) + " Dias, " + ((TempSecs % 86400)/3600) + " Horas, " + ((TempSecs % 86400)% 3600)/60 + " Minutos, " + (((TempSecs% 86400)% 3600) % 60) + " Segundos.";
-	WriteConsoleMsg(sendIndex, "Logeado hace: " + vb6::CStr(TempSecs), FontTypeNames_FONTTYPE_INFO);
-	WriteConsoleMsg(sendIndex, "Total: " + vb6::CStr(UserList[UserIndex].UpTime + TempSecs),
-			FontTypeNames_FONTTYPE_INFO);
+	TempSecs = TempDate.seconds();
+	int minutosTotales = UserList[UserIndex].UpTime;
+	WriteConsoleMsg(sendIndex, "Logeado hace: " + boost::posix_time::to_simple_string(TempDate), FontTypeNames_FONTTYPE_INFO);
+	std::stringstream s;
+	s << "Total: " << ((minutosTotales/24)/60) <<" Dias, " << ((minutosTotales/60)%24) <<" Horas, "<< (minutosTotales%60) << " minutos";
+	WriteConsoleMsg(sendIndex, s.str() , FontTypeNames_FONTTYPE_INFO);
+
 	/* # END IF */
 	if (UserList[UserIndex].flags.Traveling == 1) {
 		WriteConsoleMsg(sendIndex,
@@ -2316,7 +2318,7 @@ void CambiarNick(int UserIndex, int UserIndexDestino, std::string NuevoNick) {
 
 	if (FileExist(GetCharPath(ViejoNick), 0)) {
 		/* 'hace un backup del char */
-		ViejoCharBackup = GetCharPath(ViejoNick) + ".old-" + vb6::CStr(vb6::Now());
+		ViejoCharBackup = GetCharPath(ViejoNick) + ".old-" + vb6::Time();
 		vb6::Name(GetCharPath(ViejoNick), ViejoCharBackup);
 	}
 

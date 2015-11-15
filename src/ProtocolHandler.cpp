@@ -68,7 +68,7 @@ void HandleIncomingDataOnePacket(int UserIndex) {
 	/* '*************************************************** */
 	int packetID;
 
-	packetID = UserList[UserIndex].sockctx->incomingData->PeekUnsignedByte();
+	packetID = UserList[UserIndex].sockctx->incomingData->PeekByte();
 
 	/* 'Does the packet requires a logged user?? */
 	if (!(packetID == ClientPacketID_ThrowDices || packetID == ClientPacketID_LoginExistingChar
@@ -884,7 +884,7 @@ void HandleGMCommands(int UserIndex) {
 
 	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
-	Command = UserList[UserIndex].sockctx->incomingData->PeekUnsignedByte();
+	Command = UserList[UserIndex].sockctx->incomingData->PeekByte();
 
 	switch (Command) {
 	/* '/GMSG */
@@ -1852,9 +1852,9 @@ void HandleLoginExistingChar(int UserIndex) {
 	/* # END IF */
 
 	{
-		int vera = buffer->ReadUnsignedByte();
-		int verb = buffer->ReadUnsignedByte();
-		int verc = buffer->ReadUnsignedByte();
+		int vera = buffer->ReadByte();
+		int verb = buffer->ReadByte();
+		int verc = buffer->ReadByte();
 
 		/* 'Convert version number to string */
 		version = vb6::CStr(vera) + "." + vb6::CStr(verb) + "." + vb6::CStr(verc);
@@ -3082,7 +3082,7 @@ void HandleWork(int UserIndex) {
 
 	eSkill Skill;
 
-	Skill = static_cast<eSkill> (UserList[UserIndex].sockctx->incomingData->ReadUnsignedByte());
+	Skill = static_cast<eSkill> (UserList[UserIndex].sockctx->incomingData->ReadByte());
 
 	if (UserList[UserIndex].flags.Muerto == 1) {
 		return;
@@ -3912,7 +3912,7 @@ void HandleChangeHeading(int UserIndex) {
 	int posX = 0;
 	int posY = 0;
 
-	heading = static_cast<eHeading> (UserList[UserIndex].sockctx->incomingData->ReadUnsignedByte());
+	heading = static_cast<eHeading> (UserList[UserIndex].sockctx->incomingData->ReadByte());
 
 	if (UserList[UserIndex].flags.Paralizado == 1 && UserList[UserIndex].flags.Inmovilizado == 0) {
 		switch (heading) {
@@ -7597,7 +7597,7 @@ void HandleGuildFundation(int UserIndex) {
 	eClanType clanType;
 	std::string ERROR;
 
-	clanType = static_cast<eClanType>(UserList[UserIndex].sockctx->incomingData->ReadUnsignedByte());
+	clanType = static_cast<eClanType>(UserList[UserIndex].sockctx->incomingData->ReadByte());
 
 	if (HasFound(UserList[UserIndex].Name)) {
 		WriteConsoleMsg(UserIndex, "¡Ya has fundado un clan, no puedes fundar otro!",
@@ -8178,7 +8178,7 @@ void HandleServerTime(int UserIndex) {
 	LogGM(UserList[UserIndex].Name, "Hora.");
 
 	SendData(SendTarget_ToAll, 0,
-			PrepareMessageConsoleMsg("Hora: " + vb6::CStr(vb6::Now()), FontTypeNames_FONTTYPE_INFO));
+			PrepareMessageConsoleMsg("Hora: " + vb6::Time(), FontTypeNames_FONTTYPE_INFO));
 }
 
 /* '' */
@@ -8942,7 +8942,7 @@ void HandleJail(int UserIndex) {
 						WriteVar(userCharPath, "PENAS", "Cant", Count + 1);
 						WriteVar(userCharPath, "PENAS", "P" + vb6::CStr(Count + 1),
 								vb6::LCase(UserList[UserIndex].Name) + ": CARCEL " + vb6::CStr(jailTime)
-										+ "m, MOTIVO: " + vb6::LCase(Reason) + " " + vb6::CStr(vb6::Now()));
+										+ "m, MOTIVO: " + vb6::LCase(Reason) + " " + vb6::Time());
 					}
 
 					Encarcelar(tUser, jailTime, UserList[UserIndex].Name);
@@ -9055,7 +9055,7 @@ void HandleWarnUser(int UserIndex) {
 					WriteVar(GetCharPath(UserName), "PENAS", "Cant", Count + 1);
 					WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(Count + 1),
 							vb6::LCase(UserList[UserIndex].Name) + ": ADVERTENCIA por: " + vb6::LCase(Reason)
-									+ " " + vb6::CStr(vb6::Now()));
+									+ " " + vb6::Time());
 
 					WriteConsoleMsg(UserIndex, "Has advertido a " + vb6::UCase(UserName) + ".",
 							FontTypeNames_FONTTYPE_INFO);
@@ -9113,7 +9113,7 @@ void HandleEditChar(int UserIndex) {
 		tUser = NameIndex(UserName);
 	}
 
-	opcion = buffer->ReadUnsignedByte();
+	opcion = buffer->ReadByte();
 	Arg1 = buffer->ReadUnicodeString();
 	Arg2 = buffer->ReadUnicodeString();
 
@@ -10417,7 +10417,7 @@ void HandleUnbanChar(int UserIndex) {
 				cantPenas = vb6::val(GetVar(GetCharPath(UserName), "PENAS", "Cant"));
 				WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 				WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
-						vb6::LCase(UserList[UserIndex].Name) + ": UNBAN. " + vb6::CStr(vb6::Now()));
+						vb6::LCase(UserList[UserIndex].Name) + ": UNBAN. " + vb6::Time());
 
 				LogGM(UserList[UserIndex].Name, "/UNBAN a " + UserName);
 				WriteConsoleMsg(UserIndex, UserName + " unbanned.", FontTypeNames_FONTTYPE_INFO);
@@ -12013,7 +12013,7 @@ void HandleGuildBan(int UserIndex) {
 				WriteVar(GetCharPath(member), "PENAS", "Cant", Count + 1);
 				WriteVar(GetCharPath(member), "PENAS", "P" + vb6::CStr(Count + 1),
 						vb6::LCase(UserList[UserIndex].Name) + ": BAN AL CLAN: " + GuildName + " "
-								+ vb6::CStr(vb6::Now()));
+								+ vb6::Time());
 			}
 		}
 	}
@@ -12323,7 +12323,7 @@ void HandleChaosLegionKick(int UserIndex) {
 			WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 			WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 					vb6::LCase(UserList[UserIndex].Name) + ": EXPULSADO de la Legión Oscura por: "
-							+ vb6::LCase(Reason) + " " + vb6::CStr(vb6::Now()));
+							+ vb6::LCase(Reason) + " " + vb6::Time());
 		} else {
 			if (FileExist(GetCharPath(UserName))) {
 				WriteVar(GetCharPath(UserName), "FACCIONES", "EjercitoCaos", 0);
@@ -12335,7 +12335,7 @@ void HandleChaosLegionKick(int UserIndex) {
 				WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 				WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 						vb6::LCase(UserList[UserIndex].Name) + ": EXPULSADO de la Legión Oscura por: "
-								+ vb6::LCase(Reason) + " " + vb6::CStr(vb6::Now()));
+								+ vb6::LCase(Reason) + " " + vb6::Time());
 
 				WriteConsoleMsg(UserIndex,
 						UserName + " expulsado de las fuerzas del caos y prohibida la reenlistada.",
@@ -12410,7 +12410,7 @@ void HandleRoyalArmyKick(int UserIndex) {
 			WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 			WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 					vb6::LCase(UserList[UserIndex].Name) + ": EXPULSADO de la Legión Oscura por: "
-							+ vb6::LCase(Reason) + " " + vb6::CStr(vb6::Now()));
+							+ vb6::LCase(Reason) + " " + vb6::Time());
 		} else {
 			if (FileExist(GetCharPath(UserName))) {
 				WriteVar(GetCharPath(UserName), "FACCIONES", "EjercitoReal", 0);
@@ -12425,7 +12425,7 @@ void HandleRoyalArmyKick(int UserIndex) {
 				WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 				WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 						vb6::LCase(UserList[UserIndex].Name) + ": EXPULSADO de la Legión Oscura por: "
-								+ vb6::LCase(Reason) + " " + vb6::CStr(vb6::Now()));
+								+ vb6::LCase(Reason) + " " + vb6::Time());
 			} else {
 				WriteConsoleMsg(UserIndex, UserName + ".chr inexistente.", FontTypeNames_FONTTYPE_INFO);
 			}
@@ -12552,7 +12552,7 @@ void HandleRemovePunishment(int UserIndex) {
 
 				WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(punishment),
 						vb6::LCase(UserList[UserIndex].Name) + ": <" + NewText + "> "
-								+ vb6::CStr(vb6::Now()));
+								+ vb6::Time());
 
 				WriteConsoleMsg(UserIndex, "Pena modificada.", FontTypeNames_FONTTYPE_INFO);
 			}
@@ -13838,7 +13838,7 @@ void HandleAlterName(int UserIndex) {
 
 							WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 									vb6::LCase(UserList[UserIndex].Name) + ": BAN POR Cambio de nick a "
-											+ vb6::UCase(newName) + " " + vb6::CStr(vb6::Now()));
+											+ vb6::UCase(newName) + " " + vb6::Time());
 
 							LogGM(UserList[UserIndex].Name,
 									"Ha cambiado de nombre al usuario " + UserName + ". Ahora se llama "
@@ -14078,7 +14078,7 @@ void HandleImperialArmour(int UserIndex) {
 	int index;
 	int ObjIndex;
 
-	index = UserList[UserIndex].sockctx->incomingData->ReadUnsignedByte();
+	index = UserList[UserIndex].sockctx->incomingData->ReadByte();
 	ObjIndex = UserList[UserIndex].sockctx->incomingData->ReadInteger();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
@@ -14329,7 +14329,7 @@ void HandleResetFactions(int UserIndex) {
 			WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 			WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 					vb6::LCase(UserList[UserIndex].Name) + ": Personaje reincorporado a la facción. "
-							+ vb6::CStr(vb6::Now()));
+							+ vb6::Time());
 		} else {
 			Char = GetCharPath(UserName);
 
@@ -14354,7 +14354,7 @@ void HandleResetFactions(int UserIndex) {
 				WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 				WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 						vb6::LCase(UserList[UserIndex].Name) + ": Personaje reincorporado a la facción. "
-								+ vb6::CStr(vb6::Now()));
+								+ vb6::Time());
 			} else {
 				WriteConsoleMsg(UserIndex, "El personaje " + UserName + " no existe.",
 						FontTypeNames_FONTTYPE_INFO);

@@ -17,18 +17,27 @@
 
 #ifndef DECLARACIONES_H
 #define DECLARACIONES_H
+
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <deque>
+#include <set>
 #include <vector>
 #include <memory>
 #include <string>
-#include <set>
-#include <deque>
 #include <map>
 
-#include "vb6compat.h"
-#include "enums.h"
-
+#include "AntiMassClon.h"
 #include "Areas.h"
+#include "ByteQueue.h"
+#include "ConsultasPopulares.h"
+#include "enums.h"
+#include "IniManager.h"
+#include "MapSoundManager.h"
+#include "Party.h"
+#include "vb6compat.h"
 #include "ComercioUsuario.h"
+
+class socket_ctx;
 
 extern std::shared_ptr<clsAntiMassClon> aClon;
 extern std::set<WorldPos> TrashCollector;
@@ -390,7 +399,7 @@ extern const int EXP_FALLO_SKILL;
 
 struct tObservacion {
 	std::string Creador;
-	vb6::Date Fecha{};
+	boost::posix_time::ptime Fecha{};
 
 	std::string Detalles;
 };
@@ -399,7 +408,7 @@ struct tRecord {
 	std::string Usuario;
 	std::string Motivo;
 	std::string Creador;
-	vb6::Date Fecha;
+	boost::posix_time::ptime Fecha;
 
 	int NumObs{};
 	vb6::array<struct tObservacion> Obs;
@@ -1159,7 +1168,7 @@ struct User {
 
 	struct tFacciones Faccion{};
 
-	vb6::Date LogOnTime{};
+	boost::posix_time::ptime LogOnTime{};
 	int UpTime = 0;
 
 	std::string ip;

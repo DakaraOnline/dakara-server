@@ -20,15 +20,25 @@
 #ifndef VB6COMPAT_H
 #define VB6COMPAT_H
 
-#include <cstdint>
-#include <vector>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/posix_time/time_parsers.hpp>
+#include <boost/date_time/time.hpp>
+#include <boost/date_time/time_clock.hpp>
+#include <boost/date_time/time_duration.hpp>
+#include "boost/date_time/posix_time/posix_time.hpp"
+#include "boost/date_time/gregorian/gregorian_types.hpp"
 #include <algorithm>
+#include <cctype>
 #include <cmath>
-#include <sstream>
-#include <stdexcept>
-#include <iostream>
-#include <string>
+#include <cstddef>
+#include <cstdlib>
 #include <ctime>
+#include <iostream>
+#include <iterator>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 #define vbGreen 0x0000ff00
 #define vbWhite 0x00ffffff
@@ -319,42 +329,57 @@ inline double CSng<std::string>(const std::string& e) {
 	return string_to<double>(e);
 }
 
-inline std::string DateAdd(const std::string fmt, int what, Date d) {
-	(void)fmt;
-	(void)what;
-	(void)d;
-	throw std::runtime_error("DateAdd not implemented");
+inline std::string DateAdd(const std::string &fmt, int cant, boost::posix_time::ptime d) {
+	int dias;
+	if (fmt == "d")
+		dias = cant;
+	else {
+		if (fmt == "m")
+			dias = cant * 30;
+		else {
+			if (fmt == "a")
+				dias = cant * 365;
+			else
+				throw std::runtime_error("comando invalido en DateAdd");
+		}
+	}
+
+	boost::gregorian::date_duration dur(dias);
+	d += dur;
+	return boost::posix_time::to_simple_string(d);
 }
 
-inline std::string Time() {
-	//throw std::runtime_error("time not implemented");
-	return std::to_string(std::time(0));
+inline std::string dateToString(boost::posix_time::ptime &d){// todas las fechas formato : "2002-01-20 23:59:59.000"
+	return boost::posix_time::to_simple_string(d);
 }
 
-inline Date CDate(std::string str) {
-	(void)str;
-	throw std::runtime_error("CDate not implemented");
-	return 0; // FIXME
+inline boost::posix_time::ptime Now() {
+	return boost::posix_time::second_clock::local_time();
 }
 
-inline Date Now() {
-	return std::time(0); // FIXME
+inline std::string Time(){
+	return boost::posix_time::to_simple_string(boost::posix_time::second_clock::local_time());
 }
 
-inline int Hour(Date d) {
-	return (d / 3600) % 60;
+inline boost::posix_time::ptime CDate(const std::string &str) {
+	return (boost::posix_time::time_from_string(str));
 }
 
-inline int Minute(Date d) {
-	return (d / 60) % 60;
+
+inline int Hour(const boost::posix_time::ptime &t) {
+	return t.time_of_day().hours();
 }
 
-inline int Second(Date d) {
-	return d % 60;
+inline int Minute(boost::posix_time::ptime t) {
+	return t.time_of_day().minutes();
 }
 
-inline int Weekday(Date d) {
-	return ((((d / 60) / 60) / 24) % 7) + 1;
+inline int Second(boost::posix_time::ptime t) {
+	return t.time_of_day().seconds();
+}
+
+inline int Weekday(boost::posix_time::ptime t) {
+	return t.date().day_of_week()+1;
 }
 
 inline std::string Replace(const std::string& str, const std::string& strold, const std::string& strnew) {
@@ -407,6 +432,7 @@ inline std::string dir(const std::string& str) {
 	throw std::runtime_error("dir not implemented");
 }
 */
+
 
 inline std::string Chr(int c) {
 	return std::string(&c, &c+1);

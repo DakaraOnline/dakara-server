@@ -43,7 +43,7 @@ public:
 	void flushAll();
 
 private:
-	std::map<std::string,std::shared_ptr< std::ofstream > >logStreams; // logfiles , nombre, ofstream, flush time
+	std::map<std::string,std::shared_ptr< std::ofstream > >logStreams;
 	void closeAll();
 };
 

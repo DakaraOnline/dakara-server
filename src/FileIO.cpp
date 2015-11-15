@@ -2205,10 +2205,10 @@ void SaveUser(int UserIndex, std::string UserFile, bool SaveTimeOnline) {
 	/* # IF ConUpTime THEN */
 
 	if (SaveTimeOnline) {
-		vb6::Date TempDate;
+		boost::posix_time::time_duration TempDate;
 		TempDate = vb6::Now() - UserList[UserIndex].LogOnTime;
 		UserList[UserIndex].LogOnTime = vb6::Now();
-		UserList[UserIndex].UpTime = UserList[UserIndex].UpTime + TempDate;
+		UserList[UserIndex].UpTime = UserList[UserIndex].UpTime + TempDate.minutes();
 		//UserList[UserIndex].UpTime = UserList[UserIndex].UpTime;
 		Manager->ChangeValue("INIT", "UpTime", std::to_string(UserList[UserIndex].UpTime));
 	}

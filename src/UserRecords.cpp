@@ -16,9 +16,17 @@
 ******************************************************************************/
 
 #include "UserRecords.h"
-#include "allheaders.h"
 
+#include <boost/date_time/posix_time/ptime.hpp>
 #include <fstream>
+#include <iostream>
+#include <string>
+
+#include "Declares.h"
+#include "FileIO.h"
+#include "General.h"
+#include "IniManager.h"
+#include "vb6compat.h"
 
 
 void LoadRecords() {
@@ -86,13 +94,13 @@ void SaveRecords() {
 	for (i = (1); i <= (NumRecords); i++) {
 		Writer->ChangeValue("RECORD" + vb6::CStr(i), "Usuario", Records[i].Usuario);
 		Writer->ChangeValue("RECORD" + vb6::CStr(i), "Creador", Records[i].Creador);
-		Writer->ChangeValue("RECORD" + vb6::CStr(i), "Fecha", vb6::CStr(Records[i].Fecha));
+		Writer->ChangeValue("RECORD" + vb6::CStr(i), "Fecha", vb6::dateToString(Records[i].Fecha));
 		Writer->ChangeValue("RECORD" + vb6::CStr(i), "Motivo", Records[i].Motivo);
 
 		Writer->ChangeValue("RECORD" + vb6::CStr(i), "NumObs", vb6::CStr(Records[i].NumObs));
 
 		for (j = (1); j <= (Records[i].NumObs); j++) {
-			tmpStr = Records[i].Obs[j].Creador + "-" + vb6::CStr(Records[i].Obs[j].Fecha) + "-"
+			tmpStr = Records[i].Obs[j].Creador + "-" + vb6::dateToString(Records[i].Obs[j].Fecha) + "-"
 					+ Records[i].Obs[j].Detalles;
 			Writer->ChangeValue("RECORD" + vb6::CStr(i), "Obs" + vb6::CStr(j), tmpStr);
 		}

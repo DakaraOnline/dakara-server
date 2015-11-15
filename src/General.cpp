@@ -325,8 +325,8 @@ void LoadConstants() {
 	/* 'Loads all constants and general parameters. */
 	/* '***************************************************************** */
 
-	LastBackup = vb6::Format(vb6::Now(), "Short Time");
-	Minutos = vb6::Format(vb6::Now(), "Short Time");
+//	LastBackup = vb6::Format(vb6::Now(), "Short Time");
+//	Minutos = vb6::Format(vb6::Now(), "Short Time");
 
 	/* ' Paths */
 //	IniPath = vb6::App().Path + "/";
