@@ -1064,10 +1064,8 @@ void SendUserStatsTxt(int sendIndex, int UserIndex) {
 
 	/* # IF ConUpTime THEN */
 	boost::posix_time::time_duration TempDate;
-	int TempSecs;
 	// std::string TempStr;
 	TempDate = vb6::Now() - UserList[UserIndex].LogOnTime;
-	TempSecs = TempDate.seconds();
 	int minutosTotales = UserList[UserIndex].UpTime;
 	WriteConsoleMsg(sendIndex, "Logeado hace: " + boost::posix_time::to_simple_string(TempDate), FontTypeNames_FONTTYPE_INFO);
 	std::stringstream s;
