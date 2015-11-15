@@ -127,14 +127,9 @@ public:
 	}
 
 public:
-	inline std::int8_t ReadByte() {
-		std::int8_t tmp = PeekByte();
-		readPos += sizeof(tmp);
-		return tmp;
-	}
-
-	inline std::uint8_t ReadUnsignedByte() {
-		std::uint8_t tmp = PeekUnsignedByte();
+	inline std::uint8_t ReadByte() {
+		// unsigned byte
+		std::uint8_t tmp = PeekByte();
 		readPos += sizeof(tmp);
 		return tmp;
 	}
@@ -177,11 +172,8 @@ public:
 
 	// void ReadBlock(std::vector<int> & block, int dataLength);
 
-	inline std::int8_t PeekByte() {
-		return PeekRaw<std::int8_t>();
-	}
-
-	inline std::uint8_t PeekUnsignedByte() {
+	inline std::uint8_t PeekByte() {
+		// unsigned byte
 		return PeekRaw<std::uint8_t>();
 	}
 

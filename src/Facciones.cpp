@@ -254,7 +254,7 @@ void EnlistarArmadaReal(int UserIndex) {
 
 		UserList[UserIndex].Faccion.RecibioArmaduraReal = 1;
 		UserList[UserIndex].Faccion.NivelIngreso = UserList[UserIndex].Stats.ELV;
-		UserList[UserIndex].Faccion.FechaIngreso = vb6::CStr(vb6::Now());
+		UserList[UserIndex].Faccion.FechaIngreso = vb6::Time();
 		/* 'Esto por ahora es inútil, siempre va a ser cero, pero bueno, despues va a servir. */
 		UserList[UserIndex].Faccion.MatadosIngreso = UserList[UserIndex].Faccion.CiudadanosMatados;
 
@@ -754,7 +754,7 @@ void EnlistarCaos(int UserIndex) {
 
 		UserList[UserIndex].Faccion.RecibioArmaduraCaos = 1;
 		UserList[UserIndex].Faccion.NivelIngreso = UserList[UserIndex].Stats.ELV;
-		UserList[UserIndex].Faccion.FechaIngreso = vb6::CStr(vb6::Now());
+		UserList[UserIndex].Faccion.FechaIngreso = vb6::Time();
 
 		UserList[UserIndex].Faccion.RecibioExpInicialCaos = 1;
 		UserList[UserIndex].Faccion.RecompensasCaos = 0;

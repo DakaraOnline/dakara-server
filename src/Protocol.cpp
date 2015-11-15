@@ -3083,7 +3083,7 @@ void WriteRecordDetails(int UserIndex, int RecordIndex) {
 	int i;
 	int tIndex;
 	std::string tmpStr;
-	vb6::Date TempDate;
+	boost::posix_time::time_duration TempDate;
 
 	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_RecordDetails);
 
@@ -3111,7 +3111,7 @@ void WriteRecordDetails(int UserIndex, int RecordIndex) {
 		/* 'Tiempo logueado. */
 		TempDate = vb6::Now() - UserList[tIndex].LogOnTime;
 		//tmpStr = vb6::Hour(TempDate) + ":" + vb6::Minute(TempDate) + ":" + vb6::Second(TempDate);
-		tmpStr = vb6::CStr(TempDate);
+		tmpStr = boost::posix_time::to_simple_string(TempDate);
 	} else {
 		/* 'Envío string nulo. */
 		tmpStr = "";

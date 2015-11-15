@@ -17,6 +17,7 @@
 
 #include "Clan.h"
 #include "allheaders.h"
+#include "boost/date_time/posix_time/posix_time_types.hpp"
 
 static const int NEWSLENGTH = 1024;
 static const int DESCLENGTH = 256;
@@ -172,7 +173,7 @@ void clsClan::InicializarNuevoClan(std::string & Fundador) {
 
 	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "Founder", Fundador);
 	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "GuildName", p_GuildName);
-	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "Date", std::to_string(vb6::Now()));
+	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "Date", vb6::Time());
 	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "Antifaccion", "0");
 	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "Alineacion", Alineacion2String(p_Alineacion));
 
@@ -623,7 +624,7 @@ std::string clsClan::ContarVotos(int & CantGanadores) {
 
 bool clsClan::RevisarElecciones() {
 	bool retval;
-	vb6::Date FechaSufragio;
+	boost::posix_time::ptime FechaSufragio;
 	std::string Temps;
 	std::string Ganador;
 	int CantGanadores;
