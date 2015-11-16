@@ -36,6 +36,8 @@ static const int CANTIDADMAXIMACODEX = 8;
 const int MAXASPIRANTES = 10;
 /* 'cantidad maxima de aspirantes que puede tener un clan acumulados a la vez */
 
+const int MAXCLANMEMBERS = 1000;
+
 static const int MAXANTIFACCION = 5;
 /* 'puntos maximos de antifaccion que un clan tolera antes de ser cambiada su alineacion */
 
@@ -69,6 +71,8 @@ void LoadGuildsDB() {
 	} else {
 		CANTIDADDECLANES = 0;
 	}
+
+	CANTIDADDECLANES = vb6::Constrain(CANTIDADDECLANES, 0, MAX_GUILDS);
 
 	guilds.redim(1, MAX_GUILDS); /* XXX */
 
@@ -1903,7 +1907,6 @@ void SendDetallesPersonaje(int UserIndex, std::string Personaje) {
 	std::string Miembro;
 	int GuildActual;
 	std::vector<std::string> list;
-	int i;
 
 	try {
 		GI = UserList[UserIndex].GuildIndex;

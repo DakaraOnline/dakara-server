@@ -169,8 +169,11 @@ void CargarSpawnList() {
 	leerSp.Initialize(GetDatPath(DATPATH::Invokar));
 
 	N = vb6::val(leerSp.GetValue("INIT", "NumNPCs"));
+	N = vb6::Constrain(N, 0, MAXNPCS);
+
 	SpawnList.redim(0);
 	SpawnList.redim(1, N);
+
 	for (LoopC = (1); LoopC <= (N); LoopC++) {
 		SpawnList[LoopC].NpcIndex = vb6::val(
 				leerSp.GetValue("LIST", "NI" + vb6::CStr(LoopC)));
@@ -299,6 +302,7 @@ void loadAdministrativeUsers() {
 
 	/* ' Admines */
 	buf = vb6::val(ServerIni->GetValue("INIT", "Admines"));
+	buf = vb6::Constrain(buf, 0, MAX_SPECIAL_USERS);
 
 	for (i = (1); i <= (buf); i++) {
 		Name = vb6::UCase(ServerIni->GetValue("Admines", "Admin" + vb6::CStr(i)));
@@ -314,6 +318,7 @@ void loadAdministrativeUsers() {
 
 	/* ' Dioses */
 	buf = vb6::val(ServerIni->GetValue("INIT", "Dioses"));
+	buf = vb6::Constrain(buf, 0, MAX_SPECIAL_USERS);
 
 	for (i = (1); i <= (buf); i++) {
 		Name = vb6::UCase(ServerIni->GetValue("Dioses", "Dios" + vb6::CStr(i)));
@@ -329,6 +334,7 @@ void loadAdministrativeUsers() {
 
 	/* ' Especiales */
 	buf = vb6::val(ServerIni->GetValue("INIT", "Especiales"));
+	buf = vb6::Constrain(buf, 0, MAX_SPECIAL_USERS);
 
 	for (i = (1); i <= (buf); i++) {
 		Name = vb6::UCase(ServerIni->GetValue("Especiales", "Especial" + vb6::CStr(i)));
@@ -344,6 +350,7 @@ void loadAdministrativeUsers() {
 
 	/* ' SemiDioses */
 	buf = vb6::val(ServerIni->GetValue("INIT", "SemiDioses"));
+	buf = vb6::Constrain(buf, 0, MAX_SPECIAL_USERS);
 
 	for (i = (1); i <= (buf); i++) {
 		Name = vb6::UCase(ServerIni->GetValue("SemiDioses", "SemiDios" + vb6::CStr(i)));
@@ -359,6 +366,7 @@ void loadAdministrativeUsers() {
 
 	/* ' Consejeros */
 	buf = vb6::val(ServerIni->GetValue("INIT", "Consejeros"));
+	buf = vb6::Constrain(buf, 0, MAX_SPECIAL_USERS);
 
 	for (i = (1); i <= (buf); i++) {
 		Name = vb6::UCase(ServerIni->GetValue("Consejeros", "Consejero" + vb6::CStr(i)));
@@ -374,6 +382,7 @@ void loadAdministrativeUsers() {
 
 	/* ' RolesMasters */
 	buf = vb6::val(ServerIni->GetValue("INIT", "RolesMasters"));
+	buf = vb6::Constrain(buf, 0, MAX_SPECIAL_USERS);
 
 	for (i = (1); i <= (buf); i++) {
 		Name = vb6::UCase(ServerIni->GetValue("RolesMasters", "RM" + vb6::CStr(i)));
@@ -827,6 +836,7 @@ void LoadArmasHerreria() {
 	leerArm.Initialize(GetDatPath(DATPATH::ArmasHerrero));
 
 	N = vb6::val(leerArm.GetValue("INIT", "NumArmas"));
+	N = vb6::Constrain(N, 0, MAX_DAT_ITEMS);
 
 	ArmasHerrero.redim(1, N);
 
@@ -849,6 +859,7 @@ void LoadArmadurasHerreria() {
 	leerArm.Initialize(GetDatPath(DATPATH::ArmadurasHerrero));
 
 	N = vb6::val(leerArm.GetValue("INIT", "NumArmaduras"));
+	N = vb6::Constrain(N, 0, MAX_DAT_ITEMS);
 
 	ArmadurasHerrero.redim(1, N);
 
@@ -940,6 +951,7 @@ void LoadObjCarpintero() {
 	leerCarp.Initialize(GetDatPath(DATPATH::ObjCarpintero));
 
 	N = vb6::val(leerCarp.GetValue("INIT", "NumObjs"));
+	N = vb6::Constrain(N, 0, MAX_DAT_ITEMS);
 
 	ObjCarpintero.redim(1, N);
 
@@ -971,6 +983,7 @@ void LoadOBJData() {
 
 	/* 'obtiene el numero de obj */
 	NumObjDatas = vb6::val(Leer->GetValue("INIT", "NumObjs"));
+	NumObjDatas = vb6::Constrain(NumObjDatas, 0, MAX_DAT_ITEMS);
 
 	ObjData.redim(1, NumObjDatas);
 
@@ -1512,6 +1525,8 @@ void CargarBackUp() {
 	std::string tFileName;
 
 	NumMaps = vb6::val(GetVar(GetDatPath(DATPATH::Map), "INIT", "NumMaps"));
+	NumMaps = vb6::Constrain(NumMaps, 0, MAX_MAPS);
+
 	InitAreas();
 
 	//MapPath = GetVar(GetDatPath(DATPATH::Map), "INIT", "MapPath");
@@ -1572,6 +1587,8 @@ void LoadMapData() {
 	int Map;
 
 	NumMaps = vb6::val(GetVar(GetDatPath(DATPATH::Map), "INIT", "NumMaps"));
+	NumMaps = vb6::Constrain(NumMaps, 0, MAX_MAPS);
+
 	InitAreas();
 
 	//MapPath = GetVar(GetDatPath(DATPATH::Map), "INIT", "MapPath");

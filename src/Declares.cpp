@@ -626,6 +626,12 @@ const int ESPADA_VIKINGA = 123;
 // vb6::array<std::shared_ptr<clsClanPretoriano>> ClanPretoriano;
 
 const int MAX_DENOUNCES = 20;
+const int MAX_PENAS = 1000;
+const int MAX_SPECIAL_USERS = 1000;
+const int MAX_MAPS = 1000;
+const int MAX_EXPRESIONES = 10000;
+const int MAX_SONIDOS = 1000;
+const int MAX_DAT_ITEMS = 100000;
 
 /* 'Mensajes de los NPCs enlistadores (Nobles): */
 const std::string MENSAJE_REY_CAOS =

@@ -206,7 +206,7 @@ int clsClan::CantidadDeMiembros() {
 	int retval;
 	std::string OldQ;
 	OldQ = GetVar(MEMBERSFILE, "INIT", "NroMembers");
-	retval = vb6::IIf(vb6::IsNumeric(OldQ), vb6::CInt(OldQ), 0);
+	retval = vb6::IIf(vb6::IsNumeric(OldQ), vb6::Constrain(vb6::CInt(OldQ), 0, MAXCLANMEMBERS), 0);
 	return retval;
 }
 
@@ -288,7 +288,7 @@ void clsClan::AceptarNuevoMiembro(std::string & Nombre) {
 		/* 'Call WriteVar(CharPath & Nombre & ".chr", "GUILD", "ClanesParticipo", CantP + 1) */
 		OldQs = GetVar(MEMBERSFILE, "INIT", "NroMembers");
 		if (vb6::IsNumeric(OldQs)) {
-			OldQ = vb6::CInt(OldQs);
+			OldQ = vb6::Constrain(vb6::CInt(OldQs), 0, MAXCLANMEMBERS);
 		} else {
 			OldQ = 0;
 		}
@@ -339,6 +339,8 @@ void clsClan::RemoveMemberName(std::string Nombre) {
 	bool EsMiembro;
 
 	OldQ = vb6::CInt(GetVar(MEMBERSFILE, "INIT", "NroMembers"));
+	OldQ = vb6::Constrain(OldQ, 0, MAXCLANMEMBERS);
+
 	i = 1;
 	Nombre = vb6::UCase(Nombre);
 	while (i <= OldQ && vb6::UCase(vb6::Trim(GetVar(MEMBERSFILE, "Members", "Member" + vb6::CStr(i)))) != Nombre) {
@@ -584,7 +586,7 @@ std::string clsClan::ContarVotos(int & CantGanadores) {
 	retval = "";
 	CantGanadores = 0;
 	Temps = GetVar(MEMBERSFILE, "INIT", "NroMembers");
-	q = vb6::IsNumeric(Temps) ? vb6::CInt(Temps) : 0;
+	q = vb6::IsNumeric(Temps) ? vb6::Constrain(vb6::CInt(Temps), 0, MAXCLANMEMBERS) : 0;
 	if (q > 0) {
 		for (i = (1); i <= (q); i++) {
 			/* 'miembro del clan */

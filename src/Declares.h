@@ -1585,6 +1585,12 @@ extern const int ESPADA_VIKINGA;
 // extern vb6::array<std::shared_ptr<clsClanPretoriano>> ClanPretoriano;
 
 extern const int MAX_DENOUNCES;
+extern const int MAX_PENAS;
+extern const int MAX_SPECIAL_USERS;
+extern const int MAX_MAPS;
+extern const int MAX_EXPRESIONES;
+extern const int MAX_SONIDOS;
+extern const int MAX_DAT_ITEMS;
 
 /* 'Mensajes de los NPCs enlistadores (Nobles): */
 extern const std::string MENSAJE_REY_CAOS;

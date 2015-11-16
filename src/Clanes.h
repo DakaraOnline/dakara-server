@@ -45,6 +45,8 @@ extern int CANTIDADDECLANES;
 extern const int MAXASPIRANTES;
 /* 'cantidad maxima de aspirantes que puede tener un clan acumulados a la vez */
 
+extern const int MAXCLANMEMBERS;
+
 /* 'puntos maximos de antifaccion que un clan tolera antes de ser cambiada su alineacion */
 
 /* 'alineaciones permitidas */

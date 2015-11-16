@@ -42,7 +42,7 @@ void SoundMapInfo::LoadSoundMapInfo() {
 		Temps = GetVar(datfile, "SONIDOS", "Cantidad");
 
 		if (vb6::IsNumeric(Temps)) {
-			p_Mapas[i].Cantidad = vb6::val(Temps);
+			p_Mapas[i].Cantidad = vb6::Constrain(vb6::CInt(Temps), 0, MAX_SONIDOS);
 
 			p_Mapas[i].flags.resize(0);
 			p_Mapas[i].flags.resize(1 + p_Mapas[i].Cantidad);

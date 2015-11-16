@@ -344,7 +344,7 @@ void MD5sCarga(clsIniManager& leerSini) {
 	MD5ClientesActivado = vb6::CInt(leerSini.GetValue("MD5Hush", "Activado"));
 
 	if (MD5ClientesActivado == 1) {
-		int count = vb6::CInt(leerSini.GetValue("MD5Hush", "MD5Aceptados"));
+		int count = vb6::Constrain(vb6::CInt(leerSini.GetValue("MD5Hush", "MD5Aceptados")), 0, 10000);
 
 		if (count < 1) {
 			std::cerr << "ATENCION: No hay MD5s cargados en server.ini" << std::endl;

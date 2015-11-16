@@ -580,6 +580,13 @@ inline std::size_t LenB(const std::string& v) {
 	return v.size();
 }
 
+template <typename T>
+T Constrain(T x, T a, T b) {
+	if (x < a) return a;
+	if (x > b) return b;
+	return x;
+}
+
 }
 
 #endif

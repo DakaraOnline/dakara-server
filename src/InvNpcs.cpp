@@ -268,6 +268,7 @@ void CargarInvent(int NpcIndex) {
 
 	Npclist[NpcIndex].Invent.NroItems = vb6::val(
 			GetVar(npcfile, "NPC" + vb6::CStr(Npclist[NpcIndex].Numero), "NROITEMS"));
+	Npclist[NpcIndex].Invent.NroItems = vb6::Constrain(Npclist[NpcIndex].Invent.NroItems, 0, MAX_INVENTORY_SLOTS);
 
 	for (LoopC = (1); LoopC <= (Npclist[NpcIndex].Invent.NroItems); LoopC++) {
 		ln = GetVar(npcfile, "NPC" + vb6::CStr(Npclist[NpcIndex].Numero), "Obj" + vb6::CStr(LoopC));

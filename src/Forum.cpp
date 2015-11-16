@@ -45,8 +45,8 @@ void AddForum(std::string sForoID) {
 	Foros[NumForos].ID = sForoID;
 
 	if (FileExist(ForumPath, 0)) {
-		Foros[NumForos].CantPosts = vb6::val(GetVar(ForumPath, "INFO", "CantMSG"));
-		Foros[NumForos].CantAnuncios = vb6::val(GetVar(ForumPath, "INFO", "CantAnuncios"));
+		Foros[NumForos].CantPosts = vb6::Constrain(vb6::CInt(GetVar(ForumPath, "INFO", "CantMSG")), 0, MAX_MENSAJES_FORO);
+		Foros[NumForos].CantAnuncios = vb6::Constrain(vb6::CInt(GetVar(ForumPath, "INFO", "CantAnuncios")), 0, MAX_ANUNCIOS_FORO);
 
 		/* ' Cargo posts */
 		for (PostIndex = (1); PostIndex <= (Foros[NumForos].CantPosts); PostIndex++) {
@@ -212,14 +212,14 @@ void CleanForum(int ForumIndex) {
 	ForumPath = GetForumPath(Foros[ForumIndex].ID);
 	if (FileExist(ForumPath, 0)) {
 
-		NumPost = vb6::val(GetVar(ForumPath, "INFO", "CantMSG"));
+		NumPost = vb6::Constrain(vb6::CInt(GetVar(ForumPath, "INFO", "CantMSG")), 0, MAX_MENSAJES_FORO);
 
 		/* ' Elimino los post viejos */
 		for (PostIndex = (1); PostIndex <= (NumPost); PostIndex++) {
 			/* FIXME: KILL App . Path & "/Foros/" & . ID & PostIndex & ".for" */
 		}
 
-		NumPost = vb6::val(GetVar(ForumPath, "INFO", "CantAnuncios"));
+		NumPost = vb6::Constrain(vb6::CInt(GetVar(ForumPath, "INFO", "CantAnuncios")), 0, MAX_ANUNCIOS_FORO);
 
 		/* ' Elimino los post viejos */
 		for (PostIndex = (1); PostIndex <= (NumPost); PostIndex++) {

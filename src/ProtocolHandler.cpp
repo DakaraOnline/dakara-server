@@ -7080,9 +7080,10 @@ void HandlePunishments(int UserIndex) {
 		} else {
 			if (FileExist(GetCharPath(Name), 0)) {
 				Count = vb6::val(GetVar(GetCharPath(Name), "PENAS", "Cant"));
-				if (Count == 0) {
+				if (Count <= 0) {
 					WriteConsoleMsg(UserIndex, "Sin prontuario..", FontTypeNames_FONTTYPE_INFO);
 				} else {
+					Count = vb6::Constrain(Count, 0, MAX_PENAS);
 					while (Count > 0) {
 						WriteConsoleMsg(UserIndex,
 								vb6::CStr(Count) + " - " + GetVar(GetCharPath(Name), "PENAS", "P" + vb6::CStr(Count)),
@@ -7091,7 +7092,7 @@ void HandlePunishments(int UserIndex) {
 					}
 				}
 			} else {
-				WriteConsoleMsg(UserIndex, "Personaje " "" + Name + "" " inexistente.",
+				WriteConsoleMsg(UserIndex, "Personaje \"" + Name + "\" inexistente.",
 						FontTypeNames_FONTTYPE_INFO);
 			}
 		}
@@ -11988,7 +11989,8 @@ void HandleGuildBan(int UserIndex) {
 			LogGM(UserList[UserIndex].Name, "BANCLAN a " + vb6::UCase(GuildName));
 
 			cantMembers = vb6::val(GetVar(tFile, "INIT", "NroMembers"));
-
+			cantMembers = vb6::Constrain(cantMembers, 0, MAXCLANMEMBERS);
+			
 			for (LoopC = (1); LoopC <= (cantMembers); LoopC++) {
 				member = GetVar(tFile, "Members", "Member" + vb6::CStr(LoopC));
 				/* 'member es la victima */

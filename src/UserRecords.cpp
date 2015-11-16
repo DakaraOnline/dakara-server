@@ -28,6 +28,7 @@
 #include "IniManager.h"
 #include "vb6compat.h"
 
+static const int MAX_RECORDS = 10000;
 
 void LoadRecords() {
 	/* '************************************************************** */
@@ -49,9 +50,12 @@ void LoadRecords() {
 	Reader->Initialize(GetDatPath(DATPATH::UserRecords));
 
 	NumRecords = vb6::CInt(Reader->GetValue("INIT", "NumRecords"));
-	if (NumRecords) {
-		Records.redim(0);
+	Records.redim(0);
+	if (NumRecords > 0) {
+		NumRecords = vb6::Constrain(NumRecords, 0, MAX_RECORDS);
 		Records.redim(1, NumRecords);
+	} else {
+		return;
 	}
 
 	for (i = (1); i <= (NumRecords); i++) {

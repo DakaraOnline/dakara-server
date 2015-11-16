@@ -1029,6 +1029,8 @@ int OpenNPC(int NpcNumber, bool Respawn) {
 
 	/* '<<<<<<<<<<<<<< Expresiones >>>>>>>>>>>>>>>> */
 	Npclist[NpcIndex].NroExpresiones = vb6::val(Leer->GetValue(npcSect, "NROEXP"));
+	Npclist[NpcIndex].NroExpresiones = vb6::Constrain(Npclist[NpcIndex].NroExpresiones, 0, MAX_EXPRESIONES);
+	
 	if (Npclist[NpcIndex].NroExpresiones > 0) {
 		Npclist[NpcIndex].Expresiones.redim(0);
 		Npclist[NpcIndex].Expresiones.redim(1, Npclist[NpcIndex].NroExpresiones);
