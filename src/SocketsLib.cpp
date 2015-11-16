@@ -152,6 +152,7 @@ public:
 	void fireCloseEvent();
 
 public:
+	evutil_socket_t fd_{0};
 	struct bufferevent *bev_{nullptr};
 	struct event *evclose_{nullptr};
 	bool evclosefired_{false};
@@ -383,7 +384,7 @@ void SocketServerLibEvent::doAccept(evutil_socket_t listener, short event) {
 
 	struct sockaddr_storage ss;
 	socklen_t slen = sizeof(ss);
-	int fd = accept(listener, (struct sockaddr*) &ss, &slen);
+	evutil_socket_t fd = accept(listener, (struct sockaddr*) &ss, &slen);
 	if (fd < 0) {
 		perror("accept");
 		return;
@@ -404,6 +405,7 @@ void SocketServerLibEvent::doAccept(evutil_socket_t listener, short event) {
 	// bufferevent_setwatermark(bev, EV_READ, 0, MAX_LINE);
 	bufferevent_enable(bev, EV_READ | EV_WRITE);
 
+	s->fd_ = fd;
 	s->idx_ = idx;
 	s->bev_ = bev;
 }
@@ -415,6 +417,11 @@ void SocketServerLibEvent::addListener(std::string addr, int port) {
 	sockin.sin_port = htons(port);
 
 	listener = socket(AF_INET, SOCK_STREAM, 0);
+	if (listener < 0) {
+		perror("socket");
+		throw std::runtime_error("socket del listener");
+	}
+
 	evutil_make_socket_nonblocking(listener);
 
 #ifndef WIN32

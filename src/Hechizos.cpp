@@ -15,6 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include <sstream>
+
 #include "Hechizos.h"
 #include "allheaders.h"
 
@@ -2528,14 +2530,15 @@ void ChangeUserHechizo(int UserIndex, int Slot, int Hechizo) {
 	/* ' */
 	/* '*************************************************** */
 
-	UserList[UserIndex].Stats.UserHechizos[Slot] = Hechizo;
-
 	if (Hechizo > 0 && Hechizo < NumeroHechizos + 1) {
-		WriteChangeSpellSlot(UserIndex, Slot);
+		UserList[UserIndex].Stats.UserHechizos[Slot] = Hechizo;
 	} else {
-		WriteChangeSpellSlot(UserIndex, Slot);
+		std::stringstream ss;
+		ss << "ChangeUserHechizo " << UserIndex << " " << Slot << " " << Hechizo << " " << NumeroHechizos << " out of bounds.";
+		LogError(ss.str());
 	}
 
+	WriteChangeSpellSlot(UserIndex, Slot);
 }
 
 void DesplazarHechizo(int UserIndex, int Dire, int HechizoDesplazado) {

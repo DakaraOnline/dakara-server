@@ -259,11 +259,13 @@ static void errorcb(struct bufferevent *bev, short error, void *ctx) {
 static void do_accept(evutil_socket_t listener, short event, void *arg) {
 	(void)event;
 
+	int fd = 0;
+
 	try {
 		struct event_base *base = (struct event_base *)arg;
 		struct sockaddr_storage ss;
 		socklen_t slen = sizeof(ss);
-		int fd = accept(listener, (struct sockaddr*) &ss, &slen);
+		fd = accept(listener, (struct sockaddr*) &ss, &slen);
 		if (fd < 0) {
 			perror("accept");
 			LogApiSock("error en accept");
@@ -312,9 +314,15 @@ static void do_accept(evutil_socket_t listener, short event, void *arg) {
 		sctx->ConnIdCerrada = false;
 		sctx->ConnIgnoreIncomingData = false;
 	} catch (std::exception& ex) {
+		if (fd) {
+			EVUTIL_CLOSESOCKET(fd);
+		}
 		std::cerr << "Unhandled error on do_accept: " << ex.what() << std::endl;
 		LogApiSock("Unhandled error on do_accept, " + std::string(ex.what()));
 	} catch (...) {
+		if (fd) {
+			EVUTIL_CLOSESOCKET(fd);
+		}
 		std::cerr << "UNKNOWN error on do_accept!" << std::endl;
 		LogApiSock("UNKNOWN error on do_accept!");
 	}
@@ -384,12 +392,21 @@ void IniciaWsApi() {
 	sockin.sin_port = htons(Puerto);
 
 	listener = socket(AF_INET, SOCK_STREAM, 0);
+	if (listener < 0) {
+		perror("socket");
+		throw std::runtime_error("socket del listener");
+	}
+
 	evutil_make_socket_nonblocking(listener);
 
 #ifndef WIN32
 	{
 		int one = 1;
-		setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+		if (0 != setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one))) {
+			perror("setsockopt");
+			LogApiSock("error en setsockopt");
+			return;
+		}
 	}
 #endif
 
