@@ -308,6 +308,7 @@ static void do_accept(evutil_socket_t listener, short event, void *arg) {
 		bufferevent_enable(bev, EV_READ | EV_WRITE);
 
 		sctx->setBufferEvent(bev);
+		sctx->setFd(fd);
 
 		sctx->incomingData.reset(new clsByteQueue());
 		sctx->outgoingData.reset(new clsByteQueue());

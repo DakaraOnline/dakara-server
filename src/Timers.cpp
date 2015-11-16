@@ -619,14 +619,15 @@ void TIMER_AI_Timer() {
 
 void tLluvia_Timer() {
 	/* ' [TEMPORAL] */
-	return;
 
+#if 0
 	int iCount;
 	if (Lloviendo) {
 		for (iCount = (1); iCount <= (LastUser); iCount++) {
 			EfectoLluvia(iCount);
 		}
 	}
+#endif
 }
 
 void tLluviaEvent_Timer() {

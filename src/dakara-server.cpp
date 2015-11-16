@@ -87,29 +87,40 @@ static void atexit_func() {
 
 int main(int argc, char **argv) {
 // std::set_terminate(handler);
-	cout << "Dakara Server" << endl; // prints !!!Hello World!!!
 
-	atexit(atexit_func);
-
-	if (argc < 2) {
-		DakaraBasePath = boost::filesystem::current_path().string();
-	} else {
-		DakaraBasePath = argv[1];
-	}
-	if (DakaraBasePath.substr(DakaraBasePath.length() - 1, 1) != "/") {
-		DakaraBasePath += "/";
-	}
-
-	vb6::InitializeTickCount();
-
-	redimGlobalArrays();
-
+#ifdef __COVERITY__ 
 	try {
+#endif
+
+		/*
+		 * COVERITY FIXME: Instruct coverity to ignore uncatched exceptions on main. I want then uncatched! 
+		 * this way, when there is an exception the process dies and we can see the stack trace.
+		 */
+
+		cout << "Dakara Server" << endl; // prints !!!Hello World!!!
+
+		atexit(atexit_func);
+
+		if (argc < 2) {
+			DakaraBasePath = boost::filesystem::current_path().string();
+		} else {
+			DakaraBasePath = argv[1];
+		}
+		if (DakaraBasePath.substr(DakaraBasePath.length() - 1, 1) != "/") {
+			DakaraBasePath += "/";
+		}
+
+		vb6::InitializeTickCount();
+
+		redimGlobalArrays();
+
 		Main();
 
 		ServerLoop();
 
 		ServerShutdown();
+
+#ifdef __COVERITY__ 
 	} catch (const std::runtime_error& e) {
 		std::cerr << "runtime_error: " << e.what() << std::endl;
 		return 1;
@@ -120,6 +131,7 @@ int main(int argc, char **argv) {
 		std::cerr << "UNKNOWN EXCEPTION !!!" << std::endl;
 		return 1;
 	}
+#endif
 
 	return 0;
 }

@@ -64,6 +64,8 @@
 #endif
 
 #include <cstdint>
+#include <cstring>
+#include <memory>
 #include <vector>
 #include <deque>
 
@@ -311,6 +313,8 @@ SocketServerLibEvent::SocketServerLibEvent() {
 		perror("event_base_new");
 		return;
 	}
+
+	std::memset(&sockin, 0, sizeof(sockin));
 }
 
 SocketServerLibEvent::~SocketServerLibEvent() {

@@ -979,7 +979,7 @@ int OpenNPC(int NpcNumber, bool Respawn) {
 	Npclist[NpcIndex].Stats.defM = vb6::val(Leer->GetValue(npcSect, "DEFm"));
 	Npclist[NpcIndex].Stats.Alineacion = vb6::val(Leer->GetValue(npcSect, "Alineacion"));
 
-	Npclist[NpcIndex].Invent.NroItems = vb6::val(Leer->GetValue(npcSect, "NROITEMS"));
+	Npclist[NpcIndex].Invent.NroItems = vb6::Constrain(vb6::CInt(Leer->GetValue(npcSect, "NROITEMS")), 0, MAX_DAT_ITEMS);
 	for (LoopC = (1); LoopC <= (Npclist[NpcIndex].Invent.NroItems); LoopC++) {
 		ln = Leer->GetValue(npcSect, "Obj" + vb6::CStr(LoopC));
 		Npclist[NpcIndex].Invent.Object[LoopC].ObjIndex = vb6::val(ReadField(1, ln, 45));
@@ -992,7 +992,7 @@ int OpenNPC(int NpcNumber, bool Respawn) {
 		Npclist[NpcIndex].Drop[LoopC].Amount = vb6::val(ReadField(2, ln, 45));
 	}
 
-	Npclist[NpcIndex].flags.LanzaSpells = vb6::val(Leer->GetValue(npcSect, "LanzaSpells"));
+	Npclist[NpcIndex].flags.LanzaSpells = vb6::Constrain(vb6::CInt(Leer->GetValue(npcSect, "LanzaSpells")), 0, MAXUSERHECHIZOS);
 	if (Npclist[NpcIndex].flags.LanzaSpells > 0) {
 		Npclist[NpcIndex].Spells.redim(0);
 		Npclist[NpcIndex].Spells.redim(1, Npclist[NpcIndex].flags.LanzaSpells);
