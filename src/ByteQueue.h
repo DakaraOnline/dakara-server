@@ -89,7 +89,7 @@ private:
 	// void RemoveData(int dataLength);
 
 public:
-	void WriteByte(std::int8_t value);
+	void WriteByte(std::uint8_t value);
 
 	void WriteInteger(std::int16_t value);
 

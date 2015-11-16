@@ -52,8 +52,8 @@ void clsByteQueue::revertRead(int oldPos) {
 //
 //}
 
-void clsByteQueue::WriteByte(std::int8_t value) {
-	data.push_back(static_cast<std::int8_t>(0xff & value));
+void clsByteQueue::WriteByte(std::uint8_t value) {
+	data.push_back(static_cast<std::uint8_t>(0xff & value));
 }
 
 void clsByteQueue::WriteInteger(std::int16_t value) {
