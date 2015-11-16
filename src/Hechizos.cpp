@@ -2530,14 +2530,7 @@ void ChangeUserHechizo(int UserIndex, int Slot, int Hechizo) {
 	/* ' */
 	/* '*************************************************** */
 
-	if (Hechizo > 0 && Hechizo < NumeroHechizos + 1) {
-		UserList[UserIndex].Stats.UserHechizos[Slot] = Hechizo;
-	} else {
-		std::stringstream ss;
-		ss << "ChangeUserHechizo " << UserIndex << " " << Slot << " " << Hechizo << " " << NumeroHechizos << " out of bounds.";
-		LogError(ss.str());
-	}
-
+	UserList[UserIndex].Stats.UserHechizos[Slot] = Hechizo;
 	WriteChangeSpellSlot(UserIndex, Slot);
 }
 

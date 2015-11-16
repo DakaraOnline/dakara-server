@@ -299,6 +299,7 @@ void SocketLibEvent::close(bool force) {
 }
 
 SocketServerLibEvent::SocketServerLibEvent() {
+	std::memset(&sockin, 0, sizeof(sockin));
 
 #ifdef WIN32
 	WSADATA WSAData;
@@ -313,8 +314,6 @@ SocketServerLibEvent::SocketServerLibEvent() {
 		perror("event_base_new");
 		return;
 	}
-
-	std::memset(&sockin, 0, sizeof(sockin));
 }
 
 SocketServerLibEvent::~SocketServerLibEvent() {
