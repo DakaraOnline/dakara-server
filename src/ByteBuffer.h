@@ -28,7 +28,7 @@ class clsByteBuffer {
 
 private:
 	std::vector<std::int8_t> data;
-	std::size_t position;
+	std::size_t position{};
 
 public:
 	void initializeReader(std::vector<std::int8_t>& v);

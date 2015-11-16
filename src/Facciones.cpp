@@ -541,7 +541,7 @@ void ExpulsarFaccionCaos(int UserIndex, bool Expulsado) {
 		WriteConsoleMsg(UserIndex, "¡¡¡Te has retirado de la Legión Oscura!!!", FontTypeNames_FONTTYPE_FIGHT);
 	}
 
-	bool bRefresh;
+	bool bRefresh = false;
 
 	if (UserList[UserIndex].Invent.ArmourEqpObjIndex != 0) {
 		/* 'Desequipamos la armadura de caos si está equipada */

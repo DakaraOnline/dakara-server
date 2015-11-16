@@ -104,11 +104,22 @@ int main(int argc, char **argv) {
 
 	redimGlobalArrays();
 
-	Main();
+	try {
+		Main();
 
-	ServerLoop();
+		ServerLoop();
 
-	ServerShutdown();
+		ServerShutdown();
+	} catch (const std::runtime_error& e) {
+		std::cerr << "runtime_error: " << e.what() << std::endl;
+		return 1;
+	} catch (const std::exception& e) {
+		std::cerr << "exception: " << e.what() << std::endl;
+		return 1;
+	} catch (...) {
+		std::cerr << "UNKNOWN EXCEPTION !!!" << std::endl;
+		return 1;
+	}
 
 	return 0;
 }
