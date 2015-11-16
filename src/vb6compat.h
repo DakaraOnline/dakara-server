@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <climits>
 #include <cstddef>
 #include <cstdlib>
 #include <ctime>

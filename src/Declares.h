@@ -1591,6 +1591,8 @@ extern const int MAX_MAPS;
 extern const int MAX_EXPRESIONES;
 extern const int MAX_SONIDOS;
 extern const int MAX_DAT_ITEMS;
+extern const int MAX_CRIATURAS_ENTRENADOR;
+extern const int MAX_HELP_LINES;
 
 /* 'Mensajes de los NPCs enlistadores (Nobles): */
 extern const std::string MENSAJE_REY_CAOS;

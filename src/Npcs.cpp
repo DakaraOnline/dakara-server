@@ -1002,7 +1002,7 @@ int OpenNPC(int NpcNumber, bool Respawn) {
 	}
 
 	if (Npclist[NpcIndex].NPCtype == eNPCType_Entrenador) {
-		Npclist[NpcIndex].NroCriaturas = vb6::val(Leer->GetValue(npcSect, "NroCriaturas"));
+		Npclist[NpcIndex].NroCriaturas = vb6::Constrain(vb6::CInt(Leer->GetValue(npcSect, "NroCriaturas")), 0, MAX_CRIATURAS_ENTRENADOR);
 		Npclist[NpcIndex].Criaturas.redim(0);
 		Npclist[NpcIndex].Criaturas.redim(1, Npclist[NpcIndex].NroCriaturas);
 		for (LoopC = (1); LoopC <= (Npclist[NpcIndex].NroCriaturas); LoopC++) {

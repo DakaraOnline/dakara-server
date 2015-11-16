@@ -7863,6 +7863,7 @@ void HandleGuildMemberList(int UserIndex) {
 			memberCount = vb6::val(
 					GetVar(GetGuildsPath(guild, EGUILDPATH::Members), "INIT",
 							"NroMembers"));
+			memberCount = vb6::Constrain(memberCount, 0, MAXCLANMEMBERS);
 
 			for (i = (1); i <= (memberCount); i++) {
 				UserName = GetVar(GetGuildsPath(guild, EGUILDPATH::Members), "Members",
@@ -11990,7 +11991,7 @@ void HandleGuildBan(int UserIndex) {
 
 			cantMembers = vb6::val(GetVar(tFile, "INIT", "NroMembers"));
 			cantMembers = vb6::Constrain(cantMembers, 0, MAXCLANMEMBERS);
-			
+
 			for (LoopC = (1); LoopC <= (cantMembers); LoopC++) {
 				member = GetVar(tFile, "Members", "Member" + vb6::CStr(LoopC));
 				/* 'member es la victima */

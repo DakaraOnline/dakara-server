@@ -390,7 +390,7 @@ int clsClan::CantidadAspirantes() {
 	if (!vb6::IsNumeric(Temps)) {
 		return retval;
 	}
-	retval = vb6::CInt(Temps);
+	retval = vb6::Constrain(vb6::CInt(Temps), 0, INT_MAX);
 
 	return retval;
 }

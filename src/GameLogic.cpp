@@ -937,7 +937,7 @@ void SendHelp(int index) {
 	int NumHelpLines;
 	int LoopC;
 
-	NumHelpLines = vb6::val(GetVar(GetDatPath(DATPATH::Help), "INIT", "NumLines"));
+	NumHelpLines = vb6::Constrain(vb6::CInt(GetVar(GetDatPath(DATPATH::Help), "INIT", "NumLines")), 0, MAX_HELP_LINES);
 
 	for (LoopC = (1); LoopC <= (NumHelpLines); LoopC++) {
 		WriteConsoleMsg(index, GetVar(GetDatPath(DATPATH::Help), "Help", "Line" + vb6::CStr(LoopC)),

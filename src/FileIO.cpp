@@ -592,7 +592,8 @@ void CargarHechizos() {
 
 void LoadMotd() {
 	int i;
-	int MaxLines = vb6::val(GetVar(GetDatPath(DATPATH::MOTD), "INIT", "NumLines"));
+	int MaxLines = vb6::CInt(GetVar(GetDatPath(DATPATH::MOTD), "INIT", "NumLines"));
+	MaxLines = vb6::Constrain(MaxLines, 0, MAX_HELP_LINES);
 
 	MOTD.redim(1, MaxLines);
 	for (i = (1); i <= (MaxLines); i++) {

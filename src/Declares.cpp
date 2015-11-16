@@ -632,6 +632,8 @@ const int MAX_MAPS = 1000;
 const int MAX_EXPRESIONES = 10000;
 const int MAX_SONIDOS = 1000;
 const int MAX_DAT_ITEMS = 100000;
+const int MAX_CRIATURAS_ENTRENADOR = 10000;
+const int MAX_HELP_LINES = 10000;
 
 /* 'Mensajes de los NPCs enlistadores (Nobles): */
 const std::string MENSAJE_REY_CAOS =

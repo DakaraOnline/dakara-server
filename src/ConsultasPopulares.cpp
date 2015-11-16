@@ -20,6 +20,8 @@
 
 #include <fstream>
 
+static const int MAX_ENCUESTAS_OPCIONES = 1000;
+
 ConsultasPopulares :: ConsultasPopulares() {
 	pEncuestaActualNum=0;
 	pNivelRequerido=0;
@@ -55,8 +57,9 @@ void ConsultasPopulares::LoadData() {
 
 	if (pEncuestaActualNum > 0) {
 		/* 'cargo todas las opciones */
-		CantOpciones = vb6::val(
+		CantOpciones = vb6::CInt(
 				GetVar(GetDatPath(DATPATH::Consultas), "ENCUESTA" + vb6::CStr(pEncuestaActualNum), "CANTOPCIONES"));
+		CantOpciones = vb6::Constrain(CantOpciones, 0, MAX_ENCUESTAS_OPCIONES);
 		pOpciones.resize(0);
 		pOpciones.resize(1 + CantOpciones);
 		for (i = (1); i <= (CantOpciones); i++) {

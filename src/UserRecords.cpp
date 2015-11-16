@@ -28,7 +28,8 @@
 #include "IniManager.h"
 #include "vb6compat.h"
 
-static const int MAX_RECORDS = 10000;
+static const int MAX_RECORDS = 100000;
+static const int MAX_RECORDS_OBS = 10000;
 
 void LoadRecords() {
 	/* '************************************************************** */
@@ -64,7 +65,9 @@ void LoadRecords() {
 		Records[i].Fecha = vb6::CDate(Reader->GetValue("RECORD" + vb6::CStr(i), "Fecha"));
 		Records[i].Motivo = Reader->GetValue("RECORD" + vb6::CStr(i), "Motivo");
 
-		Records[i].NumObs = vb6::val(Reader->GetValue("RECORD" + vb6::CStr(i), "NumObs"));
+		Records[i].NumObs = vb6::CInt(Reader->GetValue("RECORD" + vb6::CStr(i), "NumObs"));
+		Records[i].NumObs = vb6::Constrain(Records[i].NumObs, 0, MAX_RECORDS_OBS);
+
 		if (Records[i].NumObs) {
 			Records[i].Obs.redim(0);
 			Records[i].Obs.redim(1, Records[i].NumObs);
