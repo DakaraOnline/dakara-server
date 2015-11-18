@@ -520,7 +520,7 @@ void BanCharacter(int bannerUserIndex, std::string UserName,
 							"P" + std::to_string(cantPenas + 1),
 							vb6::LCase(UserList[bannerUserIndex].Name)
 									+ ": BAN POR " + vb6::LCase(Reason) + " "
-									+ vb6::Time());
+									+ vb6::dateToString(vb6::Now()));
 
 					if (UserTieneIgualPrivilegiosQue(UserName, bannerUserIndex)) {
 						UserList[bannerUserIndex].flags.Ban = 1;
@@ -581,7 +581,7 @@ void BanCharacter(int bannerUserIndex, std::string UserName,
 			WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 					vb6::LCase(UserList[bannerUserIndex].Name) + ": BAN POR "
 							+ vb6::LCase(Reason) + " "
-							+ vb6::Time());
+							+ vb6::dateToString(vb6::Now()));
 
 			CloseSocket(tUser);
 		}

@@ -350,16 +350,17 @@ inline std::string DateAdd(const std::string &fmt, int cant, boost::posix_time::
 	return boost::posix_time::to_simple_string(d);
 }
 
-inline std::string dateToString(boost::posix_time::ptime &d){// todas las fechas formato : "2002-01-20 23:59:59.000"
+inline std::string dateToString(const boost::posix_time::ptime &d){// todas las fechas formato : "2002-01-20 23:59:59.000"
+	std::stringstream mes;
+	mes << std::setw(2) << std::setfill('0') << d.date().month().as_number();
+	std::string res = boost::posix_time::to_simple_string(d);
+	res.erase(5,3); // remplazo mes en letras por numeros
+	res.insert(5,mes.str());
 	return boost::posix_time::to_simple_string(d);
 }
 
 inline boost::posix_time::ptime Now() {
 	return boost::posix_time::second_clock::local_time();
-}
-
-inline std::string Time(){
-	return boost::posix_time::to_simple_string(boost::posix_time::second_clock::local_time());
 }
 
 inline boost::posix_time::ptime CDate(const std::string &str) {

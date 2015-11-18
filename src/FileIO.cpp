@@ -2234,7 +2234,7 @@ void SaveUser(int UserIndex, std::string UserFile, bool SaveTimeOnline) {
 
 	/* 'First time around? */
 	if (Manager->GetValue("INIT", "LastIP1") == "") {
-		Manager->ChangeValue("INIT", "LastIP1", UserList[UserIndex].ip + " - " + vb6::Time());
+		Manager->ChangeValue("INIT", "LastIP1", UserList[UserIndex].ip + " - " + vb6::dateToString(vb6::Now()));
 		/* 'Is it a different ip from last time? */
 	} else if (UserList[UserIndex].ip
 			!= vb6::Left(Manager->GetValue("INIT", "LastIP1"),
@@ -2244,10 +2244,10 @@ void SaveUser(int UserIndex, std::string UserFile, bool SaveTimeOnline) {
 			Manager->ChangeValue("INIT", "LastIP" + vb6::CStr(i),
 					Manager->GetValue("INIT", "LastIP" + vb6::CStr(i - 1)));
 		}
-		Manager->ChangeValue("INIT", "LastIP1", UserList[UserIndex].ip + " - " + vb6::Time());
+		Manager->ChangeValue("INIT", "LastIP1", UserList[UserIndex].ip + " - " + vb6::dateToString(vb6::Now()));
 		/* 'Same ip, just update the date */
 	} else {
-		Manager->ChangeValue("INIT", "LastIP1", UserList[UserIndex].ip + " - " + vb6::Time());
+		Manager->ChangeValue("INIT", "LastIP1", UserList[UserIndex].ip + " - " + vb6::dateToString(vb6::Now()));
 	}
 
 	Manager->ChangeValue("INIT", "Position",

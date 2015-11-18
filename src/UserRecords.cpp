@@ -27,6 +27,7 @@
 #include "General.h"
 #include "IniManager.h"
 #include "vb6compat.h"
+#include "Logs.h"
 
 static const int MAX_RECORDS = 100000;
 static const int MAX_RECORDS_OBS = 10000;
@@ -77,7 +78,11 @@ void LoadRecords() {
 			tmpStr = Reader->GetValue("RECORD" + vb6::CStr(i), "Obs" + vb6::CStr(j));
 
 			Records[i].Obs[j].Creador = ReadField(1, tmpStr, 45);
-			Records[i].Obs[j].Fecha = vb6::CDate(ReadField(2, tmpStr, 45));
+			try {
+				Records[i].Obs[j].Fecha = vb6::CDate(ReadField(2, tmpStr, 45));
+			} catch (std::exception &e) {
+				LogError("Error al leer fecha de archivo en LoadRecords() " + std::string(e.what()));
+			}
 			Records[i].Obs[j].Detalles = ReadField(3, tmpStr, 45);
 		}
 	}
