@@ -17,6 +17,8 @@
 
 #include "Protocol.h"
 #include "allheaders.h"
+#include "ProtocolNew.h"
+
 
 static const char* SEPARATORC = "\0";
 const std::string SEPARATOR{SEPARATORC, SEPARATORC + 1};
@@ -134,15 +136,11 @@ void WriteMultiMessage(int UserIndex, int MessageIndex, int Arg1, int Arg2, int 
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteLoggedMessage(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "Logged" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::Logged p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_Logged);
+	p.Clase = UserList[UserIndex].clase;
 
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].clase);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -152,13 +150,9 @@ void WriteLoggedMessage(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteRemoveAllDialogs(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "RemoveDialogs" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::RemoveDialogs p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_RemoveDialogs);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -169,13 +163,11 @@ void WriteRemoveAllDialogs(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteRemoveCharDialog(int UserIndex, int CharIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "RemoveCharDialog" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::RemoveCharDialog p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageRemoveCharDialog(CharIndex));
+	p.CharIndex = CharIndex;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -185,13 +177,9 @@ void WriteRemoveCharDialog(int UserIndex, int CharIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteNavigateToggle(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "NavigateToggle" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::NavigateToggle p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_NavigateToggle);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -201,13 +189,9 @@ void WriteNavigateToggle(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteDisconnect(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "Disconnect" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::Disconnect p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_Disconnect);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -217,13 +201,9 @@ void WriteDisconnect(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUserOfferConfirm(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: ZaMa */
-	/* 'Last Modification: 14/12/2009 */
-	/* 'Writes the "UserOfferConfirm" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UserOfferConfirm p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UserOfferConfirm);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -233,13 +213,9 @@ void WriteUserOfferConfirm(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteCommerceEnd(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "CommerceEnd" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::CommerceEnd p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_CommerceEnd);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -249,13 +225,9 @@ void WriteCommerceEnd(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteBankEnd(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "BankEnd" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::BankEnd p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_BankEnd);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -265,13 +237,9 @@ void WriteBankEnd(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteCommerceInit(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "CommerceInit" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::CommerceInit p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_CommerceInit);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -281,14 +249,11 @@ void WriteCommerceInit(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteBankInit(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "BankInit" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::BankInit p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_BankInit);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Stats.Banco);
+	p.Banco = UserList[UserIndex].Stats.Banco;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -298,14 +263,11 @@ void WriteBankInit(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUserCommerceInit(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "UserCommerceInit" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UserCommerceInit p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UserCommerceInit);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(UserList[UserIndex].ComUsu.DestNick);
+	p.DestUserName = UserList[UserIndex].ComUsu.DestNick;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -315,13 +277,9 @@ void WriteUserCommerceInit(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUserCommerceEnd(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "UserCommerceEnd" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UserCommerceEnd p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UserCommerceEnd);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -331,13 +289,9 @@ void WriteUserCommerceEnd(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteShowBlacksmithForm(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "ShowBlacksmithForm" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::ShowBlacksmithForm p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowBlacksmithForm);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -347,13 +301,9 @@ void WriteShowBlacksmithForm(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteShowCarpenterForm(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "ShowCarpenterForm" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::ShowCarpenterForm p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowCarpenterForm);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -363,14 +313,11 @@ void WriteShowCarpenterForm(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUpdateSta(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "UpdateMana" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UpdateSta p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UpdateSta);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Stats.MinSta);
+	p.Value = UserList[UserIndex].Stats.MinSta;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -380,14 +327,11 @@ void WriteUpdateSta(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUpdateMana(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "UpdateMana" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UpdateMana p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UpdateMana);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Stats.MinMAN);
+	p.Value = UserList[UserIndex].Stats.MinMAN;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -397,14 +341,11 @@ void WriteUpdateMana(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUpdateHP(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "UpdateMana" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UpdateHP p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UpdateHP);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Stats.MinHp);
+	p.Value = UserList[UserIndex].Stats.MinHp;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -414,14 +355,11 @@ void WriteUpdateHP(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUpdateGold(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "UpdateGold" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UpdateGold p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UpdateGold);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Stats.GLD);
+	p.Value = UserList[UserIndex].Stats.GLD;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -431,14 +369,11 @@ void WriteUpdateGold(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUpdateBankGold(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: ZaMa */
-	/* 'Last Modification: 14/12/2009 */
-	/* 'Writes the "UpdateBankGold" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UpdateBankGold p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UpdateBankGold);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Stats.Banco);
+	p.Value = UserList[UserIndex].Stats.Banco;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -448,14 +383,11 @@ void WriteUpdateBankGold(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUpdateExp(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "UpdateExp" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UpdateExp p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UpdateExp);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Stats.Exp);
+	p.Value = UserList[UserIndex].Stats.Exp;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -465,15 +397,12 @@ void WriteUpdateExp(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUpdateStrenghtAndDexterity(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Budi */
-	/* 'Last Modification: 11/26/09 */
-	/* 'Writes the "UpdateStrenghtAndDexterity" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UpdateStrenghtAndDexterity p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UpdateStrenghtAndDexterity);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserAtributos[eAtributos_Fuerza]);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserAtributos[eAtributos_Agilidad]);
+	p.Fuerza = UserList[UserIndex].Stats.UserAtributos[eAtributos_Fuerza];
+	p.Agilidad = UserList[UserIndex].Stats.UserAtributos[eAtributos_Agilidad];
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* ' Writes the "UpdateStrenghtAndDexterity" message to the given user's outgoing data buffer. */
@@ -482,14 +411,11 @@ void WriteUpdateStrenghtAndDexterity(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUpdateDexterity(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Budi */
-	/* 'Last Modification: 11/26/09 */
-	/* 'Writes the "UpdateStrenghtAndDexterity" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UpdateDexterity p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UpdateDexterity);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserAtributos[eAtributos_Agilidad]);
+	p.Agilidad = UserList[UserIndex].Stats.UserAtributos[eAtributos_Agilidad];
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* ' Writes the "UpdateStrenghtAndDexterity" message to the given user's outgoing data buffer. */
@@ -498,14 +424,11 @@ void WriteUpdateDexterity(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUpdateStrenght(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Budi */
-	/* 'Last Modification: 11/26/09 */
-	/* 'Writes the "UpdateStrenghtAndDexterity" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UpdateStrenght p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UpdateStrenght);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserAtributos[eAtributos_Fuerza]);
+	p.Fuerza = UserList[UserIndex].Stats.UserAtributos[eAtributos_Fuerza];
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -517,15 +440,12 @@ void WriteUpdateStrenght(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteChangeMap(int UserIndex, int Map, int version) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "ChangeMap" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::ChangeMap p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ChangeMap);
-	UserList[UserIndex].outgoingData->WriteInteger(Map);
-	UserList[UserIndex].outgoingData->WriteInteger(version);
+	p.Map = Map;
+	p.Version = version;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -535,15 +455,12 @@ void WriteChangeMap(int UserIndex, int Map, int version) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WritePosUpdate(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "PosUpdate" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::PosUpdate p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_PosUpdate);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Pos.X);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Pos.Y);
+	p.X = UserList[UserIndex].Pos.X;
+	p.Y = UserList[UserIndex].Pos.Y;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -556,14 +473,15 @@ void WritePosUpdate(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteChatOverHead(int UserIndex, std::string Chat, int CharIndex, int color) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "ChatOverHead" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::ChatOverHead p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(
-			PrepareMessageChatOverHead(Chat, CharIndex, color));
+	p.CharIndex = CharIndex;
+	p.Chat = Chat;
+	p.R = (color) & 0xFF;
+	p.G = (color >> 8) & 0xFF;;
+	p.B = (color >> 16) & 0xFF;;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -575,23 +493,21 @@ void WriteChatOverHead(int UserIndex, std::string Chat, int CharIndex, int color
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteConsoleMsg(int UserIndex, std::string Chat, FontTypeNames FontIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "ConsoleMsg" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::ConsoleMsg p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageConsoleMsg(Chat, FontIndex));
+	p.Chat = Chat;
+	p.FontIndex = FontIndex;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 void WriteCommerceChat(int UserIndex, std::string Chat, FontTypeNames FontIndex) {
-	/* '*************************************************** */
-	/* 'Author: ZaMa */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "ConsoleMsg" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::CommerceChat p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareCommerceConsoleMsg(Chat, FontIndex));
+	p.Chat = Chat;
+	p.FontIndex = FontIndex;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -602,13 +518,11 @@ void WriteCommerceChat(int UserIndex, std::string Chat, FontTypeNames FontIndex)
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteGuildChat(int UserIndex, std::string Chat) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "GuildChat" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::GuildChat p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageGuildChat(Chat));
+	p.Chat = Chat;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -619,14 +533,11 @@ void WriteGuildChat(int UserIndex, std::string Chat) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteShowMessageBox(int UserIndex, std::string message) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "ShowMessageBox" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::ShowMessageBox p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowMessageBox);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(message);
+	p.Chat = message;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -636,14 +547,11 @@ void WriteShowMessageBox(int UserIndex, std::string message) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUserIndexInServer(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "UserIndexInServer" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UserIndexInServer p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UserIndexInServer);
-	UserList[UserIndex].outgoingData->WriteInteger(UserIndex);
+	p.UserIndex = UserIndex;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -653,14 +561,11 @@ void WriteUserIndexInServer(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteUserCharIndexInServer(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "UserIndexInServer" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::UserCharIndexInServer p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UserCharIndexInServer);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Char.CharIndex);
+	p.CharIndex = UserIndex;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -686,15 +591,24 @@ void WriteUserCharIndexInServer(int UserIndex) {
 void WriteCharacterCreate(int UserIndex, int body, int Head, eHeading heading, int CharIndex, int X, int Y,
 		int weapon, int shield, int FX, int FXLoops, int helmet, std::string Name, int NickColor,
 		int Privileges) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "CharacterCreate" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::CharacterCreate p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(
-			PrepareMessageCharacterCreate(body, Head, heading, CharIndex, X, Y, weapon, shield, FX, FXLoops,
-					helmet, Name, NickColor, Privileges));
+	p.Body = body;
+	p.Head = Head;
+	p.Heading = heading;
+	p.CharIndex = CharIndex;
+	p.X = X;
+	p.Y = Y;
+	p.Weapon = weapon;
+	p.Shield = shield;
+	p.FX = FX;
+	p.FXLoops = FXLoops;
+	p.Helmet = helmet;
+	p.Name = Name;
+	p.NickColor = NickColor;
+	p.Privileges = Privileges;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -705,13 +619,11 @@ void WriteCharacterCreate(int UserIndex, int body, int Head, eHeading heading, i
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteCharacterRemove(int UserIndex, int CharIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "CharacterRemove" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::CharacterRemove p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageCharacterRemove(CharIndex));
+	p.CharIndex = CharIndex;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -724,23 +636,21 @@ void WriteCharacterRemove(int UserIndex, int CharIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteCharacterMove(int UserIndex, int CharIndex, int X, int Y) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "CharacterMove" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::CharacterMove p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageCharacterMove(CharIndex, X, Y));
+	p.CharIndex = CharIndex;
+	p.X = X;
+	p.Y = Y;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 void WriteForceCharMove(int UserIndex, eHeading Direccion) {
-	/* '*************************************************** */
-	/* 'Author: ZaMa */
-	/* 'Last Modification: 26/03/2009 */
-	/* 'Writes the "ForceCharMove" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::ForceCharMove p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageForceCharMove(Direccion));
+	p.Direction = Direccion;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -760,15 +670,19 @@ void WriteForceCharMove(int UserIndex, eHeading Direccion) {
 
 void WriteCharacterChange(int UserIndex, int body, int Head, eHeading heading, int CharIndex, int weapon,
 		int shield, int FX, int FXLoops, int helmet) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "CharacterChange" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::CharacterChange p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(
-			PrepareMessageCharacterChange(body, Head, heading, CharIndex, weapon, shield, FX, FXLoops,
-					helmet));
+	p.Body = body;
+	p.Head = Head;
+	p.Heading = heading;
+	p.CharIndex = CharIndex;
+	p.Weapon = weapon;
+	p.Shield = shield;
+	p.FX = FX;
+	p.FXLoops = FXLoops;
+	p.Helmet = helmet;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -781,13 +695,13 @@ void WriteCharacterChange(int UserIndex, int body, int Head, eHeading heading, i
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteObjectCreate(int UserIndex, int GrhIndex, int X, int Y) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "ObjectCreate" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::ObjectCreate p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageObjectCreate(GrhIndex, X, Y));
+	p.GrhIndex = GrhIndex;
+	p.X = X;
+	p.Y = Y;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -799,13 +713,12 @@ void WriteObjectCreate(int UserIndex, int GrhIndex, int X, int Y) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteObjectDelete(int UserIndex, int X, int Y) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "ObjectDelete" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::ObjectDelete p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageObjectDelete(X, Y));
+	p.X = X;
+	p.Y = Y;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -818,16 +731,13 @@ void WriteObjectDelete(int UserIndex, int X, int Y) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteBlockPosition(int UserIndex, int X, int Y, bool Blocked) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "BlockPosition" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::BlockPosition p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_BlockPosition);
-	UserList[UserIndex].outgoingData->WriteByte(X);
-	UserList[UserIndex].outgoingData->WriteByte(Y);
-	UserList[UserIndex].outgoingData->WriteBoolean(Blocked);
+	p.X = X;
+	p.Y = Y;
+	p.Blocked = Blocked;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -839,13 +749,12 @@ void WriteBlockPosition(int UserIndex, int X, int Y, bool Blocked) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WritePlayMidi(int UserIndex, int midi, int loops) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "PlayMidi" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::PlayMidi p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessagePlayMidi(midi, loops));
+	p.MidiID = midi;
+	p.Loops = loops;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -858,14 +767,13 @@ void WritePlayMidi(int UserIndex, int midi, int loops) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WritePlayWave(int UserIndex, int wave, int X, int Y) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 08/08/07 */
-	/* 'Last Modified by: Rapsodius */
-	/* 'Added X and Y positions for 3D Sounds */
-	/* '*************************************************** */
+	dakara::protocol::server::PlayWave p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessagePlayWave(wave, X, Y));
+	p.WaveID = wave;
+	p.X = X;
+	p.Y = Y;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -876,16 +784,8 @@ void WritePlayWave(int UserIndex, int wave, int X, int Y) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteGuildList(int UserIndex, std::vector<std::string> & guildList) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "GuildList" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
-
 	std::string Tmp;
 	int i;
-
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_guildList);
 
 	/* ' Prepare guild name's list */
 	for (i = 0; i < (int)guildList.size(); i++) {
@@ -896,7 +796,11 @@ void WriteGuildList(int UserIndex, std::vector<std::string> & guildList) {
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	dakara::protocol::server::GuildList p;
+
+	p.Data = Tmp;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -906,15 +810,12 @@ void WriteGuildList(int UserIndex, std::vector<std::string> & guildList) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WriteAreaChanged(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "AreaChanged" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::AreaChanged p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_AreaChanged);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Pos.X);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Pos.Y);
+	p.X = UserList[UserIndex].Pos.X;
+	p.Y = UserList[UserIndex].Pos.Y;
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
