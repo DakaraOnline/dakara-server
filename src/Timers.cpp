@@ -243,7 +243,7 @@ void AutoSave_Timer() {
 	/* Imprimir en la consola el numero de users */
 	PrintConsole++;
 	if (PrintConsole >= IntervaloImprimirEnConsola) {
-		std::cerr << vb6::Now() << " Online: " << NumUsers << std::endl;
+		std::cerr << vb6::dateToString(vb6::Now()) << " Online: " << NumUsers << std::endl;
 		PrintConsole = 0;
 	}
 
