@@ -8180,7 +8180,7 @@ void HandleServerTime(int UserIndex) {
 	LogGM(UserList[UserIndex].Name, "Hora.");
 
 	SendData(SendTarget_ToAll, 0,
-			PrepareMessageConsoleMsg("Hora: " + vb6::Time(), FontTypeNames_FONTTYPE_INFO));
+			PrepareMessageConsoleMsg("Hora: " + vb6::dateToString(vb6::Now()), FontTypeNames_FONTTYPE_INFO));
 }
 
 /* '' */
@@ -8944,7 +8944,7 @@ void HandleJail(int UserIndex) {
 						WriteVar(userCharPath, "PENAS", "Cant", Count + 1);
 						WriteVar(userCharPath, "PENAS", "P" + vb6::CStr(Count + 1),
 								vb6::LCase(UserList[UserIndex].Name) + ": CARCEL " + vb6::CStr(jailTime)
-										+ "m, MOTIVO: " + vb6::LCase(Reason) + " " + vb6::Time());
+										+ "m, MOTIVO: " + vb6::LCase(Reason) + " " + vb6::dateToString(vb6::Now()));
 					}
 
 					Encarcelar(tUser, jailTime, UserList[UserIndex].Name);
@@ -9057,7 +9057,7 @@ void HandleWarnUser(int UserIndex) {
 					WriteVar(GetCharPath(UserName), "PENAS", "Cant", Count + 1);
 					WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(Count + 1),
 							vb6::LCase(UserList[UserIndex].Name) + ": ADVERTENCIA por: " + vb6::LCase(Reason)
-									+ " " + vb6::Time());
+									+ " " + vb6::dateToString(vb6::Now()));
 
 					WriteConsoleMsg(UserIndex, "Has advertido a " + vb6::UCase(UserName) + ".",
 							FontTypeNames_FONTTYPE_INFO);
@@ -10419,7 +10419,7 @@ void HandleUnbanChar(int UserIndex) {
 				cantPenas = vb6::val(GetVar(GetCharPath(UserName), "PENAS", "Cant"));
 				WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 				WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
-						vb6::LCase(UserList[UserIndex].Name) + ": UNBAN. " + vb6::Time());
+						vb6::LCase(UserList[UserIndex].Name) + ": UNBAN. " + vb6::dateToString(vb6::Now()));
 
 				LogGM(UserList[UserIndex].Name, "/UNBAN a " + UserName);
 				WriteConsoleMsg(UserIndex, UserName + " unbanned.", FontTypeNames_FONTTYPE_INFO);
@@ -12016,7 +12016,7 @@ void HandleGuildBan(int UserIndex) {
 				WriteVar(GetCharPath(member), "PENAS", "Cant", Count + 1);
 				WriteVar(GetCharPath(member), "PENAS", "P" + vb6::CStr(Count + 1),
 						vb6::LCase(UserList[UserIndex].Name) + ": BAN AL CLAN: " + GuildName + " "
-								+ vb6::Time());
+								+ vb6::dateToString(vb6::Now()));
 			}
 		}
 	}
@@ -12326,7 +12326,7 @@ void HandleChaosLegionKick(int UserIndex) {
 			WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 			WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 					vb6::LCase(UserList[UserIndex].Name) + ": EXPULSADO de la Legión Oscura por: "
-							+ vb6::LCase(Reason) + " " + vb6::Time());
+							+ vb6::LCase(Reason) + " " + vb6::dateToString(vb6::Now()));
 		} else {
 			if (FileExist(GetCharPath(UserName))) {
 				WriteVar(GetCharPath(UserName), "FACCIONES", "EjercitoCaos", 0);
@@ -12338,7 +12338,7 @@ void HandleChaosLegionKick(int UserIndex) {
 				WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 				WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 						vb6::LCase(UserList[UserIndex].Name) + ": EXPULSADO de la Legión Oscura por: "
-								+ vb6::LCase(Reason) + " " + vb6::Time());
+								+ vb6::LCase(Reason) + " " + vb6::dateToString(vb6::Now()));
 
 				WriteConsoleMsg(UserIndex,
 						UserName + " expulsado de las fuerzas del caos y prohibida la reenlistada.",
@@ -12413,7 +12413,7 @@ void HandleRoyalArmyKick(int UserIndex) {
 			WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 			WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 					vb6::LCase(UserList[UserIndex].Name) + ": EXPULSADO de la Legión Oscura por: "
-							+ vb6::LCase(Reason) + " " + vb6::Time());
+							+ vb6::LCase(Reason) + " " + vb6::dateToString(vb6::Now()));
 		} else {
 			if (FileExist(GetCharPath(UserName))) {
 				WriteVar(GetCharPath(UserName), "FACCIONES", "EjercitoReal", 0);
@@ -12428,7 +12428,7 @@ void HandleRoyalArmyKick(int UserIndex) {
 				WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 				WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 						vb6::LCase(UserList[UserIndex].Name) + ": EXPULSADO de la Legión Oscura por: "
-								+ vb6::LCase(Reason) + " " + vb6::Time());
+								+ vb6::LCase(Reason) + " " + vb6::dateToString(vb6::Now()));
 			} else {
 				WriteConsoleMsg(UserIndex, UserName + ".chr inexistente.", FontTypeNames_FONTTYPE_INFO);
 			}
@@ -12555,7 +12555,7 @@ void HandleRemovePunishment(int UserIndex) {
 
 				WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(punishment),
 						vb6::LCase(UserList[UserIndex].Name) + ": <" + NewText + "> "
-								+ vb6::Time());
+								+ vb6::dateToString(vb6::Now()));
 
 				WriteConsoleMsg(UserIndex, "Pena modificada.", FontTypeNames_FONTTYPE_INFO);
 			}
@@ -13841,7 +13841,7 @@ void HandleAlterName(int UserIndex) {
 
 							WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 									vb6::LCase(UserList[UserIndex].Name) + ": BAN POR Cambio de nick a "
-											+ vb6::UCase(newName) + " " + vb6::Time());
+											+ vb6::UCase(newName) + " " + vb6::dateToString(vb6::Now()));
 
 							LogGM(UserList[UserIndex].Name,
 									"Ha cambiado de nombre al usuario " + UserName + ". Ahora se llama "
@@ -14332,7 +14332,7 @@ void HandleResetFactions(int UserIndex) {
 			WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 			WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 					vb6::LCase(UserList[UserIndex].Name) + ": Personaje reincorporado a la facción. "
-							+ vb6::Time());
+							+ vb6::dateToString(vb6::Now()));
 		} else {
 			Char = GetCharPath(UserName);
 
@@ -14357,7 +14357,7 @@ void HandleResetFactions(int UserIndex) {
 				WriteVar(GetCharPath(UserName), "PENAS", "Cant", cantPenas + 1);
 				WriteVar(GetCharPath(UserName), "PENAS", "P" + vb6::CStr(cantPenas + 1),
 						vb6::LCase(UserList[UserIndex].Name) + ": Personaje reincorporado a la facción. "
-								+ vb6::Time());
+								+ vb6::dateToString(vb6::Now()));
 			} else {
 				WriteConsoleMsg(UserIndex, "El personaje " + UserName + " no existe.",
 						FontTypeNames_FONTTYPE_INFO);

@@ -2316,7 +2316,7 @@ void CambiarNick(int UserIndex, int UserIndexDestino, std::string NuevoNick) {
 
 	if (FileExist(GetCharPath(ViejoNick), 0)) {
 		/* 'hace un backup del char */
-		ViejoCharBackup = GetCharPath(ViejoNick) + ".old-" + vb6::Time();
+		ViejoCharBackup = GetCharPath(ViejoNick) + ".old-" + vb6::dateToString(vb6::Now());
 		vb6::Name(GetCharPath(ViejoNick), ViejoCharBackup);
 	}
 

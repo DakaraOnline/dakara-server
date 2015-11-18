@@ -129,6 +129,7 @@ void LogIndex(int index, std::string desc) {
 void LogError(std::string desc) {
 	std::stringstream f;
 	f << vb6::Now() << " " << desc << std::endl;
+	std::cerr << f << std::endl;
 	Logger::getInstance().log(GetLogFileName("errores"),f.str());
 
 	// errores se flushean inmediatamente

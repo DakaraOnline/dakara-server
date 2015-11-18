@@ -173,7 +173,7 @@ void clsClan::InicializarNuevoClan(std::string & Fundador) {
 
 	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "Founder", Fundador);
 	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "GuildName", p_GuildName);
-	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "Date", vb6::Time());
+	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "Date", vb6::dateToString(vb6::Now()));
 	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "Antifaccion", "0");
 	WriteVar(GUILDINFOFILE, "GUILD" + vb6::CStr(NewQ), "Alineacion", Alineacion2String(p_Alineacion));
 
@@ -641,7 +641,13 @@ bool clsClan::RevisarElecciones() {
 	}
 
 	if (Temps.size() > 0) {
+		try{
 		FechaSufragio = vb6::CDate(Temps);
+		}
+		catch (std::exception &e){
+			LogError(std::string("Error al leer fecha de archivo en RevisarElecciones()") + e.what());
+			return false;
+		}
 		/* 'toca! */
 		if (FechaSufragio < vb6::Now()) {
 			Ganador = ContarVotos(CantGanadores);
