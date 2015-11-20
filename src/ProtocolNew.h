@@ -4518,6 +4518,7 @@ public:
     std::uint8_t Slot; 
     std::int16_t ObjIndex; 
     std::string ObjName; 
+    std::int16_t Amount; 
     std::int16_t GrhIndex; 
     std::uint8_t ObjType; 
     std::int16_t MaxHit; 

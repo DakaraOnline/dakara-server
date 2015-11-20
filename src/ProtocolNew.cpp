@@ -11003,6 +11003,7 @@ ChangeBankSlot::ChangeBankSlot(clsByteQueue* buffer) : ServerPacket(ServerPacket
     Slot = buffer->ReadByte();
     ObjIndex = buffer->ReadInteger();
     ObjName = buffer->ReadUnicodeString();
+    Amount = buffer->ReadInteger();
     GrhIndex = buffer->ReadInteger();
     ObjType = buffer->ReadByte();
     MaxHit = buffer->ReadInteger();
@@ -11018,6 +11019,7 @@ void ChangeBankSlot::serialize(clsByteQueue* buffer) {
     buffer->WriteByte(Slot);
     buffer->WriteInteger(ObjIndex);
     buffer->WriteUnicodeString(ObjName);
+    buffer->WriteInteger(Amount);
     buffer->WriteInteger(GrhIndex);
     buffer->WriteByte(ObjType);
     buffer->WriteInteger(MaxHit);
@@ -11119,7 +11121,6 @@ void BlacksmithWeapons::serialize(clsByteQueue* buffer) {
             buffer->WriteInteger(e.ArmasHerreroIndex);
             buffer->WriteInteger(e.ObjUpgrade);
 
-            Items.push_back(e);
         }
     }
 }
@@ -11165,7 +11166,6 @@ void BlacksmithArmors::serialize(clsByteQueue* buffer) {
             buffer->WriteInteger(e.ArmasHerreroIndex);
             buffer->WriteInteger(e.ObjUpgrade);
 
-            Items.push_back(e);
         }
     }
 }
@@ -11209,7 +11209,6 @@ void CarpenterObjects::serialize(clsByteQueue* buffer) {
             buffer->WriteInteger(e.ObjCarpinteroIndex);
             buffer->WriteInteger(e.ObjUpgrade);
 
-            Items.push_back(e);
         }
     }
 }
@@ -12169,7 +12168,6 @@ void RecordList::serialize(clsByteQueue* buffer) {
             Item &e = Items[i];
             buffer->WriteUnicodeString(e.Usuario);
 
-            Items.push_back(e);
         }
     }
 }
