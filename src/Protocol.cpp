@@ -825,14 +825,9 @@ void WriteAreaChanged(int UserIndex) {
 /* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
 
 void WritePauseToggle(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
-	/* 'Last Modification: 05/17/06 */
-	/* 'Writes the "PauseToggle" message to the given user's outgoing data buffer */
-	/* '*************************************************** */
+	dakara::protocol::server::PauseToggle p;
 
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessagePauseToggle());
-}
+	p.serialize(UserList[UserIndex].outgoingData.get());}
 
 /* '' */
 /* ' Writes the "RainToggle" message to the given user's outgoing data buffer. */
