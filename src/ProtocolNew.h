@@ -4563,9 +4563,7 @@ public:
 
     virtual void serialize(clsByteQueue* buffer);
     virtual void dispatch(PacketHandler* d);
-	void addItem(const std::string &Name, std::int16_t GrhIndex,
-			std::int16_t LingH, std::int16_t LingP, std::int16_t LingO,
-			std::int16_t ArmasHerreroIndex, std::int16_t ObjUpgrade);
+
     struct Item {
     std::string Name; 
     std::int16_t GrhIndex; 
@@ -4577,6 +4575,18 @@ public:
     };
 
     std::vector<Item> Items;
+
+    void addItem(const std::string& Name, const std::int16_t GrhIndex, const std::int16_t LingH, const std::int16_t LingP, const std::int16_t LingO, const std::int16_t ArmasHerreroIndex, const std::int16_t ObjUpgrade) {
+        Item e;
+        e.Name = Name;
+        e.GrhIndex = GrhIndex;
+        e.LingH = LingH;
+        e.LingP = LingP;
+        e.LingO = LingO;
+        e.ArmasHerreroIndex = ArmasHerreroIndex;
+        e.ObjUpgrade = ObjUpgrade;
+        Items.push_back(e);
+    }
 };
 
 class BlacksmithArmors : public ServerPacket {
@@ -4586,9 +4596,7 @@ public:
 
     virtual void serialize(clsByteQueue* buffer);
     virtual void dispatch(PacketHandler* d);
-	void addItem(const std::string &Name, std::int16_t GrhIndex,
-			std::int16_t LingH, std::int16_t LingP, std::int16_t LingO,
-			std::int16_t ArmasHerreroIndex, std::int16_t ObjUpgrade);
+
     struct Item {
     std::string Name; 
     std::int16_t GrhIndex; 
@@ -4600,6 +4608,18 @@ public:
     };
 
     std::vector<Item> Items;
+
+    void addItem(const std::string& Name, const std::int16_t GrhIndex, const std::int16_t LingH, const std::int16_t LingP, const std::int16_t LingO, const std::int16_t ArmasHerreroIndex, const std::int16_t ObjUpgrade) {
+        Item e;
+        e.Name = Name;
+        e.GrhIndex = GrhIndex;
+        e.LingH = LingH;
+        e.LingP = LingP;
+        e.LingO = LingO;
+        e.ArmasHerreroIndex = ArmasHerreroIndex;
+        e.ObjUpgrade = ObjUpgrade;
+        Items.push_back(e);
+    }
 };
 
 class CarpenterObjects : public ServerPacket {
@@ -4609,9 +4629,7 @@ public:
 
     virtual void serialize(clsByteQueue* buffer);
     virtual void dispatch(PacketHandler* d);
-	void addItem(const std::string &Name, std::int16_t GrhIndex,
-			std::int16_t Madera, std::int16_t MaderaElfica,
-			std::int16_t ObjCarpinteroIndex, std::int16_t ObjUpgrade);
+
     struct Item {
     std::string Name; 
     std::int16_t GrhIndex; 
@@ -4622,6 +4640,17 @@ public:
     };
 
     std::vector<Item> Items;
+
+    void addItem(const std::string& Name, const std::int16_t GrhIndex, const std::int16_t Madera, const std::int16_t MaderaElfica, const std::int16_t ObjCarpinteroIndex, const std::int16_t ObjUpgrade) {
+        Item e;
+        e.Name = Name;
+        e.GrhIndex = GrhIndex;
+        e.Madera = Madera;
+        e.MaderaElfica = MaderaElfica;
+        e.ObjCarpinteroIndex = ObjCarpinteroIndex;
+        e.ObjUpgrade = ObjUpgrade;
+        Items.push_back(e);
+    }
 };
 
 class RestOK : public ServerPacket {
@@ -4790,12 +4819,11 @@ public:
     SetInvisible();
     SetInvisible(clsByteQueue* buffer);
 
-    std::int16_t charIndex;
-    bool invisible;
     virtual void serialize(clsByteQueue* buffer);
     virtual void dispatch(PacketHandler* d);
 
-
+    std::int16_t charIndex; 
+    bool invisible; 
 };
 
 class DiceRoll : public ServerPacket {
@@ -5172,12 +5200,18 @@ public:
 
     virtual void serialize(clsByteQueue* buffer);
     virtual void dispatch(PacketHandler* d);
-    void addItem(const std::string &usuario);
+
     struct Item {
-    std::string Usuario;
+    std::string Usuario; 
     };
 
     std::vector<Item> Items;
+
+    void addItem(const std::string& Usuario) {
+        Item e;
+        e.Usuario = Usuario;
+        Items.push_back(e);
+    }
 };
 
 class RecordDetails : public ServerPacket {
