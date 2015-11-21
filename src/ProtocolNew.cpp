@@ -11087,6 +11087,21 @@ void Atributes::dispatch(PacketHandler* d) {
 BlacksmithWeapons::BlacksmithWeapons() : ServerPacket(ServerPacketID_BlacksmithWeapons /* 51 */) {
 }
 
+void BlacksmithWeapons::addItem(const std::string &Name, std::int16_t GrhIndex,
+		std::int16_t LingH, std::int16_t LingP, std::int16_t LingO,
+		std::int16_t ArmasHerreroIndex, std::int16_t ObjUpgrade) {
+	Item item;
+	item.Name = Name;
+	item.GrhIndex = GrhIndex;
+	item.ArmasHerreroIndex = ArmasHerreroIndex;
+	item.LingH = LingH;
+	item.LingO = LingO;
+	item.LingP = LingP;
+	item.ObjUpgrade = ObjUpgrade;
+
+	Items.push_back(item);
+}
+
 BlacksmithWeapons::BlacksmithWeapons(clsByteQueue* buffer) : ServerPacket(ServerPacketID_BlacksmithWeapons /* 51 */) {
     buffer->ReadByte(); /* PacketID */
     std::int32_t Count = buffer->ReadInteger();
@@ -11120,9 +11135,9 @@ void BlacksmithWeapons::serialize(clsByteQueue* buffer) {
             buffer->WriteInteger(e.LingO);
             buffer->WriteInteger(e.ArmasHerreroIndex);
             buffer->WriteInteger(e.ObjUpgrade);
-
         }
     }
+    Items.clear();
 }
 
 void BlacksmithWeapons::dispatch(PacketHandler* d) {
@@ -11130,6 +11145,21 @@ void BlacksmithWeapons::dispatch(PacketHandler* d) {
 }
 
 BlacksmithArmors::BlacksmithArmors() : ServerPacket(ServerPacketID_BlacksmithArmors /* 52 */) {
+}
+
+void BlacksmithArmors::addItem(const std::string &Name, std::int16_t GrhIndex,
+		std::int16_t LingH, std::int16_t LingP, std::int16_t LingO,
+		std::int16_t ArmasHerreroIndex, std::int16_t ObjUpgrade) {
+	Item item;
+	item.Name = Name;
+	item.GrhIndex = GrhIndex;
+	item.ArmasHerreroIndex = ArmasHerreroIndex;
+	item.LingH = LingH;
+	item.LingO = LingO;
+	item.LingP = LingP;
+	item.ObjUpgrade = ObjUpgrade;
+
+	Items.push_back(item);
 }
 
 BlacksmithArmors::BlacksmithArmors(clsByteQueue* buffer) : ServerPacket(ServerPacketID_BlacksmithArmors /* 52 */) {
@@ -11165,9 +11195,9 @@ void BlacksmithArmors::serialize(clsByteQueue* buffer) {
             buffer->WriteInteger(e.LingO);
             buffer->WriteInteger(e.ArmasHerreroIndex);
             buffer->WriteInteger(e.ObjUpgrade);
-
         }
     }
+    Items.clear();
 }
 
 void BlacksmithArmors::dispatch(PacketHandler* d) {
@@ -11175,6 +11205,20 @@ void BlacksmithArmors::dispatch(PacketHandler* d) {
 }
 
 CarpenterObjects::CarpenterObjects() : ServerPacket(ServerPacketID_CarpenterObjects /* 53 */) {
+}
+
+void CarpenterObjects::addItem(const std::string &Name, std::int16_t GrhIndex,
+			std::int16_t Madera, std::int16_t MaderaElfica,
+			std::int16_t ObjCarpinteroIndex, std::int16_t ObjUpgrade){
+	Item item;
+	item.GrhIndex = GrhIndex;
+	item.Madera = Madera;
+	item.MaderaElfica = MaderaElfica;
+	item.Name = Name;
+	item.ObjCarpinteroIndex = ObjCarpinteroIndex;
+	item.ObjUpgrade = ObjUpgrade;
+
+	Items.push_back(item);
 }
 
 CarpenterObjects::CarpenterObjects(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CarpenterObjects /* 53 */) {
@@ -11208,9 +11252,9 @@ void CarpenterObjects::serialize(clsByteQueue* buffer) {
             buffer->WriteInteger(e.MaderaElfica);
             buffer->WriteInteger(e.ObjCarpinteroIndex);
             buffer->WriteInteger(e.ObjUpgrade);
-
         }
     }
+    Items.clear();
 }
 
 void CarpenterObjects::dispatch(PacketHandler* d) {
@@ -11502,12 +11546,14 @@ SetInvisible::SetInvisible() : ServerPacket(ServerPacketID_SetInvisible /* 66 */
 
 SetInvisible::SetInvisible(clsByteQueue* buffer) : ServerPacket(ServerPacketID_SetInvisible /* 66 */) {
     buffer->ReadByte(); /* PacketID */
-
+    charIndex = buffer->ReadInteger();
+    invisible = buffer->ReadBoolean();
 }
 
 void SetInvisible::serialize(clsByteQueue* buffer) {
     buffer->WriteByte(ServerPacketID_SetInvisible); /* PacketID: 66 */
-
+    buffer->WriteInteger(charIndex);
+    buffer->WriteBoolean(invisible);
 }
 
 void SetInvisible::dispatch(PacketHandler* d) {
@@ -12145,7 +12191,11 @@ void ShowDenounces::dispatch(PacketHandler* d) {
 
 RecordList::RecordList() : ServerPacket(ServerPacketID_RecordList /* 96 */) {
 }
-
+void RecordList::addItem(const std::string &usuario){
+	Item item;
+	item.Usuario = usuario;
+	Items.push_back(item);
+}
 RecordList::RecordList(clsByteQueue* buffer) : ServerPacket(ServerPacketID_RecordList /* 96 */) {
     buffer->ReadByte(); /* PacketID */
     std::int32_t Count = buffer->ReadByte();
@@ -12167,9 +12217,9 @@ void RecordList::serialize(clsByteQueue* buffer) {
         for (i=0; i<Count; ++i) {
             Item &e = Items[i];
             buffer->WriteUnicodeString(e.Usuario);
-
         }
     }
+    Items.clear();
 }
 
 void RecordList::dispatch(PacketHandler* d) {

@@ -827,7 +827,8 @@ void WriteAreaChanged(int UserIndex) {
 void WritePauseToggle(int UserIndex) {
 	dakara::protocol::server::PauseToggle p;
 
-	p.serialize(UserList[UserIndex].outgoingData.get());}
+	p.serialize(UserList[UserIndex].outgoingData.get());
+}
 
 /* '' */
 /* ' Writes the "RainToggle" message to the given user's outgoing data buffer. */
@@ -841,8 +842,8 @@ void WriteRainToggle(int UserIndex) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "RainToggle" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
-
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageRainToggle());
+	dakara::protocol::server::RainToggle p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -860,8 +861,11 @@ void WriteCreateFX(int UserIndex, int CharIndex, int FX, int FXLoops) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "CreateFX" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
-
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageCreateFX(CharIndex, FX, FXLoops));
+	dakara::protocol::server::CreateFX p;
+	p.CharIndex = CharIndex;
+	p.FX =FX;
+	p.FXLoops = FXLoops;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -877,17 +881,18 @@ void WriteUpdateUserStats(int UserIndex) {
 	/* 'Writes the "UpdateUserStats" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UpdateUserStats);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Stats.MaxHp);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Stats.MinHp);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Stats.MaxMAN);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Stats.MinMAN);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Stats.MaxSta);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Stats.MinSta);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Stats.GLD);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.ELV);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Stats.ELU);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Stats.Exp);
+	dakara::protocol::server::UpdateUserStats p;
+	p.MaxHp = UserList[UserIndex].Stats.MaxHp;
+	p.MaxMan = UserList[UserIndex].Stats.MaxMAN;
+	p.MinHp = UserList[UserIndex].Stats.MinHp;
+	p.MinMan = UserList[UserIndex].Stats.MinMAN;
+	p.MaxSta = UserList[UserIndex].Stats.MaxSta;
+	p.MinSta = UserList[UserIndex].Stats.MinSta;
+	p.Gld = UserList[UserIndex].Stats.GLD;
+	p.Elv = UserList[UserIndex].Stats.ELV;
+	p.Elu = UserList[UserIndex].Stats.ELU;
+	p.Exp = UserList[UserIndex].Stats.Exp;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -903,9 +908,9 @@ void WriteWorkRequestTarget(int UserIndex, eSkill Skill) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "WorkRequestTarget" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
-
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_WorkRequestTarget);
-	UserList[UserIndex].outgoingData->WriteByte(Skill);
+	dakara::protocol::server::WorkRequestTarget p;
+	p.Skill = Skill;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -923,8 +928,8 @@ void WriteChangeInventorySlot(int UserIndex, int Slot) {
 	/* '3/12/09: Budi - Ahora se envia MaxDef y MinDef en lugar de Def */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ChangeInventorySlot);
-	UserList[UserIndex].outgoingData->WriteByte(Slot);
+	dakara::protocol::server::ChangeInventorySlot p;
+	p.Slot = Slot;
 
 	int ObjIndex;
 	struct ObjData obData;
@@ -935,17 +940,19 @@ void WriteChangeInventorySlot(int UserIndex, int Slot) {
 		obData = ObjData[ObjIndex];
 	}
 
-	UserList[UserIndex].outgoingData->WriteInteger(ObjIndex);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(obData.Name);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Invent.Object[Slot].Amount);
-	UserList[UserIndex].outgoingData->WriteBoolean(UserList[UserIndex].Invent.Object[Slot].Equipped);
-	UserList[UserIndex].outgoingData->WriteInteger(obData.GrhIndex);
-	UserList[UserIndex].outgoingData->WriteByte(obData.OBJType);
-	UserList[UserIndex].outgoingData->WriteInteger(obData.MaxHIT);
-	UserList[UserIndex].outgoingData->WriteInteger(obData.MinHIT);
-	UserList[UserIndex].outgoingData->WriteInteger(obData.MaxDef);
-	UserList[UserIndex].outgoingData->WriteInteger(obData.MinDef);
-	UserList[UserIndex].outgoingData->WriteSingle(SalePrice(ObjIndex));
+	p.ObjIndex = ObjIndex;
+	p.ObjName = obData.Name;
+	p.Amount = UserList[UserIndex].Invent.Object[Slot].Amount;
+	p.Equiped = UserList[UserIndex].Invent.Object[Slot].Equipped;
+	p.GrhIndex = obData.GrhIndex;
+	p.ObjType = obData.OBJType;
+	p.MaxHit = obData.MaxHIT;
+	p.MinHit = obData.MinHIT;
+	p.MaxDef = obData.MaxDef;
+	p.MinDef = obData.MinDef;
+	p.ObjSalePrice = SalePrice(ObjIndex);
+
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 void WriteAddSlots(int UserIndex, eMochilas Mochila) {
@@ -954,8 +961,9 @@ void WriteAddSlots(int UserIndex, eMochilas Mochila) {
 	/* 'Last Modification: 01/12/09 */
 	/* 'Writes the "AddSlots" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_AddSlots);
-	UserList[UserIndex].outgoingData->WriteByte(Mochila);
+	dakara::protocol::server::AddSlots p;
+	p.Mochila = Mochila;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -973,8 +981,8 @@ void WriteChangeBankSlot(int UserIndex, int Slot) {
 	/* '12/03/09: Budi - Ahora se envia MaxDef y MinDef en lugar de sólo Def */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ChangeBankSlot);
-	UserList[UserIndex].outgoingData->WriteByte(Slot);
+	dakara::protocol::server::ChangeBankSlot p;
+	p.Slot = Slot;
 
 	int ObjIndex;
 	struct ObjData obData;
@@ -987,15 +995,16 @@ void WriteChangeBankSlot(int UserIndex, int Slot) {
 		obData = ObjData[ObjIndex];
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(obData.Name);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].BancoInvent.Object[Slot].Amount);
-	UserList[UserIndex].outgoingData->WriteInteger(obData.GrhIndex);
-	UserList[UserIndex].outgoingData->WriteByte(obData.OBJType);
-	UserList[UserIndex].outgoingData->WriteInteger(obData.MaxHIT);
-	UserList[UserIndex].outgoingData->WriteInteger(obData.MinHIT);
-	UserList[UserIndex].outgoingData->WriteInteger(obData.MaxDef);
-	UserList[UserIndex].outgoingData->WriteInteger(obData.MinDef);
-	UserList[UserIndex].outgoingData->WriteLong(obData.Valor);
+	p.ObjName = obData.Name;
+	p.Amount = UserList[UserIndex].BancoInvent.Object[Slot].Amount;
+	p.GrhIndex = obData.GrhIndex;
+	p.ObjType = obData.OBJType;
+	p.MaxHit = obData.MaxHIT;
+	p.MinHit = obData.MinHIT;
+	p.MaxDef = obData.MaxDef;
+	p.MinDef = obData.MinDef;
+	p.ObjSalePrice = obData.Valor;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1012,16 +1021,16 @@ void WriteChangeSpellSlot(int UserIndex, int Slot) {
 	/* 'Writes the "ChangeSpellSlot" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ChangeSpellSlot);
-	UserList[UserIndex].outgoingData->WriteByte(Slot);
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Stats.UserHechizos[Slot]);
+	dakara::protocol::server::ChangeSpellSlot p;
+	p.Slot = Slot;
+	p.SpellID = UserList[UserIndex].Stats.UserHechizos[Slot];
 
 	if (UserList[UserIndex].Stats.UserHechizos[Slot] > 0) {
-		UserList[UserIndex].outgoingData->WriteUnicodeString(
-				Hechizos[UserList[UserIndex].Stats.UserHechizos[Slot]].Nombre);
+		p.Name = Hechizos[UserList[UserIndex].Stats.UserHechizos[Slot]].Nombre;
 	} else {
-		UserList[UserIndex].outgoingData->WriteUnicodeString("(None)");
+		p.Name = "(None)";
 	}
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1036,15 +1045,14 @@ void WriteAttributes(int UserIndex) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "Atributes" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
+	dakara::protocol::server::Atributes p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_Atributes);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserAtributos[eAtributos_Fuerza]);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserAtributos[eAtributos_Agilidad]);
-	UserList[UserIndex].outgoingData->WriteByte(
-			UserList[UserIndex].Stats.UserAtributos[eAtributos_Inteligencia]);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserAtributos[eAtributos_Carisma]);
-	UserList[UserIndex].outgoingData->WriteByte(
-			UserList[UserIndex].Stats.UserAtributos[eAtributos_Constitucion]);
+	p.Fuerza = UserList[UserIndex].Stats.UserAtributos[eAtributos_Fuerza];
+	p.Agilidad = UserList[UserIndex].Stats.UserAtributos[eAtributos_Agilidad];
+	p.Inteligencia = UserList[UserIndex].Stats.UserAtributos[eAtributos_Inteligencia];
+	p.Carisma = UserList[UserIndex].Stats.UserAtributos[eAtributos_Carisma];
+	p.Constitucion = UserList[UserIndex].Stats.UserAtributos[eAtributos_Constitucion];
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1060,6 +1068,7 @@ void WriteBlacksmithWeapons(int UserIndex) {
 	/* 'Writes the "BlacksmithWeapons" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
+	dakara::protocol::server::BlacksmithWeapons p;
 	int i;
 	struct ObjData Obj;
 	std::vector<int> validIndexes;
@@ -1067,8 +1076,6 @@ void WriteBlacksmithWeapons(int UserIndex) {
 
 	validIndexes.resize(0);
 	validIndexes.resize(1 + vb6::UBound(ArmasHerrero));
-
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_BlacksmithWeapons);
 
 	for (i = (1); i <= (vb6::UBound(ArmasHerrero)); i++) {
 		/* ' Can the user create this object? If so add it to the list.... */
@@ -1081,20 +1088,13 @@ void WriteBlacksmithWeapons(int UserIndex) {
 		}
 	}
 
-	/* ' Write the number of objects in the list */
-	UserList[UserIndex].outgoingData->WriteInteger(Count);
 
 	/* ' Write the needed data of each object */
 	for (i = (1); i <= (Count); i++) {
 		Obj = ObjData[ArmasHerrero[validIndexes[i]]];
-		UserList[UserIndex].outgoingData->WriteUnicodeString(Obj.Name);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.GrhIndex);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.LingH);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.LingP);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.LingO);
-		UserList[UserIndex].outgoingData->WriteInteger(ArmasHerrero[validIndexes[i]]);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.Upgrade);
+		p.addItem(Obj.Name,Obj.GrhIndex,Obj.LingH,Obj.LingP,Obj.LingO,ArmasHerrero[validIndexes[i]],Obj.Upgrade);
 	}
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1110,6 +1110,7 @@ void WriteBlacksmithArmors(int UserIndex) {
 	/* 'Writes the "BlacksmithArmors" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
+	dakara::protocol::server::BlacksmithArmors p;
 	int i;
 	struct ObjData Obj;
 	std::vector<int> validIndexes;
@@ -1118,7 +1119,6 @@ void WriteBlacksmithArmors(int UserIndex) {
 	validIndexes.resize(0);
 	validIndexes.resize(1 + vb6::UBound(ArmadurasHerrero));
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_BlacksmithArmors);
 
 	for (i = (1); i <= (vb6::UBound(ArmadurasHerrero)); i++) {
 		/* ' Can the user create this object? If so add it to the list.... */
@@ -1131,20 +1131,13 @@ void WriteBlacksmithArmors(int UserIndex) {
 		}
 	}
 
-	/* ' Write the number of objects in the list */
-	UserList[UserIndex].outgoingData->WriteInteger(Count);
 
 	/* ' Write the needed data of each object */
 	for (i = (1); i <= (Count); i++) {
 		Obj = ObjData[ArmadurasHerrero[validIndexes[i]]];
-		UserList[UserIndex].outgoingData->WriteUnicodeString(Obj.Name);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.GrhIndex);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.LingH);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.LingP);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.LingO);
-		UserList[UserIndex].outgoingData->WriteInteger(ArmadurasHerrero[validIndexes[i]]);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.Upgrade);
+		p.addItem(Obj.Name,Obj.GrhIndex,Obj.LingH,Obj.LingP,Obj.LingO,ArmadurasHerrero[validIndexes[i]],Obj.Upgrade);
 	}
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1160,6 +1153,7 @@ void WriteCarpenterObjects(int UserIndex) {
 	/* 'Writes the "CarpenterObjects" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
+	dakara::protocol::server::CarpenterObjects p;
 	int i;
 	struct ObjData Obj;
 	std::vector<int> validIndexes;
@@ -1168,7 +1162,7 @@ void WriteCarpenterObjects(int UserIndex) {
 	validIndexes.resize(0);
 	validIndexes.resize(1 + vb6::UBound(ObjCarpintero));
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_CarpenterObjects);
+
 
 	for (i = (1); i <= (vb6::UBound(ObjCarpintero)); i++) {
 		/* ' Can the user create this object? If so add it to the list.... */
@@ -1180,19 +1174,13 @@ void WriteCarpenterObjects(int UserIndex) {
 		}
 	}
 
-	/* ' Write the number of objects in the list */
-	UserList[UserIndex].outgoingData->WriteInteger(Count);
-
 	/* ' Write the needed data of each object */
 	for (i = (1); i <= (Count); i++) {
 		Obj = ObjData[ObjCarpintero[validIndexes[i]]];
-		UserList[UserIndex].outgoingData->WriteUnicodeString(Obj.Name);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.GrhIndex);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.Madera);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.MaderaElfica);
-		UserList[UserIndex].outgoingData->WriteInteger(ObjCarpintero[validIndexes[i]]);
-		UserList[UserIndex].outgoingData->WriteInteger(Obj.Upgrade);
+		p.addItem(Obj.Name, Obj.GrhIndex, Obj.Madera, Obj.MaderaElfica,
+				ObjCarpintero[validIndexes[i]], Obj.Upgrade);
 	}
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1207,8 +1195,8 @@ void WriteRestOK(int UserIndex) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "RestOK" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
-
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_RestOK);
+	dakara::protocol::server::RestOK p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1224,8 +1212,9 @@ void WriteErrorMsg(int UserIndex, std::string message) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "ErrorMsg" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
-
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageErrorMsg(message));
+	dakara::protocol::server::ErrorMsg p;
+	p.Message = message;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1240,8 +1229,8 @@ void WriteBlind(int UserIndex) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "Blind" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
-
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_Blind);
+	dakara::protocol::server::Blind p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1256,8 +1245,9 @@ void WriteDumb(int UserIndex) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "Dumb" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
+	dakara::protocol::server::Dumb p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_Dumb);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1274,9 +1264,11 @@ void WriteShowSignal(int UserIndex, int ObjIndex) {
 	/* 'Writes the "ShowSignal" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowSignal);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(ObjData[ObjIndex].texto);
-	UserList[UserIndex].outgoingData->WriteInteger(ObjData[ObjIndex].GrhSecundario);
+	dakara::protocol::server::ShowSignal p;
+
+	p.Texto = ObjData[ObjIndex].texto;
+	p.Grh = ObjData[ObjIndex].GrhSecundario;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1297,24 +1289,27 @@ void WriteChangeNPCInventorySlot(int UserIndex, int Slot, struct Obj & Obj, floa
 	/* '12/03/09: Budi - Ahora se envia MaxDef y MinDef en lugar de sólo Def */
 	/* '*************************************************** */
 
+	dakara::protocol::server::ChangeNPCInventorySlot p;
+
 	struct ObjData ObjInfo;
 
 	if (Obj.ObjIndex >= vb6::LBound(ObjData) && Obj.ObjIndex <= vb6::UBound(ObjData)) {
 		ObjInfo = ObjData[Obj.ObjIndex];
 	}
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ChangeNPCInventorySlot);
-	UserList[UserIndex].outgoingData->WriteByte(Slot);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(ObjInfo.Name);
-	UserList[UserIndex].outgoingData->WriteInteger(Obj.Amount);
-	UserList[UserIndex].outgoingData->WriteSingle(price);
-	UserList[UserIndex].outgoingData->WriteInteger(ObjInfo.GrhIndex);
-	UserList[UserIndex].outgoingData->WriteInteger(Obj.ObjIndex);
-	UserList[UserIndex].outgoingData->WriteByte(ObjInfo.OBJType);
-	UserList[UserIndex].outgoingData->WriteInteger(ObjInfo.MaxHIT);
-	UserList[UserIndex].outgoingData->WriteInteger(ObjInfo.MinHIT);
-	UserList[UserIndex].outgoingData->WriteInteger(ObjInfo.MaxDef);
-	UserList[UserIndex].outgoingData->WriteInteger(ObjInfo.MinDef);
+
+	p.Slot = Slot;
+	p.ObjName = ObjInfo.Name;
+	p.Amount = Obj.Amount;
+	p.Price = price;
+	p.GrhIndex = ObjInfo.GrhIndex;
+	p.ObjIndex = Obj.ObjIndex;
+	p.ObjType = ObjInfo.OBJType;
+	p.MaxHit = ObjInfo.MaxHIT;
+	p.MinHit = ObjInfo.MinHIT;
+	p.MaxDef = ObjInfo.MaxDef;
+	p.MinDef = ObjInfo.MinDef;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1329,12 +1324,13 @@ void WriteUpdateHungerAndThirst(int UserIndex) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "UpdateHungerAndThirst" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
+	dakara::protocol::server::UpdateHungerAndThirst p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UpdateHungerAndThirst);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.MaxAGU);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.MinAGU);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.MaxHam);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.MinHam);
+	p.MaxAgu = UserList[UserIndex].Stats.MaxAGU;
+	p.MinAgu = UserList[UserIndex].Stats.MinAGU;
+	p.MaxHam = UserList[UserIndex].Stats.MaxHam;
+	p.MinHam = UserList[UserIndex].Stats.MinHam;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1349,16 +1345,17 @@ void WriteFame(int UserIndex) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "Fame" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
+	dakara::protocol::server::Fame p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_Fame);
 
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Reputacion.AsesinoRep);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Reputacion.BandidoRep);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Reputacion.BurguesRep);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Reputacion.LadronesRep);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Reputacion.NobleRep);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Reputacion.PlebeRep);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Reputacion.Promedio);
+	p.Asesino = UserList[UserIndex].Reputacion.AsesinoRep;
+	p.Bandido = UserList[UserIndex].Reputacion.BandidoRep;
+	p.Burgues = UserList[UserIndex].Reputacion.BurguesRep;
+	p.Ladron = UserList[UserIndex].Reputacion.LadronesRep;
+	p.Noble = UserList[UserIndex].Reputacion.NobleRep;
+	p.Plebe = UserList[UserIndex].Reputacion.PlebeRep;
+	p.Promedio = UserList[UserIndex].Reputacion.Promedio;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1373,19 +1370,20 @@ void WriteMiniStats(int UserIndex) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "MiniStats" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
+	dakara::protocol::server::MiniStats p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_MiniStats);
 
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Faccion.CiudadanosMatados);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Faccion.CriminalesMatados);
+	p.CiudadanosMatados= UserList[UserIndex].Faccion.CiudadanosMatados;
+	p.CriminalesMatados= UserList[UserIndex].Faccion.CriminalesMatados;
 
 	/* 'TODO : Este valor es calculable, no debería NI EXISTIR, ya sea en el servidor ni en el cliente!!! */
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Stats.UsuariosMatados);
+	p.UsuariosMatados = UserList[UserIndex].Stats.UsuariosMatados;
 
-	UserList[UserIndex].outgoingData->WriteInteger(UserList[UserIndex].Stats.NPCsMuertos);
+	p.NpcsMuertos = UserList[UserIndex].Stats.NPCsMuertos;
 
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].clase);
-	UserList[UserIndex].outgoingData->WriteLong(UserList[UserIndex].Counters.Pena);
+	p.Clase = UserList[UserIndex].clase;
+	p.Pena = UserList[UserIndex].Counters.Pena;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1400,9 +1398,10 @@ void WriteLevelUp(int UserIndex, int skillPoints) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "LevelUp" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
+	dakara::protocol::server::LevelUp p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_LevelUp);
-	UserList[UserIndex].outgoingData->WriteInteger(skillPoints);
+	p.SkillPoints = skillPoints;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1420,12 +1419,13 @@ void WriteAddForumMsg(int UserIndex, eForumMsgType ForumType, std::string & Titl
 	/* 'Writes the "AddForumMsg" message to the given user's outgoing data buffer */
 	/* '02/01/2010: ZaMa - Now sends Author and forum type */
 	/* '*************************************************** */
+	dakara::protocol::server::AddForumMsg p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_AddForumMsg);
-	UserList[UserIndex].outgoingData->WriteByte(ForumType);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Title);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Author);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(message);
+	p.ForumType = ForumType;
+	p.Title = Title;
+	p.Author = Author;
+	p.Message = message;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1441,10 +1441,10 @@ void WriteShowForumForm(int UserIndex) {
 	/* 'Writes the "ShowForumForm" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
+	dakara::protocol::server::ShowForumForm p;
 	int Visibilidad;
 	int CanMakeSticky = 0;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowForumForm);
 
 	Visibilidad = eForumVisibility_ieGENERAL_MEMBER;
 
@@ -1456,7 +1456,7 @@ void WriteShowForumForm(int UserIndex) {
 		Visibilidad = Visibilidad | eForumVisibility_ieREAL_MEMBER;
 	}
 
-	UserList[UserIndex].outgoingData->WriteByte(Visibilidad);
+	p.Visibilidad = Visibilidad;
 
 	/* ' Pueden mandar sticky los gms o los del consejo de armada/caos */
 	if (EsGm(UserIndex)) {
@@ -1467,7 +1467,8 @@ void WriteShowForumForm(int UserIndex) {
 		CanMakeSticky = 1;
 	}
 
-	UserList[UserIndex].outgoingData->WriteByte(CanMakeSticky);
+	p.CanMakeSticky = CanMakeSticky;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1484,8 +1485,10 @@ void WriteSetInvisible(int UserIndex, int CharIndex, bool invisible) {
 	/* 'Last Modification: 05/17/06 */
 	/* 'Writes the "SetInvisible" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
-
-	UserList[UserIndex].outgoingData->WriteBinaryFixed(PrepareMessageSetInvisible(CharIndex, invisible));
+	dakara::protocol::server::SetInvisible p;
+	p.charIndex = CharIndex;
+	p.invisible = invisible;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1501,15 +1504,13 @@ void WriteDiceRoll(int UserIndex) {
 	/* 'Writes the "DiceRoll" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_DiceRoll);
-
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserAtributos[eAtributos_Fuerza]);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserAtributos[eAtributos_Agilidad]);
-	UserList[UserIndex].outgoingData->WriteByte(
-			UserList[UserIndex].Stats.UserAtributos[eAtributos_Inteligencia]);
-	UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserAtributos[eAtributos_Carisma]);
-	UserList[UserIndex].outgoingData->WriteByte(
-			UserList[UserIndex].Stats.UserAtributos[eAtributos_Constitucion]);
+	dakara::protocol::server::DiceRoll p;
+	p.Fuerza = UserList[UserIndex].Stats.UserAtributos[eAtributos_Fuerza];
+	p.Agilidad = UserList[UserIndex].Stats.UserAtributos[eAtributos_Agilidad];
+	p.Inteligencia = UserList[UserIndex].Stats.UserAtributos[eAtributos_Inteligencia];
+	p.Carisma = UserList[UserIndex].Stats.UserAtributos[eAtributos_Carisma];
+	p.Constitucion = UserList[UserIndex].Stats.UserAtributos[eAtributos_Constitucion];
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1525,7 +1526,8 @@ void WriteMeditateToggle(int UserIndex) {
 	/* 'Writes the "MeditateToggle" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_MeditateToggle);
+	dakara::protocol::server::MeditateToggle p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1541,7 +1543,8 @@ void WriteBlindNoMore(int UserIndex) {
 	/* 'Writes the "BlindNoMore" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_BlindNoMore);
+	dakara::protocol::server::BlindNoMore p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1557,7 +1560,8 @@ void WriteDumbNoMore(int UserIndex) {
 	/* 'Writes the "DumbNoMore" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_DumbNoMore);
+	dakara::protocol::server::DumbNoMore p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1576,19 +1580,18 @@ void WriteSendSkills(int UserIndex) {
 
 	int i;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_SendSkills);
-
+	dakara::protocol::server::SendSkills p;
 	for (i = (1); i <= (NUMSKILLS); i++) {
 		UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserSkills[i]);
 		if (UserList[UserIndex].Stats.UserSkills[i] < MAXSKILLPOINTS) {
-			UserList[UserIndex].outgoingData->WriteByte(
-					vb6::Int(
+			p.Skills[i-1]=vb6::Int(
 							UserList[UserIndex].Stats.ExpSkills[i] * 100
-									/ UserList[UserIndex].Stats.EluSkills[i]));
+									/ UserList[UserIndex].Stats.EluSkills[i]);
 		} else {
-			UserList[UserIndex].outgoingData->WriteByte(0);
+			p.Skills[i-1] = 0;
 		}
 	}
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1607,8 +1610,8 @@ void WriteTrainerCreatureList(int UserIndex, int NpcIndex) {
 
 	int i;
 	std::string str;
+	dakara::protocol::server::TrainerCreatureList p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_TrainerCreatureList);
 
 	for (i = (1); i <= (Npclist[NpcIndex].NroCriaturas); i++) {
 		str = str + Npclist[NpcIndex].Criaturas[i].NpcName + SEPARATOR;
@@ -1618,7 +1621,8 @@ void WriteTrainerCreatureList(int UserIndex, int NpcIndex) {
 		str = vb6::Left(str, vb6::Len(str) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(str);
+	p.Data = str;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1639,10 +1643,10 @@ void WriteGuildNews(int UserIndex, std::string guildNews, std::vector<std::strin
 	/* '*************************************************** */
 
 	std::string Tmp;
+	dakara::protocol::server::GuildNews p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_guildNews);
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(guildNews);
+	p.News = guildNews;
 
 	/* 'Prepare enemies' list */
 	for (std::string& x : enemies) {
@@ -1653,7 +1657,7 @@ void WriteGuildNews(int UserIndex, std::string guildNews, std::vector<std::strin
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.EnemiesList = Tmp;
 
 	Tmp = "";
 	/* 'Prepare allies' list */
@@ -1665,7 +1669,8 @@ void WriteGuildNews(int UserIndex, std::string guildNews, std::vector<std::strin
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.AlliesList = Tmp;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1682,8 +1687,9 @@ void WriteOfferDetails(int UserIndex, std::string details) {
 	/* 'Writes the "OfferDetails" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_OfferDetails);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(details);
+	dakara::protocol::server::OfferDetails p;
+	p.Details= details;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1701,8 +1707,8 @@ void WriteAlianceProposalsList(int UserIndex, std::vector<std::string> guilds) {
 	/* '*************************************************** */
 
 	std::string Tmp;
+	dakara::protocol::server::AlianceProposalsList p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_AlianceProposalsList);
 
 	/* ' Prepare guild's list */
 	for (auto& x : guilds) {
@@ -1713,7 +1719,8 @@ void WriteAlianceProposalsList(int UserIndex, std::vector<std::string> guilds) {
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.Data = Tmp;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1732,8 +1739,7 @@ void WritePeaceProposalsList(int UserIndex, std::vector<std::string> guilds) {
 
 	std::string Tmp;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_PeaceProposalsList);
-
+	dakara::protocol::server::PeaceProposalsList p;
 	/* ' Prepare guilds' list */
 	for (auto& x : guilds) {
 		Tmp = Tmp + x + SEPARATOR;
@@ -1743,7 +1749,8 @@ void WritePeaceProposalsList(int UserIndex, std::vector<std::string> guilds) {
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.Data = Tmp;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1776,27 +1783,26 @@ void WriteCharacterInfo(int UserIndex, std::string charName, eRaza race, eClass 
 	/* 'Writes the "CharacterInfo" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_CharacterInfo);
+	dakara::protocol::server::CharacterInfo p;
+	p.CharName = charName;
+	p.Race = race;
+	p.Class = Class;
+	p.Gender = gender;
+	p.Level = level;
+	p.Gold = gold;
+	p.Bank = bank;
+	p.Reputation = reputation;
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(charName);
-	UserList[UserIndex].outgoingData->WriteByte(race);
-	UserList[UserIndex].outgoingData->WriteByte(Class);
-	UserList[UserIndex].outgoingData->WriteByte(gender);
+	p.PreviousPetitions = previousPetitions;
+	p.CurrentGuild = currentGuild;
+	p.PreviousGuilds = previousGuilds;
 
-	UserList[UserIndex].outgoingData->WriteByte(level);
-	UserList[UserIndex].outgoingData->WriteLong(gold);
-	UserList[UserIndex].outgoingData->WriteLong(bank);
-	UserList[UserIndex].outgoingData->WriteLong(reputation);
+	p.RoyalArmy = RoyalArmy;
+	p.ChaosLegion = CaosLegion;
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(previousPetitions);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(currentGuild);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(previousGuilds);
-
-	UserList[UserIndex].outgoingData->WriteBoolean(RoyalArmy);
-	UserList[UserIndex].outgoingData->WriteBoolean(CaosLegion);
-
-	UserList[UserIndex].outgoingData->WriteLong(citicensKilled);
-	UserList[UserIndex].outgoingData->WriteLong(criminalsKilled);
+	p.CiudadanosMatados = citicensKilled;
+	p.CriminalesMatados = criminalsKilled;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1820,7 +1826,7 @@ void WriteGuildLeaderInfo(int UserIndex, std::vector<std::string> & guildList,
 
 	std::string Tmp;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_GuildLeaderInfo);
+	dakara::protocol::server::GuildLeaderInfo p;
 
 	/* ' Prepare guild name's list */
 	for (auto& x : guildList) {
@@ -1831,7 +1837,7 @@ void WriteGuildLeaderInfo(int UserIndex, std::vector<std::string> & guildList,
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.GuildList = Tmp;
 
 	/* ' Prepare guild member's list */
 	Tmp = "";
@@ -1843,10 +1849,10 @@ void WriteGuildLeaderInfo(int UserIndex, std::vector<std::string> & guildList,
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.MemberList  = Tmp;
 
 	/* ' Store guild news */
-	UserList[UserIndex].outgoingData->WriteUnicodeString(guildNews);
+	p.GuildNews = guildNews;
 
 	/* ' Prepare the join request's list */
 	Tmp = "";
@@ -1858,7 +1864,8 @@ void WriteGuildLeaderInfo(int UserIndex, std::vector<std::string> & guildList,
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.JoinRequests = Tmp;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1878,8 +1885,8 @@ void WriteGuildMemberInfo(int UserIndex, std::vector<std::string> & guildList,
 	/* '*************************************************** */
 
 	std::string Tmp;
+	dakara::protocol::server::GuildMemberInfo p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_GuildMemberInfo);
 
 	/* ' Prepare guild name's list */
 	for (auto& x : guildList) {
@@ -1890,7 +1897,7 @@ void WriteGuildMemberInfo(int UserIndex, std::vector<std::string> & guildList,
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.GuildList = Tmp;
 
 	/* ' Prepare guild member's list */
 	Tmp = "";
@@ -1902,7 +1909,8 @@ void WriteGuildMemberInfo(int UserIndex, std::vector<std::string> & guildList,
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.MemberList = Tmp;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1935,24 +1943,19 @@ void WriteGuildDetails(int UserIndex, std::string GuildName, std::string founder
 	/* '*************************************************** */
 
 	std::string temp;
+	dakara::protocol::server::GuildDetails p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_GuildDetails);
-
-	UserList[UserIndex].outgoingData->WriteUnicodeString(GuildName);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(founder);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(foundationDate);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(leader);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(URL);
-
-	UserList[UserIndex].outgoingData->WriteInteger(memberCount);
-	UserList[UserIndex].outgoingData->WriteBoolean(electionsOpen);
-
-	UserList[UserIndex].outgoingData->WriteUnicodeString(alignment);
-
-	UserList[UserIndex].outgoingData->WriteInteger(enemiesCount);
-	UserList[UserIndex].outgoingData->WriteInteger(AlliesCount);
-
-	UserList[UserIndex].outgoingData->WriteUnicodeString(antifactionPoints);
+	p.GuildName = GuildName;
+	p.Founder = founder;
+	p.FoundationDate = foundationDate;
+	p.Leader = leader;
+	p.URL = URL;
+	p.MemberCount = memberCount;
+	p.ElectionsOpen = electionsOpen;
+	p.Aligment = alignment;
+	p.EnemiesCount = enemiesCount;
+	p.AlliesCount = AlliesCount;
+	p.AntifactionPoints = antifactionPoints;
 
 	for (auto& x : codex) {
 		temp = temp + x + SEPARATOR;
@@ -1961,10 +1964,9 @@ void WriteGuildDetails(int UserIndex, std::string GuildName, std::string founder
 	if (vb6::Len(temp) > 1) {
 		temp = vb6::Left(temp, vb6::Len(temp) - 1);
 	}
-
-	UserList[UserIndex].outgoingData->WriteUnicodeString(temp);
-
-	UserList[UserIndex].outgoingData->WriteUnicodeString(guildDesc);
+	p.Codex = temp;
+	p.GuildDesc = guildDesc;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1980,7 +1982,8 @@ void WriteShowGuildAlign(int UserIndex) {
 	/* 'Writes the "ShowGuildAlign" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowGuildAlign);
+	dakara::protocol::server::ShowGuildAlign p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -1996,7 +1999,8 @@ void WriteShowGuildFundationForm(int UserIndex) {
 	/* 'Writes the "ShowGuildFundationForm" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowGuildFundationForm);
+	dakara::protocol::server::ShowGuildFundationForm p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2014,8 +2018,9 @@ void WriteParalizeOK(int UserIndex) {
 	/* 'And updates user position */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ParalizeOK);
+	dakara::protocol::server::ParalizeOK p;
 	WritePosUpdate(UserIndex);
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2032,9 +2037,9 @@ void WriteShowUserRequest(int UserIndex, std::string details) {
 	/* 'Writes the "ShowUserRequest" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowUserRequest);
-
-	UserList[UserIndex].outgoingData->WriteUnicodeString(details);
+	dakara::protocol::server::ShowUserRequest p;
+	p.Details = details;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2050,7 +2055,8 @@ void WriteTradeOK(int UserIndex) {
 	/* 'Writes the "TradeOK" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_TradeOK);
+	dakara::protocol::server::TradeOK p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2066,7 +2072,8 @@ void WriteBankOK(int UserIndex) {
 	/* 'Writes the "BankOK" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_BankOK);
+	dakara::protocol::server::BankOK p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2086,32 +2093,32 @@ void WriteChangeUserTradeSlot(int UserIndex, int OfferSlot, int ObjIndex, int Am
 	/* '12/03/09: Budi - Ahora se envia MaxDef y MinDef en lugar de sólo Def */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ChangeUserTradeSlot);
-
-	UserList[UserIndex].outgoingData->WriteByte(OfferSlot);
-	UserList[UserIndex].outgoingData->WriteInteger(ObjIndex);
-	UserList[UserIndex].outgoingData->WriteLong(Amount);
+	dakara::protocol::server::ChangeUserTradeSlot p;
+	p.OfferSlot =OfferSlot;
+	p.ObjIndex=ObjIndex;
+	p.Amount=Amount;
 
 	if (ObjIndex > 0) {
-		UserList[UserIndex].outgoingData->WriteInteger(ObjData[ObjIndex].GrhIndex);
-		UserList[UserIndex].outgoingData->WriteByte(ObjData[ObjIndex].OBJType);
-		UserList[UserIndex].outgoingData->WriteInteger(ObjData[ObjIndex].MaxHIT);
-		UserList[UserIndex].outgoingData->WriteInteger(ObjData[ObjIndex].MinHIT);
-		UserList[UserIndex].outgoingData->WriteInteger(ObjData[ObjIndex].MaxDef);
-		UserList[UserIndex].outgoingData->WriteInteger(ObjData[ObjIndex].MinDef);
-		UserList[UserIndex].outgoingData->WriteLong(SalePrice(ObjIndex));
-		UserList[UserIndex].outgoingData->WriteUnicodeString(ObjData[ObjIndex].Name);
+		p.GrhIndex=ObjData[ObjIndex].GrhIndex;
+		p.ObjType=ObjData[ObjIndex].OBJType;
+		p.MaxHit=ObjData[ObjIndex].MaxHIT;
+		p.MinHit=ObjData[ObjIndex].MinHIT;
+		p.MaxDef=ObjData[ObjIndex].MaxDef;
+		p.MinDef=ObjData[ObjIndex].MinDef;
+		p.Price=SalePrice(ObjIndex);
+		p.ObjName=ObjData[ObjIndex].Name;
 		/* ' Borra el item */
 	} else {
-		UserList[UserIndex].outgoingData->WriteInteger(0);
-		UserList[UserIndex].outgoingData->WriteByte(0);
-		UserList[UserIndex].outgoingData->WriteInteger(0);
-		UserList[UserIndex].outgoingData->WriteInteger(0);
-		UserList[UserIndex].outgoingData->WriteInteger(0);
-		UserList[UserIndex].outgoingData->WriteInteger(0);
-		UserList[UserIndex].outgoingData->WriteLong(0);
-		UserList[UserIndex].outgoingData->WriteUnicodeString("");
+		p.GrhIndex=0;
+		p.ObjType=0;
+		p.MaxHit=0;
+		p.MinHit=0;
+		p.MaxDef=0;
+		p.MinDef=0;
+		p.Price=0;
+		p.ObjName="";
 	}
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2127,8 +2134,9 @@ void WriteSendNight(int UserIndex, bool night) {
 	/* 'Writes the "SendNight" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_SendNight);
-	UserList[UserIndex].outgoingData->WriteBoolean(night);
+	dakara::protocol::server::SendNight p;
+	p.Night= night;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2146,8 +2154,8 @@ void WriteSpawnList(int UserIndex, std::vector<std::string> & npcNames) {
 	/* '*************************************************** */
 
 	std::string Tmp;
+	dakara::protocol::server::SpawnList p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_SpawnList);
 
 	for (auto& x : npcNames) {
 		Tmp = Tmp + x + SEPARATOR;
@@ -2157,7 +2165,8 @@ void WriteSpawnList(int UserIndex, std::vector<std::string> & npcNames) {
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.Data = Tmp;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2174,8 +2183,8 @@ void WriteShowSOSForm(int UserIndex) {
 	/* '*************************************************** */
 
 	std::string Tmp;
+	dakara::protocol::server::ShowSOSForm p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowSOSForm);
 
 	for (auto& e : Ayuda) {
 		Tmp = Tmp + e + SEPARATOR;
@@ -2185,7 +2194,8 @@ void WriteShowSOSForm(int UserIndex) {
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.Data = Tmp;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2203,8 +2213,8 @@ void WriteShowDenounces(int UserIndex) {
 
 	//int DenounceIndex;
 	std::string DenounceList;
+	dakara::protocol::server::ShowDenounces p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowDenounces);
 
 	for (auto& e : Denuncias) {
 		DenounceList = DenounceList + e + SEPARATOR;
@@ -2214,7 +2224,8 @@ void WriteShowDenounces(int UserIndex) {
 		DenounceList = vb6::Left(DenounceList, vb6::Len(DenounceList) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(DenounceList);
+	p.Data = DenounceList;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2234,11 +2245,11 @@ void WriteShowPartyForm(int UserIndex) {
 	std::string Tmp;
 	int PI;
 	std::vector<int> members;
+	dakara::protocol::server::ShowPartyForm p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowPartyForm);
 
 	PI = UserList[UserIndex].PartyIndex;
-	UserList[UserIndex].outgoingData->WriteByte(vb6::CByte(Parties[PI]->EsPartyLeader(UserIndex)));
+	p.EsLider = vb6::CByte(Parties[PI]->EsPartyLeader(UserIndex));
 
 	if (PI > 0) {
 		Parties[PI]->ObtenerMiembrosOnline(members);
@@ -2254,8 +2265,9 @@ void WriteShowPartyForm(int UserIndex) {
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
-	UserList[UserIndex].outgoingData->WriteLong(Parties[PI]->ObtenerExperienciaTotal());
+	p.Data= Tmp;
+	p.Exp= Parties[PI]->ObtenerExperienciaTotal();
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2272,9 +2284,9 @@ void WriteShowMOTDEditionForm(int UserIndex, std::string currentMOTD) {
 	/* 'Writes the "ShowMOTDEditionForm" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowMOTDEditionForm);
-
-	UserList[UserIndex].outgoingData->WriteUnicodeString(currentMOTD);
+	dakara::protocol::server::ShowMOTDEditionForm p;
+	p.Data=currentMOTD;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2290,7 +2302,8 @@ void WriteShowGMPanelForm(int UserIndex) {
 	/* 'Writes the "ShowGMPanelForm" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_ShowGMPanelForm);
+	dakara::protocol::server::ShowGMPanelForm p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2310,8 +2323,8 @@ void WriteUserNameList(int UserIndex, std::vector<std::string> & userNamesList, 
 
 	int i;
 	std::string Tmp;
+	dakara::protocol::server::UserNameList p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_UserNameList);
 
 	/* ' Prepare user's names list */
 	for (i = (1); i <= (cant); i++) {
@@ -2322,7 +2335,8 @@ void WriteUserNameList(int UserIndex, std::vector<std::string> & userNamesList, 
 		Tmp = vb6::Left(Tmp, vb6::Len(Tmp) - 1);
 	}
 
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Tmp);
+	p.Data = Tmp;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2338,7 +2352,8 @@ void WritePong(int UserIndex) {
 	/* 'Writes the "Pong" message to the given user's outgoing data buffer */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_Pong);
+	dakara::protocol::server::Pong p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -2942,7 +2957,8 @@ void WriteStopWorking(int UserIndex) {
 	/* ' */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_StopWorking);
+	dakara::protocol::server::StopWorking p;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 
 }
 
@@ -2959,8 +2975,9 @@ void WriteCancelOfferItem(int UserIndex, int Slot) {
 	/* ' */
 	/* '*************************************************** */
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_CancelOfferItem);
-	UserList[UserIndex].outgoingData->WriteByte(Slot);
+	dakara::protocol::server::CancelOfferItem p;
+	p.Slot = Slot;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 
 }
 
@@ -2980,17 +2997,17 @@ void WriteRecordDetails(int UserIndex, int RecordIndex) {
 	int tIndex;
 	std::string tmpStr;
 	boost::posix_time::time_duration TempDate;
+	dakara::protocol::server::RecordDetails p;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_RecordDetails);
 
 	/* 'Creador y motivo */
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Records[RecordIndex].Creador);
-	UserList[UserIndex].outgoingData->WriteUnicodeString(Records[RecordIndex].Motivo);
+	p.Creador = Records[RecordIndex].Creador;
+	p.Motivo = Records[RecordIndex].Motivo;
 
 	tIndex = NameIndex(Records[RecordIndex].Usuario);
 
 	/* 'Status del pj (online?) */
-	UserList[UserIndex].outgoingData->WriteBoolean(tIndex > 0);
+	p.Online = (tIndex > 0);
 
 	/* 'Escribo la IP según el estado del personaje */
 	if (tIndex > 0) {
@@ -3000,7 +3017,7 @@ void WriteRecordDetails(int UserIndex, int RecordIndex) {
 	} else {
 		tmpStr = "";
 	}
-	UserList[UserIndex].outgoingData->WriteUnicodeString(tmpStr);
+	p.IP = tmpStr;
 
 	/* 'Escribo tiempo online según el estado del personaje */
 	if (tIndex > 0) {
@@ -3012,7 +3029,7 @@ void WriteRecordDetails(int UserIndex, int RecordIndex) {
 		/* 'Envío string nulo. */
 		tmpStr = "";
 	}
-	UserList[UserIndex].outgoingData->WriteUnicodeString(tmpStr);
+	p.OnlineTime = tmpStr;
 
 	/* 'Escribo observaciones: */
 	tmpStr = "";
@@ -3024,7 +3041,8 @@ void WriteRecordDetails(int UserIndex, int RecordIndex) {
 
 		tmpStr = vb6::Left(tmpStr, vb6::Len(tmpStr) - 1);
 	}
-	UserList[UserIndex].outgoingData->WriteUnicodeString(tmpStr);
+	p.Obs = tmpStr;
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
 /* '' */
@@ -3041,11 +3059,11 @@ void WriteRecordList(int UserIndex) {
 	/* '*************************************************** */
 	int i;
 
-	UserList[UserIndex].outgoingData->WriteByte(ServerPacketID_RecordList);
-
+	dakara::protocol::server::RecordList p;
 	UserList[UserIndex].outgoingData->WriteByte(NumRecords);
 	for (i = (1); i <= (NumRecords); i++) {
-		UserList[UserIndex].outgoingData->WriteUnicodeString(Records[i].Usuario);
+		p.addItem(Records[i].Usuario);
 	}
+	p.serialize(UserList[UserIndex].outgoingData.get());
 }
 
