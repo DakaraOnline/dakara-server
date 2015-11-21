@@ -4563,7 +4563,9 @@ public:
 
     virtual void serialize(clsByteQueue* buffer);
     virtual void dispatch(PacketHandler* d);
-
+	void addItem(const std::string &Name, std::int16_t GrhIndex,
+			std::int16_t LingH, std::int16_t LingP, std::int16_t LingO,
+			std::int16_t ArmasHerreroIndex, std::int16_t ObjUpgrade);
     struct Item {
     std::string Name; 
     std::int16_t GrhIndex; 
@@ -4584,7 +4586,9 @@ public:
 
     virtual void serialize(clsByteQueue* buffer);
     virtual void dispatch(PacketHandler* d);
-
+	void addItem(const std::string &Name, std::int16_t GrhIndex,
+			std::int16_t LingH, std::int16_t LingP, std::int16_t LingO,
+			std::int16_t ArmasHerreroIndex, std::int16_t ObjUpgrade);
     struct Item {
     std::string Name; 
     std::int16_t GrhIndex; 
@@ -4605,7 +4609,9 @@ public:
 
     virtual void serialize(clsByteQueue* buffer);
     virtual void dispatch(PacketHandler* d);
-
+	void addItem(const std::string &Name, std::int16_t GrhIndex,
+			std::int16_t Madera, std::int16_t MaderaElfica,
+			std::int16_t ObjCarpinteroIndex, std::int16_t ObjUpgrade);
     struct Item {
     std::string Name; 
     std::int16_t GrhIndex; 
@@ -4784,6 +4790,8 @@ public:
     SetInvisible();
     SetInvisible(clsByteQueue* buffer);
 
+    std::int16_t charIndex;
+    bool invisible;
     virtual void serialize(clsByteQueue* buffer);
     virtual void dispatch(PacketHandler* d);
 
@@ -5164,9 +5172,9 @@ public:
 
     virtual void serialize(clsByteQueue* buffer);
     virtual void dispatch(PacketHandler* d);
-
+    void addItem(const std::string &usuario);
     struct Item {
-    std::string Usuario; 
+    std::string Usuario;
     };
 
     std::vector<Item> Items;
