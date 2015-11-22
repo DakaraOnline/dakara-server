@@ -48,7 +48,7 @@ void Comercio(eModoComercio Modo, int UserIndex, int NpcIndex, int Slot, int Can
 			return;
 		} else if (Cantidad > MAX_INVENTORY_OBJS) {
 			SendData(SendTarget_ToAll, 0,
-					PrepareMessageConsoleMsg(
+					dakara::protocol::server::BuildConsoleMsg(
 							UserList[UserIndex].Name + " ha sido baneado por el sistema anti-cheats.",
 							FontTypeNames_FONTTYPE_FIGHT));
 			Ban(UserList[UserIndex].Name, "Sistema Anti Cheats",

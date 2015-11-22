@@ -250,18 +250,18 @@ void SendSpellEffects(int UserIndex, int NpcIndex, int Spell, bool DecirPalabras
 	/* '*************************************************** */
 	/* ' Spell Wav */
 	SendData(SendTarget_ToPCArea, UserIndex,
-			PrepareMessagePlayWave(Hechizos[Spell].WAV, UserList[UserIndex].Pos.X,
+			dakara::protocol::server::BuildPlayWave(Hechizos[Spell].WAV, UserList[UserIndex].Pos.X,
 					UserList[UserIndex].Pos.Y));
 
 	/* ' Spell FX */
 	SendData(SendTarget_ToPCArea, UserIndex,
-			PrepareMessageCreateFX(UserList[UserIndex].Char.CharIndex, Hechizos[Spell].FXgrh,
+			dakara::protocol::server::BuildCreateFX(UserList[UserIndex].Char.CharIndex, Hechizos[Spell].FXgrh,
 					Hechizos[Spell].loops));
 
 	/* ' Spell Words */
 	if (DecirPalabras) {
 		SendData(SendTarget_ToNPCArea, NpcIndex,
-				PrepareMessageChatOverHead(Hechizos[Spell].PalabrasMagicas, Npclist[NpcIndex].Char.CharIndex,
+				BuildChatOverHead(Hechizos[Spell].PalabrasMagicas, Npclist[NpcIndex].Char.CharIndex,
 						vbCyan));
 	}
 }
@@ -282,17 +282,17 @@ void NpcLanzaSpellSobreNpc(int NpcIndex, int TargetNPC, int SpellIndex, bool Dec
 
 	/* ' Spell sound and FX */
 	SendData(SendTarget_ToNPCArea, TargetNPC,
-			PrepareMessagePlayWave(Hechizos[SpellIndex].WAV, Npclist[TargetNPC].Pos.X,
+			dakara::protocol::server::BuildPlayWave(Hechizos[SpellIndex].WAV, Npclist[TargetNPC].Pos.X,
 					Npclist[TargetNPC].Pos.Y));
 
 	SendData(SendTarget_ToNPCArea, TargetNPC,
-			PrepareMessageCreateFX(Npclist[TargetNPC].Char.CharIndex, Hechizos[SpellIndex].FXgrh,
+			dakara::protocol::server::BuildCreateFX(Npclist[TargetNPC].Char.CharIndex, Hechizos[SpellIndex].FXgrh,
 					Hechizos[SpellIndex].loops));
 
 	/* ' Decir las palabras magicas? */
 	if (DecirPalabras) {
 		SendData(SendTarget_ToNPCArea, NpcIndex,
-				PrepareMessageChatOverHead(Hechizos[SpellIndex].PalabrasMagicas,
+				BuildChatOverHead(Hechizos[SpellIndex].PalabrasMagicas,
 						Npclist[NpcIndex].Char.CharIndex, vbCyan));
 	}
 
@@ -419,7 +419,7 @@ void DecirPalabrasMagicas(std::string SpellWords, int UserIndex) {
 
 	if (UserList[UserIndex].flags.AdminInvisible != 1) {
 		SendData(SendTarget_ToPCArea, UserIndex,
-				PrepareMessageChatOverHead(SpellWords, UserList[UserIndex].Char.CharIndex, vbCyan));
+				BuildChatOverHead(SpellWords, UserList[UserIndex].Char.CharIndex, vbCyan));
 
 		/* ' Si estaba oculto, se vuelve visible */
 		if (UserList[UserIndex].flags.Oculto == 1) {
@@ -566,7 +566,7 @@ void HechizoTerrenoEstado(int UserIndex, bool & b) {
 								&& UserList[MapData[PosCasteadaM][TempX][TempY].UserIndex].flags.AdminInvisible
 										== 0) {
 							SendData(SendTarget_ToPCArea, UserIndex,
-									PrepareMessageCreateFX(
+									dakara::protocol::server::BuildCreateFX(
 											UserList[MapData[PosCasteadaM][TempX][TempY].UserIndex].Char.CharIndex,
 											Hechizos[H].FXgrh, Hechizos[H].loops));
 						}
@@ -1717,7 +1717,7 @@ void HechizoPropNPC(int SpellIndex, int NpcIndex, int UserIndex, bool & HechizoC
 
 		if (Npclist[NpcIndex].flags.Snd2 > 0) {
 			SendData(SendTarget_ToNPCArea, NpcIndex,
-					PrepareMessagePlayWave(Npclist[NpcIndex].flags.Snd2, Npclist[NpcIndex].Pos.X,
+					dakara::protocol::server::BuildPlayWave(Npclist[NpcIndex].flags.Snd2, Npclist[NpcIndex].Pos.X,
 							Npclist[NpcIndex].Pos.Y));
 		}
 
@@ -1761,26 +1761,26 @@ void InfoHechizo(int UserIndex) {
 		/* ' Los admins invisibles no producen sonidos ni fx's */
 		if (UserList[UserIndex].flags.AdminInvisible == 1 && UserIndex == tUser) {
 			EnviarDatosASlot(UserIndex,
-					PrepareMessageCreateFX(UserList[tUser].Char.CharIndex, Hechizos[SpellIndex].FXgrh,
-							Hechizos[SpellIndex].loops));
+					PacketToString(dakara::protocol::server::BuildCreateFX(UserList[tUser].Char.CharIndex, Hechizos[SpellIndex].FXgrh,
+							Hechizos[SpellIndex].loops)));
 			EnviarDatosASlot(UserIndex,
-					PrepareMessagePlayWave(Hechizos[SpellIndex].WAV, UserList[tUser].Pos.X,
-							UserList[tUser].Pos.Y));
+					PacketToString(dakara::protocol::server::BuildPlayWave(Hechizos[SpellIndex].WAV, UserList[tUser].Pos.X,
+							UserList[tUser].Pos.Y)));
 		} else {
 			SendData(SendTarget_ToPCArea, tUser,
-					PrepareMessageCreateFX(UserList[tUser].Char.CharIndex, Hechizos[SpellIndex].FXgrh,
+					dakara::protocol::server::BuildCreateFX(UserList[tUser].Char.CharIndex, Hechizos[SpellIndex].FXgrh,
 							Hechizos[SpellIndex].loops));
 			/* 'Esta linea faltaba. Pablo (ToxicWaste) */
 			SendData(SendTarget_ToPCArea, tUser,
-					PrepareMessagePlayWave(Hechizos[SpellIndex].WAV, UserList[tUser].Pos.X,
+					dakara::protocol::server::BuildPlayWave(Hechizos[SpellIndex].WAV, UserList[tUser].Pos.X,
 							UserList[tUser].Pos.Y));
 		}
 	} else if (tNPC > 0) {
 		SendData(SendTarget_ToNPCArea, tNPC,
-				PrepareMessageCreateFX(Npclist[tNPC].Char.CharIndex, Hechizos[SpellIndex].FXgrh,
+				dakara::protocol::server::BuildCreateFX(Npclist[tNPC].Char.CharIndex, Hechizos[SpellIndex].FXgrh,
 						Hechizos[SpellIndex].loops));
 		SendData(SendTarget_ToNPCArea, tNPC,
-				PrepareMessagePlayWave(Hechizos[SpellIndex].WAV, Npclist[tNPC].Pos.X, Npclist[tNPC].Pos.Y));
+				dakara::protocol::server::BuildPlayWave(Hechizos[SpellIndex].WAV, Npclist[tNPC].Pos.X, Npclist[tNPC].Pos.Y));
 	}
 
 	if (tUser > 0) {

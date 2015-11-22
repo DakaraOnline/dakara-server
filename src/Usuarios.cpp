@@ -231,7 +231,7 @@ void ChangeUserChar(int UserIndex, int body, int Head, int heading, int Arma, in
 	UserList[UserIndex].Char.CascoAnim = casco;
 
 	SendData(SendTarget_ToPCArea, UserIndex,
-			PrepareMessageCharacterChange(body, Head, static_cast<eHeading>(heading), UserList[UserIndex].Char.CharIndex, Arma,
+			dakara::protocol::server::BuildCharacterChange(body, Head, static_cast<eHeading>(heading), UserList[UserIndex].Char.CharIndex, Arma,
 					Escudo, UserList[UserIndex].Char.FX, UserList[UserIndex].Char.loops, casco));
 }
 
@@ -298,11 +298,12 @@ void EraseUserChar(int UserIndex, bool IsAdminInvisible) {
 
 		/* ' Si esta invisible, solo el sabe de su propia existencia, es innecesario borrarlo en los demas clientes */
 		if (IsAdminInvisible) {
-			EnviarDatosASlot(UserIndex, PrepareMessageCharacterRemove(UserList[UserIndex].Char.CharIndex));
+			SendData(SendTarget_ToUserIndex, UserIndex,
+					dakara::protocol::server::BuildCharacterRemove(UserList[UserIndex].Char.CharIndex));
 		} else {
 			/* 'Le mandamos el mensaje para que borre el personaje a los clientes que estén cerca */
 			SendData(SendTarget_ToPCArea, UserIndex,
-					PrepareMessageCharacterRemove(UserList[UserIndex].Char.CharIndex));
+					dakara::protocol::server::BuildCharacterRemove(UserList[UserIndex].Char.CharIndex));
 		}
 	}
 
@@ -338,9 +339,10 @@ void RefreshCharStatus(int UserIndex) {
 
 	if (UserList[UserIndex].showName) {
 		SendData(SendTarget_ToPCArea, UserIndex,
-				PrepareMessageUpdateTagAndStatus(UserIndex, NickColor, UserList[UserIndex].Name + ClanTag));
+				dakara::protocol::server::BuildUpdateTagAndStatus(UserIndex, NickColor, UserList[UserIndex].Name + ClanTag));
 	} else {
-		SendData(SendTarget_ToPCArea, UserIndex, PrepareMessageUpdateTagAndStatus(UserIndex, NickColor, ""));
+		SendData(SendTarget_ToPCArea, UserIndex,
+				dakara::protocol::server::BuildUpdateTagAndStatus(UserIndex, NickColor, ""));
 	}
 
 	/* 'Si esta navengando, se cambia la barca. */
@@ -510,7 +512,7 @@ void CheckUserLevel(int UserIndex) {
 		UserLevelUp(UserIndex);
 
 		SendData(SendTarget_ToPCArea, UserIndex,
-				PrepareMessagePlayWave(SND_NIVEL, UserList[UserIndex].Pos.X, UserList[UserIndex].Pos.Y));
+				dakara::protocol::server::BuildPlayWave(SND_NIVEL, UserList[UserIndex].Pos.X, UserList[UserIndex].Pos.Y));
 		WriteConsoleMsg(UserIndex, "¡Has subido de nivel!", FontTypeNames_FONTTYPE_INFO);
 
 		if (UserList[UserIndex].Stats.ELV == 1) {
@@ -747,7 +749,7 @@ void CheckUserLevel(int UserIndex) {
 					/* 'We get here, so guild has factionary alignment, we have to expulse the user */
 					m_EcharMiembroDeClan(-1, UserList[UserIndex].Name);
 					SendData(SendTarget_ToGuildMembers, GI,
-							PrepareMessageConsoleMsg(UserList[UserIndex].Name + " deja el clan.",
+							dakara::protocol::server::BuildConsoleMsg(UserList[UserIndex].Name + " deja el clan.",
 									FontTypeNames_FONTTYPE_GUILD));
 					WriteConsoleMsg(UserIndex,
 							"¡Ya tienes la madurez suficiente como para decidir bajo que estandarte pelearás! Por esta razón, hasta tanto no te enlistes en la facción bajo la cual tu clan está alineado, estarás excluído del mismo.",
@@ -838,7 +840,7 @@ void MoveUserChar(int UserIndex, eHeading nHeading) {
 					/* ' Si es un admin invisible, no se avisa a los demas clientes */
 					if (UserList[CasperIndex].flags.AdminInvisible != 1) {
 						SendData(SendTarget_ToPCAreaButIndex, CasperIndex,
-								PrepareMessageCharacterMove(UserList[CasperIndex].Char.CharIndex,
+								dakara::protocol::server::BuildCharacterMove(UserList[CasperIndex].Char.CharIndex,
 										UserList[CasperIndex].Pos.X, UserList[CasperIndex].Pos.Y));
 					}
 
@@ -857,7 +859,7 @@ void MoveUserChar(int UserIndex, eHeading nHeading) {
 			/* ' Si es un admin invisible, no se avisa a los demas clientes */
 			if (!isAdminInvi) {
 				SendData(SendTarget_ToPCAreaButIndex, UserIndex,
-						PrepareMessageCharacterMove(UserList[UserIndex].Char.CharIndex, nPos.X, nPos.Y));
+						dakara::protocol::server::BuildCharacterMove(UserList[UserIndex].Char.CharIndex, nPos.X, nPos.Y));
 			}
 
 		}
@@ -1562,7 +1564,7 @@ void UserDie(int UserIndex) {
 
 	/* 'Quitar el dialogo del user muerto */
 	SendData(SendTarget_ToPCArea, UserIndex,
-			PrepareMessageRemoveCharDialog(UserList[UserIndex].Char.CharIndex));
+			dakara::protocol::server::BuildRemoveCharDialog(UserList[UserIndex].Char.CharIndex));
 
 	UserList[UserIndex].Stats.MinHp = 0;
 	UserList[UserIndex].Stats.MinSta = 0;
@@ -1866,7 +1868,7 @@ void WarpUserChar(int UserIndex, int Map, int X, int Y, bool FX, bool Teletransp
 
 	/* 'Quitar el dialogo */
 	SendData(SendTarget_ToPCArea, UserIndex,
-			PrepareMessageRemoveCharDialog(UserList[UserIndex].Char.CharIndex));
+			dakara::protocol::server::BuildRemoveCharDialog(UserList[UserIndex].Char.CharIndex));
 
 	OldMap = UserList[UserIndex].Pos.Map;
 
@@ -1985,9 +1987,9 @@ void WarpUserChar(int UserIndex, int Map, int X, int Y, bool FX, bool Teletransp
 
 	/* 'FX */
 	if (FX && UserList[UserIndex].flags.AdminInvisible == 0) {
-		SendData(SendTarget_ToPCArea, UserIndex, PrepareMessagePlayWave(SND_WARP, X, Y));
+		SendData(SendTarget_ToPCArea, UserIndex, dakara::protocol::server::BuildPlayWave(SND_WARP, X, Y));
 		SendData(SendTarget_ToPCArea, UserIndex,
-				PrepareMessageCreateFX(UserList[UserIndex].Char.CharIndex, FXIDs_FXWARP, 0));
+				dakara::protocol::server::BuildCreateFX(UserList[UserIndex].Char.CharIndex, FXIDs_FXWARP, 0));
 	}
 
 	if (UserList[UserIndex].NroMascotas) {
@@ -2480,7 +2482,7 @@ void SetInvisible(int UserIndex, int userCharIndex, bool invisible) {
 	std::string sndNick;
 
 	SendData(SendTarget_ToUsersAndRmsAndCounselorsAreaButGMs, UserIndex,
-			PrepareMessageSetInvisible(userCharIndex, invisible));
+			dakara::protocol::server::BuildSetInvisible(userCharIndex, invisible));
 
 	sndNick = UserList[UserIndex].Name;
 
@@ -2493,7 +2495,7 @@ void SetInvisible(int UserIndex, int userCharIndex, bool invisible) {
 	}
 
 	SendData(SendTarget_ToGMsAreaButRmsOrCounselors, UserIndex,
-			PrepareMessageCharacterChangeNick(userCharIndex, sndNick));
+			dakara::protocol::server::BuildCharacterChangeNick(userCharIndex, sndNick));
 }
 
 void SetConsulatMode(int UserIndex) {
@@ -2516,7 +2518,7 @@ void SetConsulatMode(int UserIndex) {
 	}
 
 	SendData(SendTarget_ToPCArea, UserIndex,
-			PrepareMessageCharacterChangeNick(UserList[UserIndex].Char.CharIndex, sndNick));
+			dakara::protocol::server::BuildCharacterChangeNick(UserList[UserIndex].Char.CharIndex, sndNick));
 }
 
 bool IsArena(int UserIndex) {

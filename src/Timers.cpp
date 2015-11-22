@@ -263,7 +263,8 @@ void AutoSave_Timer() {
 		/* ' Desactiva */
 		if (tmpHappyHour == 1) {
 			SendData(SendTarget_ToAll, 0,
-					PrepareMessageConsoleMsg("¡Ha concluido la Happy Hour!", FontTypeNames_FONTTYPE_DIOS));
+					dakara::protocol::server::BuildConsoleMsg("¡Ha concluido la Happy Hour!", FontTypeNames_FONTTYPE_DIOS));
+
 			HappyHourActivated = false;
 
 			/* ' Activa */
@@ -272,13 +273,13 @@ void AutoSave_Timer() {
 
 			if (HappyHour != 1) {
 				SendData(SendTarget_ToAll, 0,
-						PrepareMessageConsoleMsg(
+						dakara::protocol::server::BuildConsoleMsg(
 								"Se ha modificado la Happy Hour, a partir de ahora las criaturas aumentan su experiencia en un "
 										+ vb6::CStr(vb6::Round((tmpHappyHour - 1) * 100, 2)) + "%",
 								FontTypeNames_FONTTYPE_DIOS));
 			} else {
 				SendData(SendTarget_ToAll, 0,
-						PrepareMessageConsoleMsg(
+						dakara::protocol::server::BuildConsoleMsg(
 								"¡Ha comenzado la Happy Hour! ¡Las criaturas aumentan su experiencia en un "
 										+ vb6::CStr(vb6::Round((tmpHappyHour - 1) * 100, 2)) + "%!",
 								FontTypeNames_FONTTYPE_DIOS));
@@ -297,7 +298,7 @@ void AutoSave_Timer() {
 
 	if (Minutos == MinutosWs - 1) {
 		SendData(SendTarget_ToAll, 0,
-				PrepareMessageConsoleMsg("Worldsave en 1 minuto ...", FontTypeNames_FONTTYPE_VENENO));
+				dakara::protocol::server::BuildConsoleMsg("Worldsave en 1 minuto ...", FontTypeNames_FONTTYPE_VENENO));
 	}
 
 	if (Minutos >= MinutosWs) {
@@ -308,7 +309,7 @@ void AutoSave_Timer() {
 
 	if (MinsPjesSave == MinutosGuardarUsuarios - 1) {
 		SendData(SendTarget_ToAll, 0,
-				PrepareMessageConsoleMsg("CharSave en 1 minuto ...", FontTypeNames_FONTTYPE_VENENO));
+				dakara::protocol::server::BuildConsoleMsg("CharSave en 1 minuto ...", FontTypeNames_FONTTYPE_VENENO));
 	} else if (MinsPjesSave >= MinutosGuardarUsuarios) {
 		ActualizaExperiencias();
 		GuardarUsuarios();
@@ -640,24 +641,24 @@ void tLluviaEvent_Timer() {
 			if (RandomNumber(1, 100) <= 2) {
 				Lloviendo = true;
 				MinutosSinLluvia = 0;
-				SendData(SendTarget_ToAll, 0, PrepareMessageRainToggle());
+				SendData(SendTarget_ToAll, 0, dakara::protocol::server::BuildRainToggle());
 			}
 		} else if (MinutosSinLluvia >= 1440) {
 			Lloviendo = true;
 			MinutosSinLluvia = 0;
-			SendData(SendTarget_ToAll, 0, PrepareMessageRainToggle());
+			SendData(SendTarget_ToAll, 0, dakara::protocol::server::BuildRainToggle());
 		}
 	} else {
 		MinutosLloviendo = MinutosLloviendo + 1;
 		if (MinutosLloviendo >= 5) {
 			Lloviendo = false;
-			SendData(SendTarget_ToAll, 0, PrepareMessageRainToggle());
+			SendData(SendTarget_ToAll, 0, dakara::protocol::server::BuildRainToggle());
 			MinutosLloviendo = 0;
 		} else {
 			if (RandomNumber(1, 100) <= 2) {
 				Lloviendo = false;
 				MinutosLloviendo = 0;
-				SendData(SendTarget_ToAll, 0, PrepareMessageRainToggle());
+				SendData(SendTarget_ToAll, 0, dakara::protocol::server::BuildRainToggle());
 			}
 		}
 	}
@@ -705,7 +706,7 @@ void tPiqueteC_Timer() {
 				}
 				if (NuevaA) {
 					SendData(SendTarget_ToGuildMembers, GI,
-							PrepareMessageConsoleMsg(
+							dakara::protocol::server::BuildConsoleMsg(
 									"¡El clan ha pasado a tener alineación " + GuildAlignment(GI) + "!",
 									FontTypeNames_FONTTYPE_GUILD));
 					LogClanes("¡El clan cambio de alineación!");

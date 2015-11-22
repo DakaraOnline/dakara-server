@@ -625,14 +625,16 @@ void DoBackUp() {
 	/* 'Next i */
 	/* '''''''''''/'lo pongo aca x sugernecia del yind */
 
-	SendData(SendTarget_ToAll, 0, PrepareMessagePauseToggle());
+	SendData(SendTarget_ToAll, 0,
+			dakara::protocol::server::BuildPauseToggle());
 
 	LimpiarMundo();
 	WorldSave();
 	v_RutinaElecciones();
 	/* 'Call ResetCentinelaInfo     'Reseteamos al centinela 'Lo saco porque ahora el reset lo maneja el modCentinela [C4b3z0n] */
 
-	SendData(SendTarget_ToAll, 0, PrepareMessagePauseToggle());
+	SendData(SendTarget_ToAll, 0,
+			dakara::protocol::server::BuildPauseToggle());
 
 	/* 'Call EstadisticasWeb.Informar(EVENTO_NUEVO_CLAN, 0) */
 

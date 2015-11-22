@@ -247,7 +247,7 @@ void clsClan::ConectarMiembro(int UserIndex) {
 	/* ' No avisa cuando loguea un dios */
 	if (UserTienePrivilegio(UserIndex, PlayerType_Admin) || UserTienePrivilegio(UserIndex, PlayerType_Dios)) {
 		SendData(SendTarget_ToDiosesYclan, UserList[UserIndex].GuildIndex,
-				PrepareMessageGuildChat(UserList[UserIndex].Name + " se ha conectado."));
+				dakara::protocol::server::BuildGuildChat(UserList[UserIndex].Name + " se ha conectado."));
 	}
 }
 
@@ -265,7 +265,7 @@ void clsClan::DesConectarMiembro(int UserIndex) {
 		/* ' No avisa cuando se desconecta un dios */
 		if (UserTienePrivilegio(UserIndex, PlayerType_Admin) || UserTienePrivilegio(UserIndex, PlayerType_Dios)) {
 			SendData(SendTarget_ToDiosesYclan, UserList[UserIndex].GuildIndex,
-					PrepareMessageGuildChat(UserList[UserIndex].Name + " se ha desconectado."));
+					dakara::protocol::server::BuildGuildChat(UserList[UserIndex].Name + " se ha desconectado."));
 		}
 	}
 }

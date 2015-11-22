@@ -1,5 +1,5 @@
 /******************************************************************************
-    Copyright (C) 2002-2015 Argentum Online & Dakara Online Developers
+p    Copyright (C) 2002-2015 Argentum Online & Dakara Online Developers
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -22,8 +22,14 @@
 #include <string>
 #include "vb6compat.h"
 #include "enums.h"
+#include "ProtocolNew.h"
+
 
 extern const std::string SEPARATOR;
+
+inline dakara::protocol::server::ChatOverHead BuildChatOverHead(const std::string& Chat, std::int16_t CharIndex, std::uint32_t color) {
+	return dakara::protocol::server::BuildChatOverHead(Chat, CharIndex, color & 0xff, (color >> 8) & 0xff, (color >> 16) & 0xff);
+}
 
 void WriteMultiMessage(int UserIndex, int MessageIndex, int Arg1 = int(), int Arg2 = int(), int Arg3 = int(),
 		std::string StringArg1 = std::string());
@@ -942,231 +948,6 @@ void WritePong(int UserIndex);
 
 void FlushBuffer(int UserIndex);
 
-/* '' */
-/* ' Prepares the "SetInvisible" message and returns it. */
-/* ' */
-/* ' @param    CharIndex The char turning visible / invisible. */
-/* ' @param    invisible True if the char is no longer visible, False otherwise. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The message is written to no outgoing buffer, but only prepared in a single string to be easily sent to several clients. */
-
-std::string PrepareMessageSetInvisible(int CharIndex, bool invisible);
-
-std::string PrepareMessageCharacterChangeNick(int CharIndex, std::string newNick);
-
-/* '' */
-/* ' Prepares the "ChatOverHead" message and returns it. */
-/* ' */
-/* ' @param    Chat Text to be displayed over the char's head. */
-/* ' @param    CharIndex The character uppon which the chat will be displayed. */
-/* ' @param    Color The color to be used when displaying the chat. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The message is written to no outgoing buffer, but only prepared in a single string to be easily sent to several clients. */
-
-std::string PrepareMessageChatOverHead(std::string Chat, int CharIndex, int color);
-
-/* '' */
-/* ' Prepares the "ConsoleMsg" message and returns it. */
-/* ' */
-/* ' @param    Chat Text to be displayed over the char's head. */
-/* ' @param    FontIndex Index of the FONTTYPE structure to use. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageConsoleMsg(std::string Chat, FontTypeNames FontIndex);
-
-std::string PrepareCommerceConsoleMsg(std::string & Chat, FontTypeNames FontIndex);
-
-/* '' */
-/* ' Prepares the "CreateFX" message and returns it. */
-/* ' */
-/* ' @param    UserIndex User to which the message is intended. */
-/* ' @param    CharIndex Character upon which the FX will be created. */
-/* ' @param    FX FX index to be displayed over the new character. */
-/* ' @param    FXLoops Number of times the FX should be rendered. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageCreateFX(int CharIndex, int FX, int FXLoops);
-
-/* '' */
-/* ' Prepares the "PlayWave" message and returns it. */
-/* ' */
-/* ' @param    wave The wave to be played. */
-/* ' @param    X The X position in map coordinates from where the sound comes. */
-/* ' @param    Y The Y position in map coordinates from where the sound comes. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessagePlayWave(int wave, int X, int Y);
-
-/* '' */
-/* ' Prepares the "GuildChat" message and returns it. */
-/* ' */
-/* ' @param    Chat Text to be displayed over the char's head. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageGuildChat(std::string Chat);
-
-/* '' */
-/* ' Prepares the "ShowMessageBox" message and returns it. */
-/* ' */
-/* ' @param    Message Text to be displayed in the message box. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageShowMessageBox(std::string Chat);
-
-/* '' */
-/* ' Prepares the "PlayMidi" message and returns it. */
-/* ' */
-/* ' @param    midi The midi to be played. */
-/* ' @param    loops Number of repets for the midi. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessagePlayMidi(int midi, int loops = -1);
-
-/* '' */
-/* ' Prepares the "PauseToggle" message and returns it. */
-/* ' */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessagePauseToggle();
-
-/* '' */
-/* ' Prepares the "RainToggle" message and returns it. */
-/* ' */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageRainToggle();
-
-/* '' */
-/* ' Prepares the "ObjectDelete" message and returns it. */
-/* ' */
-/* ' @param    X X coord of the character's new position. */
-/* ' @param    Y Y coord of the character's new position. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageObjectDelete(int X, int Y);
-
-/* '' */
-/* ' Prepares the "BlockPosition" message and returns it. */
-/* ' */
-/* ' @param    X X coord of the tile to block/unblock. */
-/* ' @param    Y Y coord of the tile to block/unblock. */
-/* ' @param    Blocked Blocked status of the tile */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageBlockPosition(int X, int Y, bool Blocked);
-
-/* '' */
-/* ' Prepares the "ObjectCreate" message and returns it. */
-/* ' */
-/* ' @param    GrhIndex Grh of the object. */
-/* ' @param    X X coord of the character's new position. */
-/* ' @param    Y Y coord of the character's new position. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageObjectCreate(int GrhIndex, int X, int Y);
-
-/* '' */
-/* ' Prepares the "CharacterRemove" message and returns it. */
-/* ' */
-/* ' @param    CharIndex Character to be removed. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageCharacterRemove(int CharIndex);
-
-/* '' */
-/* ' Prepares the "RemoveCharDialog" message and returns it. */
-/* ' */
-/* ' @param    CharIndex Character whose dialog will be removed. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageRemoveCharDialog(int CharIndex);
-
-/* '' */
-/* ' Writes the "CharacterCreate" message to the given user's outgoing data buffer. */
-/* ' */
-/* ' @param    body Body index of the new character. */
-/* ' @param    head Head index of the new character. */
-/* ' @param    heading Heading in which the new character is looking. */
-/* ' @param    CharIndex The index of the new character. */
-/* ' @param    X X coord of the new character's position. */
-/* ' @param    Y Y coord of the new character's position. */
-/* ' @param    weapon Weapon index of the new character. */
-/* ' @param    shield Shield index of the new character. */
-/* ' @param    FX FX index to be displayed over the new character. */
-/* ' @param    FXLoops Number of times the FX should be rendered. */
-/* ' @param    helmet Helmet index of the new character. */
-/* ' @param    name Name of the new character. */
-/* ' @param    NickColor Determines if the character is a criminal or not, and if can be atacked by someone */
-/* ' @param    privileges Sets if the character is a normal one or any kind of administrative character. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageCharacterCreate(int body, int Head, eHeading heading, int CharIndex, int X, int Y,
-		int weapon, int shield, int FX, int FXLoops, int helmet, std::string Name, int NickColor,
-		int Privileges);
-
-/* '' */
-/* ' Prepares the "CharacterChange" message and returns it. */
-/* ' */
-/* ' @param    body Body index of the new character. */
-/* ' @param    head Head index of the new character. */
-/* ' @param    heading Heading in which the new character is looking. */
-/* ' @param    CharIndex The index of the new character. */
-/* ' @param    weapon Weapon index of the new character. */
-/* ' @param    shield Shield index of the new character. */
-/* ' @param    FX FX index to be displayed over the new character. */
-/* ' @param    FXLoops Number of times the FX should be rendered. */
-/* ' @param    helmet Helmet index of the new character. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageCharacterChange(int body, int Head, eHeading heading, int CharIndex, int weapon,
-		int shield, int FX, int FXLoops, int helmet);
-
-/* '' */
-/* ' Prepares the "CharacterMove" message and returns it. */
-/* ' */
-/* ' @param    CharIndex Character which is moving. */
-/* ' @param    X X coord of the character's new position. */
-/* ' @param    Y Y coord of the character's new position. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageCharacterMove(int CharIndex, int X, int Y);
-
-std::string PrepareMessageForceCharMove(eHeading Direccion);
-
-/* '' */
-/* ' Prepares the "UpdateTagAndStatus" message and returns it. */
-/* ' */
-/* ' @param    CharIndex Character which is moving. */
-/* ' @param    X X coord of the character's new position. */
-/* ' @param    Y Y coord of the character's new position. */
-/* ' @return   The formated message ready to be writen as is on outgoing buffers. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageUpdateTagAndStatus(int UserIndex, int NickColor, std::string Tag);
-
-/* '' */
-/* ' Prepares the "ErrorMsg" message and returns it. */
-/* ' */
-/* ' @param    message The error message to be displayed. */
-/* ' @remarks  The data is not actually sent until the buffer is properly flushed. */
-
-std::string PrepareMessageErrorMsg(std::string message);
 
 /* '' */
 /* ' Writes the "StopWorking" message to the given user's outgoing data buffer. */

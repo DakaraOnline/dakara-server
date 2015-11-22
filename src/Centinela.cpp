@@ -222,7 +222,7 @@ void CentinelaFinalCheck(int CentiIndex) {
 
 		/* 'Avisamos a los admins */
 		SendData(SendTarget_ToAdmins, 0,
-				PrepareMessageConsoleMsg(
+				dakara::protocol::server::BuildConsoleMsg(
 						"Servidor> El centinela ha ejecutado a " + UserName + " y lo echó del juego.",
 						FontTypeNames_FONTTYPE_SERVER));
 

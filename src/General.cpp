@@ -138,7 +138,7 @@ void Bloquear(bool toMap, int sndIndex, int X, int Y, bool b) {
 	/* '*************************************************** */
 
 	if (toMap) {
-		SendData(SendTarget_toMap, sndIndex, PrepareMessageBlockPosition(X, Y, b));
+		SendData(SendTarget_toMap, sndIndex, dakara::protocol::server::BuildBlockPosition(X, Y, b));
 	} else {
 		WriteBlockPosition(sndIndex, X, Y, b);
 	}
@@ -1339,9 +1339,10 @@ void GuardarUsuarios() {
 
 	haciendoBK = true;
 
-	SendData(SendTarget_ToAll, 0, PrepareMessagePauseToggle());
 	SendData(SendTarget_ToAll, 0,
-			PrepareMessageConsoleMsg("Servidor> Grabando Personajes", FontTypeNames_FONTTYPE_SERVER));
+			dakara::protocol::server::BuildPauseToggle());
+	SendData(SendTarget_ToAll, 0,
+			dakara::protocol::server::BuildConsoleMsg("Servidor> Grabando Personajes", FontTypeNames_FONTTYPE_SERVER));
 
 	int i;
 	for (i = (1); i <= (LastUser); i++) {
@@ -1354,8 +1355,9 @@ void GuardarUsuarios() {
 	SaveRecords();
 
 	SendData(SendTarget_ToAll, 0,
-			PrepareMessageConsoleMsg("Servidor> Personajes Grabados", FontTypeNames_FONTTYPE_SERVER));
-	SendData(SendTarget_ToAll, 0, PrepareMessagePauseToggle());
+			dakara::protocol::server::BuildConsoleMsg("Servidor> Personajes Grabados", FontTypeNames_FONTTYPE_SERVER));
+	SendData(SendTarget_ToAll, 0,
+			dakara::protocol::server::BuildPauseToggle());
 
 	haciendoBK = false;
 }

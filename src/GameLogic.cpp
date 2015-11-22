@@ -957,7 +957,7 @@ void Expresar(int NpcIndex, int UserIndex) {
 		int randomi;
 		randomi = RandomNumber(1, Npclist[NpcIndex].NroExpresiones);
 		SendData(SendTarget_ToPCArea, UserIndex,
-				PrepareMessageChatOverHead(Npclist[NpcIndex].Expresiones[randomi],
+				BuildChatOverHead(Npclist[NpcIndex].Expresiones[randomi],
 						Npclist[NpcIndex].Char.CharIndex, 0x00ffffff));
 	}
 }

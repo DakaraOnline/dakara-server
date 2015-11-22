@@ -1082,7 +1082,7 @@ bool ConnectUser(int UserIndex, const std::string & Name, const std::string & Pa
 	SendMOTD(UserIndex);
 
     if (EnviarPopupOfTheDay) {
-        EnviarDatosASlot(UserIndex, PrepareMessageShowMessageBox(PopupOfTheDayMessage));
+        SendData(SendTarget_ToUserIndex, UserIndex, dakara::protocol::server::BuildShowMessageBox(PopupOfTheDayMessage));
     }
 
 	if (haciendoBK) {
@@ -1126,7 +1126,7 @@ bool ConnectUser(int UserIndex, const std::string & Name, const std::string & Pa
 
 	if (NumUsers > RECORDusuarios) {
 		SendData(SendTarget_ToAll, 0,
-				PrepareMessageConsoleMsg(
+				dakara::protocol::server::BuildConsoleMsg(
 						vb6::CStr("RECORD de usuarios conectados simultaneamente. Hay ") + vb6::CStr(NumUsers) + " usuarios.",
 						FontTypeNames_FONTTYPE_INFO));
 		RECORDusuarios = NumUsers;
@@ -1175,7 +1175,7 @@ bool ConnectUser(int UserIndex, const std::string & Name, const std::string & Pa
 	}
 
 	SendData(SendTarget_ToPCArea, UserIndex,
-			PrepareMessageCreateFX(UserList[UserIndex].Char.CharIndex, FXIDs_FXWARP, 0));
+			dakara::protocol::server::BuildCreateFX(UserList[UserIndex].Char.CharIndex, FXIDs_FXWARP, 0));
 
 	WriteLoggedMessage(UserIndex);
 
@@ -1602,7 +1602,7 @@ void CloseUser(int UserIndex) {
 	UserList[UserIndex].Char.FX = 0;
 	UserList[UserIndex].Char.loops = 0;
 	SendData(SendTarget_ToPCArea, UserIndex,
-			PrepareMessageCreateFX(UserList[UserIndex].Char.CharIndex, 0, 0));
+			dakara::protocol::server::BuildCreateFX(UserList[UserIndex].Char.CharIndex, 0, 0));
 
 	UserList[UserIndex].flags.UserLogged = false;
 	UserList[UserIndex].Counters.Saliendo = false;
@@ -1636,7 +1636,7 @@ void CloseUser(int UserIndex) {
 	if (MapaValido(Map)) {
 		if (MapInfo[Map].NumUsers > 0) {
 			SendData(SendTarget_ToPCAreaButIndex, UserIndex,
-					PrepareMessageRemoveCharDialog(UserList[UserIndex].Char.CharIndex));
+					dakara::protocol::server::BuildRemoveCharDialog(UserList[UserIndex].Char.CharIndex));
 		}
 
 		/* 'Update Map Users */

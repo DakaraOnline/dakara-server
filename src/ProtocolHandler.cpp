@@ -21,6 +21,14 @@
 #include "vb6compat.h"
 #include "Crypto.h"
 
+std::vector<DakaraPacketHandler> UserProtocolHandler;
+
+void InitProtocolHandler() {
+	for (size_t i = 0; i < UserList.ubound(); ++i) {
+		UserProtocolHandler.emplace_back(i);
+	}
+}
+
 void HandleIncomingData(int UserIndex) {
 
 	int k = 0;
@@ -71,8 +79,8 @@ void HandleIncomingDataOnePacket(int UserIndex) {
 	packetID = UserList[UserIndex].sockctx->incomingData->PeekByte();
 
 	/* 'Does the packet requires a logged user?? */
-	if (!(packetID == ClientPacketID_ThrowDices || packetID == ClientPacketID_LoginExistingChar
-			|| packetID == ClientPacketID_LoginNewChar)) {
+	if (!(packetID == dakara::protocol::client::ClientPacketID_ThrowDices || packetID == dakara::protocol::client::ClientPacketID_LoginExistingChar
+			|| packetID == dakara::protocol::client::ClientPacketID_LoginNewChar)) {
 
 		/* 'Is the user actually logged? */
 		if (!UserList[UserIndex].flags.UserLogged) {
@@ -80,10 +88,10 @@ void HandleIncomingDataOnePacket(int UserIndex) {
 			return;
 
 			/* 'He is logged. Reset idle counter if id is valid. */
-		} else if (packetID <= LAST_CLIENT_PACKET_ID) {
+		} else if (packetID <= dakara::protocol::client::ClientPacketID_PACKET_COUNT) {
 			UserList[UserIndex].Counters.IdleCount = 0;
 		}
-	} else if (packetID <= LAST_CLIENT_PACKET_ID) {
+	} else if (packetID <= dakara::protocol::client::ClientPacketID_PACKET_COUNT) {
 		UserList[UserIndex].Counters.IdleCount = 0;
 
 		/* 'Is the user logged? */
@@ -96,1694 +104,46 @@ void HandleIncomingDataOnePacket(int UserIndex) {
 	/* ' Ante cualquier paquete, pierde la proteccion de ser atacado. */
 	UserList[UserIndex].flags.NoPuedeSerAtacado = false;
 
-	switch (packetID) {
-	/* 'OLOGIN */
-	case ClientPacketID_LoginExistingChar:
-		HandleLoginExistingChar(UserIndex);
-
-		/* 'TIRDAD */
-		break;
-
-	case ClientPacketID_ThrowDices:
-		HandleThrowDices(UserIndex);
-
-		/* 'NLOGIN */
-		break;
-
-	case ClientPacketID_LoginNewChar:
-		HandleLoginNewChar(UserIndex);
-
-		/* '; */
-		break;
-
-	case ClientPacketID_Talk:
-		HandleTalk(UserIndex);
-
-		/* '- */
-		break;
-
-	case ClientPacketID_Yell:
-		HandleYell(UserIndex);
-
-		/* '\ */
-		break;
-
-	case ClientPacketID_Whisper:
-		HandleWhisper(UserIndex);
-
-		/* 'M */
-		break;
-
-	case ClientPacketID_Walk:
-		HandleWalk(UserIndex);
-
-		/* 'RPU */
-		break;
-
-	case ClientPacketID_RequestPositionUpdate:
-		HandleRequestPositionUpdate(UserIndex);
-
-		/* 'AT */
-		break;
-
-	case ClientPacketID_Attack:
-		HandleAttack(UserIndex);
-
-		/* 'AG */
-		break;
-
-	case ClientPacketID_PickUp:
-		HandlePickUp(UserIndex);
-
-		/* '/SEG & SEG  (SEG's behaviour has to be coded in the client) */
-		break;
-
-	case ClientPacketID_SafeToggle:
-		HandleSafeToggle(UserIndex);
-
-		break;
-
-	case ClientPacketID_ResuscitationSafeToggle:
-		HandleResuscitationToggle(UserIndex);
-
-		/* 'GLINFO */
-		break;
-
-	case ClientPacketID_RequestGuildLeaderInfo:
-		HandleRequestGuildLeaderInfo(UserIndex);
-
-		/* 'ATR */
-		break;
-
-	case ClientPacketID_RequestAtributes:
-		HandleRequestAtributes(UserIndex);
-
-		/* 'FAMA */
-		break;
-
-	case ClientPacketID_RequestFame:
-		HandleRequestFame(UserIndex);
-
-		/* 'ESKI */
-		break;
-
-	case ClientPacketID_RequestSkills:
-		HandleRequestSkills(UserIndex);
-
-		/* 'FEST */
-		break;
-
-	case ClientPacketID_RequestMiniStats:
-		HandleRequestMiniStats(UserIndex);
-
-		/* 'FINCOM */
-		break;
-
-	case ClientPacketID_CommerceEnd:
-		HandleCommerceEnd(UserIndex);
-
-		break;
-
-	case ClientPacketID_CommerceChat:
-		HandleCommerceChat(UserIndex);
-
-		/* 'FINCOMUSU */
-		break;
-
-	case ClientPacketID_UserCommerceEnd:
-		HandleUserCommerceEnd(UserIndex);
-
-		break;
-
-	case ClientPacketID_UserCommerceConfirm:
-		HandleUserCommerceConfirm(UserIndex);
-
-		/* 'FINBAN */
-		break;
-
-	case ClientPacketID_BankEnd:
-		HandleBankEnd(UserIndex);
-
-		/* 'COMUSUOK */
-		break;
-
-	case ClientPacketID_UserCommerceOk:
-		HandleUserCommerceOk(UserIndex);
-
-		/* 'COMUSUNO */
-		break;
-
-	case ClientPacketID_UserCommerceReject:
-		HandleUserCommerceReject(UserIndex);
-
-		/* 'TI */
-		break;
-
-	case ClientPacketID_Drop:
-		HandleDrop(UserIndex);
-
-		/* 'LH */
-		break;
-
-	case ClientPacketID_CastSpell:
-		HandleCastSpell(UserIndex);
-
-		/* 'LC */
-		break;
-
-	case ClientPacketID_LeftClick:
-		HandleLeftClick(UserIndex);
-
-		/* 'RC */
-		break;
-
-	case ClientPacketID_DoubleClick:
-		HandleDoubleClick(UserIndex);
-
-		/* 'UK */
-		break;
-
-	case ClientPacketID_Work:
-		HandleWork(UserIndex);
-
-		/* 'UMH */
-		break;
-
-	case ClientPacketID_UseSpellMacro:
-		HandleUseSpellMacro(UserIndex);
-
-		/* 'USA */
-		break;
-
-	case ClientPacketID_UseItem:
-		HandleUseItem(UserIndex);
-
-		/* 'CNS */
-		break;
-
-	case ClientPacketID_CraftBlacksmith:
-		HandleCraftBlacksmith(UserIndex);
-
-		/* 'CNC */
-		break;
-
-	case ClientPacketID_CraftCarpenter:
-		HandleCraftCarpenter(UserIndex);
-
-		/* 'WLC */
-		break;
-
-	case ClientPacketID_WorkLeftClick:
-		HandleWorkLeftClick(UserIndex);
-
-		/* 'CIG */
-		break;
-
-	case ClientPacketID_CreateNewGuild:
-		HandleCreateNewGuild(UserIndex);
-
-		/* 'INFS */
-		break;
-
-	case ClientPacketID_SpellInfo:
-		HandleSpellInfo(UserIndex);
-
-		/* 'EQUI */
-		break;
-
-	case ClientPacketID_EquipItem:
-		HandleEquipItem(UserIndex);
-
-		/* 'CHEA */
-		break;
-
-	case ClientPacketID_ChangeHeading:
-		HandleChangeHeading(UserIndex);
-
-		/* 'SKSE */
-		break;
-
-	case ClientPacketID_ModifySkills:
-		HandleModifySkills(UserIndex);
-
-		/* 'ENTR */
-		break;
-
-	case ClientPacketID_Train:
-		HandleTrain(UserIndex);
-
-		/* 'COMP */
-		break;
-
-	case ClientPacketID_CommerceBuy:
-		HandleCommerceBuy(UserIndex);
-
-		/* 'RETI */
-		break;
-
-	case ClientPacketID_BankExtractItem:
-		HandleBankExtractItem(UserIndex);
-
-		/* 'VEND */
-		break;
-
-	case ClientPacketID_CommerceSell:
-		HandleCommerceSell(UserIndex);
-
-		/* 'DEPO */
-		break;
-
-	case ClientPacketID_BankDeposit:
-		HandleBankDeposit(UserIndex);
-
-		/* 'DEMSG */
-		break;
-
-	case ClientPacketID_ForumPost:
-		HandleForumPost(UserIndex);
-
-		/* 'DESPHE */
-		break;
-
-	case ClientPacketID_MoveSpell:
-		HandleMoveSpell(UserIndex);
-
-		break;
-
-	case ClientPacketID_MoveBank:
-		HandleMoveBank(UserIndex);
-
-		/* 'DESCOD */
-		break;
-
-	case ClientPacketID_ClanCodexUpdate:
-		HandleClanCodexUpdate(UserIndex);
-
-		/* 'OFRECER */
-		break;
-
-	case ClientPacketID_UserCommerceOffer:
-		HandleUserCommerceOffer(UserIndex);
-
-		/* 'ACEPPEAT */
-		break;
-
-	case ClientPacketID_GuildAcceptPeace:
-		HandleGuildAcceptPeace(UserIndex);
-
-		/* 'RECPALIA */
-		break;
-
-	case ClientPacketID_GuildRejectAlliance:
-		HandleGuildRejectAlliance(UserIndex);
-
-		/* 'RECPPEAT */
-		break;
-
-	case ClientPacketID_GuildRejectPeace:
-		HandleGuildRejectPeace(UserIndex);
-
-		/* 'ACEPALIA */
-		break;
-
-	case ClientPacketID_GuildAcceptAlliance:
-		HandleGuildAcceptAlliance(UserIndex);
-
-		/* 'PEACEOFF */
-		break;
-
-	case ClientPacketID_GuildOfferPeace:
-		HandleGuildOfferPeace(UserIndex);
-
-		/* 'ALLIEOFF */
-		break;
-
-	case ClientPacketID_GuildOfferAlliance:
-		HandleGuildOfferAlliance(UserIndex);
-
-		/* 'ALLIEDET */
-		break;
-
-	case ClientPacketID_GuildAllianceDetails:
-		HandleGuildAllianceDetails(UserIndex);
-
-		/* 'PEACEDET */
-		break;
-
-	case ClientPacketID_GuildPeaceDetails:
-		HandleGuildPeaceDetails(UserIndex);
-
-		/* 'ENVCOMEN */
-		break;
-
-	case ClientPacketID_GuildRequestJoinerInfo:
-		HandleGuildRequestJoinerInfo(UserIndex);
-
-		/* 'ENVALPRO */
-		break;
-
-	case ClientPacketID_GuildAlliancePropList:
-		HandleGuildAlliancePropList(UserIndex);
-
-		/* 'ENVPROPP */
-		break;
-
-	case ClientPacketID_GuildPeacePropList:
-		HandleGuildPeacePropList(UserIndex);
-
-		/* 'DECGUERR */
-		break;
-
-	case ClientPacketID_GuildDeclareWar:
-		HandleGuildDeclareWar(UserIndex);
-
-		/* 'NEWWEBSI */
-		break;
-
-	case ClientPacketID_GuildNewWebsite:
-		HandleGuildNewWebsite(UserIndex);
-
-		/* 'ACEPTARI */
-		break;
-
-	case ClientPacketID_GuildAcceptNewMember:
-		HandleGuildAcceptNewMember(UserIndex);
-
-		/* 'RECHAZAR */
-		break;
-
-	case ClientPacketID_GuildRejectNewMember:
-		HandleGuildRejectNewMember(UserIndex);
-
-		/* 'ECHARCLA */
-		break;
-
-	case ClientPacketID_GuildKickMember:
-		HandleGuildKickMember(UserIndex);
-
-		/* 'ACTGNEWS */
-		break;
-
-	case ClientPacketID_GuildUpdateNews:
-		HandleGuildUpdateNews(UserIndex);
-
-		/* '1HRINFO< */
-		break;
-
-	case ClientPacketID_GuildMemberInfo:
-		HandleGuildMemberInfo(UserIndex);
-
-		/* 'ABREELEC */
-		break;
-
-	case ClientPacketID_GuildOpenElections:
-		HandleGuildOpenElections(UserIndex);
-
-		/* 'SOLICITUD */
-		break;
-
-	case ClientPacketID_GuildRequestMembership:
-		HandleGuildRequestMembership(UserIndex);
-
-		/* 'CLANDETAILS */
-		break;
-
-	case ClientPacketID_GuildRequestDetails:
-		HandleGuildRequestDetails(UserIndex);
-
-		/* '/ONLINE */
-		break;
-
-	case ClientPacketID_Online:
-		HandleOnline(UserIndex);
-
-		/* '/SALIR */
-		break;
-
-	case ClientPacketID_Quit:
-		HandleQuit(UserIndex);
-
-		/* '/SALIRCLAN */
-		break;
-
-	case ClientPacketID_GuildLeave:
-		HandleGuildLeave(UserIndex);
-
-		/* '/BALANCE */
-		break;
-
-	case ClientPacketID_RequestAccountState:
-		HandleRequestAccountState(UserIndex);
-
-		/* '/QUIETO */
-		break;
-
-	case ClientPacketID_PetStand:
-		HandlePetStand(UserIndex);
-
-		/* '/ACOMPANAR */
-		break;
-
-	case ClientPacketID_PetFollow:
-		HandlePetFollow(UserIndex);
-
-		/* '/LIBERAR */
-		break;
-
-	case ClientPacketID_ReleasePet:
-		HandleReleasePet(UserIndex);
-
-		/* '/ENTRENAR */
-		break;
-
-	case ClientPacketID_TrainList:
-		HandleTrainList(UserIndex);
-
-		/* '/DESCANSAR */
-		break;
-
-	case ClientPacketID_Rest:
-		HandleRest(UserIndex);
-
-		/* '/MEDITAR */
-		break;
-
-	case ClientPacketID_Meditate:
-		HandleMeditate(UserIndex);
-
-		/* '/RESUCITAR */
-		break;
-
-	case ClientPacketID_Resucitate:
-		HandleResucitate(UserIndex);
-
-		/* '/CURAR */
-		break;
-
-	case ClientPacketID_Heal:
-		HandleHeal(UserIndex);
-
-		/* '/AYUDA */
-		break;
-
-	case ClientPacketID_Help:
-		HandleHelp(UserIndex);
-
-		/* '/EST */
-		break;
-
-	case ClientPacketID_RequestStats:
-		HandleRequestStats(UserIndex);
-
-		/* '/COMERCIAR */
-		break;
-
-	case ClientPacketID_CommerceStart:
-		HandleCommerceStart(UserIndex);
-
-		/* '/BOVEDA */
-		break;
-
-	case ClientPacketID_BankStart:
-		HandleBankStart(UserIndex);
-
-		/* '/ENLISTAR */
-		break;
-
-	case ClientPacketID_Enlist:
-		HandleEnlist(UserIndex);
-
-		/* '/INFORMACION */
-		break;
-
-	case ClientPacketID_Information:
-		HandleInformation(UserIndex);
-
-		/* '/RECOMPENSA */
-		break;
-
-	case ClientPacketID_Reward:
-		HandleReward(UserIndex);
-
-		/* '/MOTD */
-		break;
-
-	case ClientPacketID_RequestMOTD:
-		HandleRequestMOTD(UserIndex);
-
-		/* '/UPTIME */
-		break;
-
-	case ClientPacketID_UpTime:
-		HandleUpTime(UserIndex);
-
-		/* '/SALIRPARTY */
-		break;
-
-	case ClientPacketID_PartyLeave:
-		HandlePartyLeave(UserIndex);
-
-		/* '/CREARPARTY */
-		break;
-
-	case ClientPacketID_PartyCreate:
-		HandlePartyCreate(UserIndex);
-
-		/* '/PARTY */
-		break;
-
-	case ClientPacketID_PartyJoin:
-		HandlePartyJoin(UserIndex);
-
-		/* '/ENCUESTA ( with no params ) */
-		break;
-
-	case ClientPacketID_Inquiry:
-		HandleInquiry(UserIndex);
-
-		/* '/CMSG */
-		break;
-
-	case ClientPacketID_GuildMessage:
-		HandleGuildMessage(UserIndex);
-
-		/* '/PMSG */
-		break;
-
-	case ClientPacketID_PartyMessage:
-		HandlePartyMessage(UserIndex);
-
-		/* '/CENTINELA */
-		break;
-
-	case ClientPacketID_CentinelReport:
-		HandleCentinelReport(UserIndex);
-
-		/* '/ONLINECLAN */
-		break;
-
-	case ClientPacketID_GuildOnline:
-		HandleGuildOnline(UserIndex);
-
-		/* '/ONLINEPARTY */
-		break;
-
-	case ClientPacketID_PartyOnline:
-		HandlePartyOnline(UserIndex);
-
-		/* '/BMSG */
-		break;
-
-	case ClientPacketID_CouncilMessage:
-		HandleCouncilMessage(UserIndex);
-
-		/* '/ROL */
-		break;
-
-	case ClientPacketID_RoleMasterRequest:
-		HandleRoleMasterRequest(UserIndex);
-
-		/* '/GM */
-		break;
-
-	case ClientPacketID_GMRequest:
-		HandleGMRequest(UserIndex);
-
-		/* '/_BUG */
-		break;
-
-	case ClientPacketID_bugReport:
-		HandleBugReport(UserIndex);
-
-		/* '/DESC */
-		break;
-
-	case ClientPacketID_ChangeDescription:
-		HandleChangeDescription(UserIndex);
-
-		/* '/VOTO */
-		break;
-
-	case ClientPacketID_GuildVote:
-		HandleGuildVote(UserIndex);
-
-		/* '/PENAS */
-		break;
-
-	case ClientPacketID_Punishments:
-		HandlePunishments(UserIndex);
-
-		/* '/CONTRASENA */
-		break;
-
-	case ClientPacketID_ChangePassword:
-		HandleChangePassword(UserIndex);
-
-		/* '/APOSTAR */
-		break;
-
-	case ClientPacketID_Gamble:
-		HandleGamble(UserIndex);
-
-		/* '/ENCUESTA ( with parameters ) */
-		break;
-
-	case ClientPacketID_InquiryVote:
-		HandleInquiryVote(UserIndex);
-
-		/* '/RETIRAR ( with no arguments ) */
-		break;
-
-	case ClientPacketID_LeaveFaction:
-		HandleLeaveFaction(UserIndex);
-
-		/* '/RETIRAR ( with arguments ) */
-		break;
-
-	case ClientPacketID_BankExtractGold:
-		HandleBankExtractGold(UserIndex);
-
-		/* '/DEPOSITAR */
-		break;
-
-	case ClientPacketID_BankDepositGold:
-		HandleBankDepositGold(UserIndex);
-
-		/* '/DENUNCIAR */
-		break;
-
-	case ClientPacketID_Denounce:
-		HandleDenounce(UserIndex);
-
-		/* '/FUNDARCLAN */
-		break;
-
-	case ClientPacketID_GuildFundate:
-		HandleGuildFundate(UserIndex);
-
-		break;
-
-	case ClientPacketID_GuildFundation:
-		HandleGuildFundation(UserIndex);
-
-		/* '/ECHARPARTY */
-		break;
-
-	case ClientPacketID_PartyKick:
-		HandlePartyKick(UserIndex);
-
-		/* '/PARTYLIDER */
-		break;
-
-	case ClientPacketID_PartySetLeader:
-		HandlePartySetLeader(UserIndex);
-
-		/* '/ACCEPTPARTY */
-		break;
-
-	case ClientPacketID_PartyAcceptMember:
-		HandlePartyAcceptMember(UserIndex);
-
-		/* '/PING */
-		break;
-
-	case ClientPacketID_Ping:
-		HandlePing(UserIndex);
-
-		break;
-
-	case ClientPacketID_RequestPartyForm:
-		HandlePartyForm(UserIndex);
-
-		break;
-
-	case ClientPacketID_ItemUpgrade:
-		HandleItemUpgrade(UserIndex);
-
-		/* 'GM Messages */
-		break;
-
-	case ClientPacketID_GMCommands:
-		HandleGMCommands(UserIndex);
-
-		break;
-
-	case ClientPacketID_InitCrafting:
-		HandleInitCrafting(UserIndex);
-
-		break;
-
-	case ClientPacketID_Home:
-		HandleHome(UserIndex);
-
-		break;
-
-	case ClientPacketID_ShowGuildNews:
-		HandleShowGuildNews(UserIndex);
-
-		break;
-
-	case ClientPacketID_ShareNpc:
-		HandleShareNpc(UserIndex);
-
-		break;
-
-	case ClientPacketID_StopSharingNpc:
-		HandleStopSharingNpc(UserIndex);
-
-		break;
-
-	case ClientPacketID_Consultation:
-		HandleConsultation(UserIndex);
-
-		break;
-
-	case ClientPacketID_moveItem:
-		HandleMoveItem(UserIndex);
-
-		/* # IF SeguridadAlkon THEN */
-		/* # ELSE */
-		break;
-
-	default:
-		/* 'ERROR : Abort! */
+	try {
+		dakara::protocol::client::ClientPacketDecodeAndDispatch(
+				UserList[UserIndex].incomingData.get(),
+				&(UserProtocolHandler[UserIndex]));
+	} catch (const dakara::protocol::PacketDecodingError& e) {
 		CerrarUserIndex(UserIndex);
-		/* # END IF */
-		break;
 	}
 }
 
-void HandleGMCommands(int UserIndex) {
-	/* '*************************************************** */
-	/* 'Author: Unknown */
-	/* 'Last Modification: - */
-	/* ' */
-	/* '*************************************************** */
-
-	int Command;
-
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	Command = UserList[UserIndex].sockctx->incomingData->PeekByte();
-
-	switch (Command) {
-	/* '/GMSG */
-	case eGMCommands_GMMessage:
-		HandleGMMessage(UserIndex);
-
-		/* '/SHOWNAME */
-		break;
-
-	case eGMCommands_showName:
-		HandleShowName(UserIndex);
-
-		break;
-
-	case eGMCommands_OnlineRoyalArmy:
-		HandleOnlineRoyalArmy(UserIndex);
-
-		/* '/ONLINECAOS */
-		break;
-
-	case eGMCommands_OnlineChaosLegion:
-		HandleOnlineChaosLegion(UserIndex);
-
-		/* '/IRCERCA */
-		break;
-
-	case eGMCommands_GoNearby:
-		HandleGoNearby(UserIndex);
-
-		/* '/REM */
-		break;
-
-	case eGMCommands_comment:
-		HandleComment(UserIndex);
-
-		/* '/HORA */
-		break;
-
-	case eGMCommands_serverTime:
-		HandleServerTime(UserIndex);
-
-		/* '/DONDE */
-		break;
-
-	case eGMCommands_Where:
-		HandleWhere(UserIndex);
-
-		/* '/NENE */
-		break;
-
-	case eGMCommands_CreaturesInMap:
-		HandleCreaturesInMap(UserIndex);
-
-		/* '/TELEPLOC */
-		break;
-
-	case eGMCommands_WarpMeToTarget:
-		HandleWarpMeToTarget(UserIndex);
-
-		/* '/TELEP */
-		break;
-
-	case eGMCommands_WarpChar:
-		HandleWarpChar(UserIndex);
-
-		/* '/SILENCIAR */
-		break;
-
-	case eGMCommands_Silence:
-		HandleSilence(UserIndex);
-
-		/* '/SHOW SOS */
-		break;
-
-	case eGMCommands_SOSShowList:
-		HandleSOSShowList(UserIndex);
-
-		/* 'SOSDONE */
-		break;
-
-	case eGMCommands_SOSRemove:
-		HandleSOSRemove(UserIndex);
-
-		/* '/IRA */
-		break;
-
-	case eGMCommands_GoToChar:
-		HandleGoToChar(UserIndex);
-
-		/* '/INVISIBLE */
-		break;
-
-	case eGMCommands_invisible:
-		HandleInvisible(UserIndex);
-
-		/* '/PANELGM */
-		break;
-
-	case eGMCommands_GMPanel:
-		HandleGMPanel(UserIndex);
-
-		/* 'LISTUSU */
-		break;
-
-	case eGMCommands_RequestUserList:
-		HandleRequestUserList(UserIndex);
-
-		/* '/TRABAJANDO */
-		break;
-
-	case eGMCommands_Working:
-		HandleWorking(UserIndex);
-
-		/* '/OCULTANDO */
-		break;
-
-	case eGMCommands_Hiding:
-		HandleHiding(UserIndex);
-
-		/* '/CARCEL */
-		break;
-
-	case eGMCommands_Jail:
-		HandleJail(UserIndex);
-
-		/* '/RMATA */
-		break;
-
-	case eGMCommands_KillNPC:
-		HandleKillNPC(UserIndex);
-
-		/* '/ADVERTENCIA */
-		break;
-
-	case eGMCommands_WarnUser:
-		HandleWarnUser(UserIndex);
-
-		/* '/MOD */
-		break;
-
-	case eGMCommands_EditChar:
-		HandleEditChar(UserIndex);
-
-		/* '/INFO */
-		break;
-
-	case eGMCommands_RequestCharInfo:
-		HandleRequestCharInfo(UserIndex);
-
-		/* '/STAT */
-		break;
-
-	case eGMCommands_RequestCharStats:
-		HandleRequestCharStats(UserIndex);
-
-		/* '/BAL */
-		break;
-
-	case eGMCommands_RequestCharGold:
-		HandleRequestCharGold(UserIndex);
-
-		/* '/INV */
-		break;
-
-	case eGMCommands_RequestCharInventory:
-		HandleRequestCharInventory(UserIndex);
-
-		/* '/BOV */
-		break;
-
-	case eGMCommands_RequestCharBank:
-		HandleRequestCharBank(UserIndex);
-
-		/* '/SKILLS */
-		break;
-
-	case eGMCommands_RequestCharSkills:
-		HandleRequestCharSkills(UserIndex);
-
-		/* '/REVIVIR */
-		break;
-
-	case eGMCommands_ReviveChar:
-		HandleReviveChar(UserIndex);
-
-		/* '/ONLINEGM */
-		break;
-
-	case eGMCommands_OnlineGM:
-		HandleOnlineGM(UserIndex);
-
-		/* '/ONLINEMAP */
-		break;
-
-	case eGMCommands_OnlineMap:
-		HandleOnlineMap(UserIndex);
-
-		/* '/PERDON */
-		break;
-
-	case eGMCommands_Forgive:
-		HandleForgive(UserIndex);
-
-		/* '/ECHAR */
-		break;
-
-	case eGMCommands_Kick:
-		HandleKick(UserIndex);
-
-		/* '/EJECUTAR */
-		break;
-
-	case eGMCommands_Execute:
-		HandleExecute(UserIndex);
-
-		/* '/BAN */
-		break;
-
-	case eGMCommands_BanChar:
-		HandleBanChar(UserIndex);
-
-		/* '/UNBAN */
-		break;
-
-	case eGMCommands_UnbanChar:
-		HandleUnbanChar(UserIndex);
-
-		/* '/SEGUIR */
-		break;
-
-	case eGMCommands_NPCFollow:
-		HandleNPCFollow(UserIndex);
-
-		/* '/SUM */
-		break;
-
-	case eGMCommands_SummonChar:
-		HandleSummonChar(UserIndex);
-
-		/* '/CC */
-		break;
-
-	case eGMCommands_SpawnListRequest:
-		HandleSpawnListRequest(UserIndex);
-
-		/* 'SPA */
-		break;
-
-	case eGMCommands_SpawnCreature:
-		HandleSpawnCreature(UserIndex);
-
-		/* '/RESETINV */
-		break;
-
-	case eGMCommands_ResetNPCInventory:
-		HandleResetNPCInventory(UserIndex);
-
-		/* '/LIMPIAR */
-		break;
-
-	case eGMCommands_CleanWorld:
-		HandleCleanWorld(UserIndex);
-
-		/* '/RMSG */
-		break;
-
-	case eGMCommands_ServerMessage:
-		HandleServerMessage(UserIndex);
-
-		/* '/MAPMSG */
-		break;
-
-	case eGMCommands_MapMessage:
-		HandleMapMessage(UserIndex);
-
-		/* '/NICK2IP */
-		break;
-
-	case eGMCommands_NickToIP:
-		HandleNickToIP(UserIndex);
-
-		/* '/IP2NICK */
-		break;
-
-	case eGMCommands_IPToNick:
-		HandleIPToNick(UserIndex);
-
-		/* '/ONCLAN */
-		break;
-
-	case eGMCommands_GuildOnlineMembers:
-		HandleGuildOnlineMembers(UserIndex);
-
-		/* '/CT */
-		break;
-
-	case eGMCommands_TeleportCreate:
-		HandleTeleportCreate(UserIndex);
-
-		/* '/DT */
-		break;
-
-	case eGMCommands_TeleportDestroy:
-		HandleTeleportDestroy(UserIndex);
-
-		/* '/LLUVIA */
-		break;
-
-	case eGMCommands_RainToggle:
-		HandleRainToggle(UserIndex);
-
-		/* '/SETDESC */
-		break;
-
-	case eGMCommands_SetCharDescription:
-		HandleSetCharDescription(UserIndex);
-
-		/* '/FORCEMIDIMAP */
-		break;
-
-	case eGMCommands_ForceMIDIToMap:
-		HanldeForceMIDIToMap(UserIndex);
-
-		/* '/FORCEWAVMAP */
-		break;
-
-	case eGMCommands_ForceWAVEToMap:
-		HandleForceWAVEToMap(UserIndex);
-
-		/* '/REALMSG */
-		break;
-
-	case eGMCommands_RoyalArmyMessage:
-		HandleRoyalArmyMessage(UserIndex);
-
-		/* '/CAOSMSG */
-		break;
-
-	case eGMCommands_ChaosLegionMessage:
-		HandleChaosLegionMessage(UserIndex);
-
-		/* '/CIUMSG */
-		break;
-
-	case eGMCommands_CitizenMessage:
-		HandleCitizenMessage(UserIndex);
-
-		/* '/CRIMSG */
-		break;
-
-	case eGMCommands_CriminalMessage:
-		HandleCriminalMessage(UserIndex);
-
-		/* '/TALKAS */
-		break;
-
-	case eGMCommands_TalkAsNPC:
-		HandleTalkAsNPC(UserIndex);
-
-		/* '/MASSDEST */
-		break;
-
-	case eGMCommands_DestroyAllItemsInArea:
-		HandleDestroyAllItemsInArea(UserIndex);
-
-		/* '/ACEPTCONSE */
-		break;
-
-	case eGMCommands_AcceptRoyalCouncilMember:
-		HandleAcceptRoyalCouncilMember(UserIndex);
-
-		/* '/ACEPTCONSECAOS */
-		break;
-
-	case eGMCommands_AcceptChaosCouncilMember:
-		HandleAcceptChaosCouncilMember(UserIndex);
-
-		/* '/PISO */
-		break;
-
-	case eGMCommands_ItemsInTheFloor:
-		HandleItemsInTheFloor(UserIndex);
-
-		/* '/ESTUPIDO */
-		break;
-
-	case eGMCommands_MakeDumb:
-		HandleMakeDumb(UserIndex);
-
-		/* '/NOESTUPIDO */
-		break;
-
-	case eGMCommands_MakeDumbNoMore:
-		HandleMakeDumbNoMore(UserIndex);
-
-		/* '/DUMPSECURITY */
-		break;
-
-	case eGMCommands_DumpIPTables:
-		HandleDumpIPTables(UserIndex);
-
-		/* '/KICKCONSE */
-		break;
-
-	case eGMCommands_CouncilKick:
-		HandleCouncilKick(UserIndex);
-
-		/* '/TRIGGER */
-		break;
-
-	case eGMCommands_SetTrigger:
-		HandleSetTrigger(UserIndex);
-
-		/* '/TRIGGER with no args */
-		break;
-
-	case eGMCommands_AskTrigger:
-		HandleAskTrigger(UserIndex);
-
-		/* '/BANIPLIST */
-		break;
-
-	case eGMCommands_BannedIPList:
-		HandleBannedIPList(UserIndex);
-
-		/* '/BANIPRELOAD */
-		break;
-
-	case eGMCommands_BannedIPReload:
-		HandleBannedIPReload(UserIndex);
-
-		/* '/MIEMBROSCLAN */
-		break;
-
-	case eGMCommands_GuildMemberList:
-		HandleGuildMemberList(UserIndex);
-
-		/* '/BANCLAN */
-		break;
-
-	case eGMCommands_GuildBan:
-		HandleGuildBan(UserIndex);
-
-		/* '/BANIP */
-		break;
-
-	case eGMCommands_BanIP:
-		HandleBanIP(UserIndex);
-
-		/* '/UNBANIP */
-		break;
-
-	case eGMCommands_UnbanIP:
-		HandleUnbanIP(UserIndex);
-
-		/* '/CI */
-		break;
-
-	case eGMCommands_CreateItem:
-		HandleCreateItem(UserIndex);
-
-		/* '/DEST */
-		break;
-
-	case eGMCommands_DestroyItems:
-		HandleDestroyItems(UserIndex);
-
-		/* '/NOCAOS */
-		break;
-
-	case eGMCommands_ChaosLegionKick:
-		HandleChaosLegionKick(UserIndex);
-
-		/* '/NOREAL */
-		break;
-
-	case eGMCommands_RoyalArmyKick:
-		HandleRoyalArmyKick(UserIndex);
-
-		/* '/FORCEMIDI */
-		break;
-
-	case eGMCommands_ForceMIDIAll:
-		HandleForceMIDIAll(UserIndex);
-
-		/* '/FORCEWAV */
-		break;
-
-	case eGMCommands_ForceWAVEAll:
-		HandleForceWAVEAll(UserIndex);
-
-		/* '/BORRARPENA */
-		break;
-
-	case eGMCommands_RemovePunishment:
-		HandleRemovePunishment(UserIndex);
-
-		/* '/BLOQ */
-		break;
-
-	case eGMCommands_TileBlockedToggle:
-		HandleTileBlockedToggle(UserIndex);
-
-		/* '/MATA */
-		break;
-
-	case eGMCommands_KillNPCNoRespawn:
-		HandleKillNPCNoRespawn(UserIndex);
-
-		/* '/MASSKILL */
-		break;
-
-	case eGMCommands_KillAllNearbyNPCs:
-		HandleKillAllNearbyNPCs(UserIndex);
-
-		/* '/LASTIP */
-		break;
-
-	case eGMCommands_LastIP:
-		HandleLastIP(UserIndex);
-
-		/* '/MOTDCAMBIA */
-		break;
-
-	case eGMCommands_ChangeMOTD:
-		HandleChangeMOTD(UserIndex);
-
-		/* 'ZMOTD */
-		break;
-
-	case eGMCommands_SetMOTD:
-		HandleSetMOTD(UserIndex);
-
-		/* '/SMSG */
-		break;
-
-	case eGMCommands_SystemMessage:
-		HandleSystemMessage(UserIndex);
-
-		/* '/ACC */
-		break;
-
-	case eGMCommands_CreateNPC:
-		HandleCreateNPC(UserIndex);
-
-		/* '/RACC */
-		break;
-
-	case eGMCommands_CreateNPCWithRespawn:
-		HandleCreateNPCWithRespawn(UserIndex);
-
-		/* '/AI1 - 4 */
-		break;
-
-	case eGMCommands_ImperialArmour:
-		HandleImperialArmour(UserIndex);
-
-		/* '/AC1 - 4 */
-		break;
-
-	case eGMCommands_ChaosArmour:
-		HandleChaosArmour(UserIndex);
-
-		/* '/NAVE */
-		break;
-
-	case eGMCommands_NavigateToggle:
-		HandleNavigateToggle(UserIndex);
-
-		/* '/HABILITAR */
-		break;
-
-	case eGMCommands_ServerOpenToUsersToggle:
-		HandleServerOpenToUsersToggle(UserIndex);
-
-		/* '/APAGAR */
-		break;
-
-	case eGMCommands_TurnOffServer:
-		HandleTurnOffServer(UserIndex);
-
-		/* '/CONDEN */
-		break;
-
-	case eGMCommands_TurnCriminal:
-		HandleTurnCriminal(UserIndex);
-
-		/* '/RAJAR */
-		break;
-
-	case eGMCommands_ResetFactions:
-		HandleResetFactions(UserIndex);
-
-		/* '/RAJARCLAN */
-		break;
-
-	case eGMCommands_RemoveCharFromGuild:
-		HandleRemoveCharFromGuild(UserIndex);
-
-		/* '/LASTEMAIL */
-		break;
-
-	case eGMCommands_RequestCharMail:
-		HandleRequestCharMail(UserIndex);
-
-		/* '/APASS */
-		break;
-
-	case eGMCommands_AlterPassword:
-		HandleAlterPassword(UserIndex);
-
-		/* '/AEMAIL */
-		break;
-
-	case eGMCommands_AlterMail:
-		HandleAlterMail(UserIndex);
-
-		/* '/ANAME */
-		break;
-
-	case eGMCommands_AlterName:
-		HandleAlterName(UserIndex);
-
-		/* '/CENTINELAACTIVADO */
-		break;
-
-	case eGMCommands_ToggleCentinelActivated:
-		HandleToggleCentinelActivated(UserIndex);
-
-		/* '/DOBACKUP */
-		break;
-
-	case eGMCommands_DoBackUp:
-		HandleDoBackUp(UserIndex);
-
-		/* '/SHOWCMSG */
-		break;
-
-	case eGMCommands_ShowGuildMessages:
-		HandleShowGuildMessages(UserIndex);
-
-		/* '/GUARDAMAPA */
-		break;
-
-	case eGMCommands_SaveMap:
-		HandleSaveMap(UserIndex);
-
-		/* '/MODMAPINFO PK */
-		break;
-
-	case eGMCommands_ChangeMapInfoPK:
-		HandleChangeMapInfoPK(UserIndex);
-
-		/* '/MODMAPINFO BACKUP */
-		break;
-
-	case eGMCommands_ChangeMapInfoBackup:
-		HandleChangeMapInfoBackup(UserIndex);
-
-		/* '/MODMAPINFO RESTRINGIR */
-		break;
-
-	case eGMCommands_ChangeMapInfoRestricted:
-		HandleChangeMapInfoRestricted(UserIndex);
-
-		/* '/MODMAPINFO MAGIASINEFECTO */
-		break;
-
-	case eGMCommands_ChangeMapInfoNoMagic:
-		HandleChangeMapInfoNoMagic(UserIndex);
-
-		/* '/MODMAPINFO INVISINEFECTO */
-		break;
-
-	case eGMCommands_ChangeMapInfoNoInvi:
-		HandleChangeMapInfoNoInvi(UserIndex);
-
-		/* '/MODMAPINFO RESUSINEFECTO */
-		break;
-
-	case eGMCommands_ChangeMapInfoNoResu:
-		HandleChangeMapInfoNoResu(UserIndex);
-
-		/* '/MODMAPINFO TERRENO */
-		break;
-
-	case eGMCommands_ChangeMapInfoLand:
-		HandleChangeMapInfoLand(UserIndex);
-
-		/* '/MODMAPINFO ZONA */
-		break;
-
-	case eGMCommands_ChangeMapInfoZone:
-		HandleChangeMapInfoZone(UserIndex);
-
-		/* '/MODMAPINFO ROBONPC */
-		break;
-
-	case eGMCommands_ChangeMapInfoStealNpc:
-		HandleChangeMapInfoStealNpc(UserIndex);
-
-		/* '/MODMAPINFO OCULTARSINEFECTO */
-		break;
-
-	case eGMCommands_ChangeMapInfoNoOcultar:
-		HandleChangeMapInfoNoOcultar(UserIndex);
-
-		/* '/MODMAPINFO INVOCARSINEFECTO */
-		break;
-
-	case eGMCommands_ChangeMapInfoNoInvocar:
-		HandleChangeMapInfoNoInvocar(UserIndex);
-
-		/* '/GRABAR */
-		break;
-
-	case eGMCommands_SaveChars:
-		HandleSaveChars(UserIndex);
-
-		/* '/BORRAR SOS */
-		break;
-
-	case eGMCommands_CleanSOS:
-		HandleCleanSOS(UserIndex);
-
-		/* '/SHOW INT */
-		break;
-
-	case eGMCommands_ShowServerForm:
-		HandleShowServerForm(UserIndex);
-
-		/* '/NOCHE */
-		break;
-
-	case eGMCommands_night:
-		HandleNight(UserIndex);
-
-		/* '/ECHARTODOSPJS */
-		break;
-
-	case eGMCommands_KickAllChars:
-		HandleKickAllChars(UserIndex);
-
-		/* '/RELOADNPCS */
-		break;
-
-	case eGMCommands_ReloadNPCs:
-		HandleReloadNPCs(UserIndex);
-
-		/* '/RELOADSINI */
-		break;
-
-	case eGMCommands_ReloadServerIni:
-		HandleReloadServerIni(UserIndex);
-
-		/* '/RELOADHECHIZOS */
-		break;
-
-	case eGMCommands_ReloadSpells:
-		HandleReloadSpells(UserIndex);
-
-		/* '/RELOADOBJ */
-		break;
-
-	case eGMCommands_ReloadObjects:
-		HandleReloadObjects(UserIndex);
-
-		/* '/REINICIAR */
-		break;
-
-	case eGMCommands_Restart:
-		HandleRestart(UserIndex);
-
-		/* '/AUTOUPDATE */
-		break;
-
-	case eGMCommands_ResetAutoUpdate:
-		HandleResetAutoUpdate(UserIndex);
-
-		/* '/CHATCOLOR */
-		break;
-
-	case eGMCommands_ChatColor:
-		HandleChatColor(UserIndex);
-
-		/* '/IGNORADO */
-		break;
-
-	case eGMCommands_Ignored:
-		HandleIgnored(UserIndex);
-
-		/* '/SLOT */
-		break;
-
-	case eGMCommands_CheckSlot:
-		HandleCheckSlot(UserIndex);
-
-		/* '/SETINIVAR LLAVE CLAVE VALOR */
-		break;
-
-	case eGMCommands_SetIniVar:
-		HandleSetIniVar(UserIndex);
-
-		/* '/CREARPRETORIANOS */
-		break;
-
-	case eGMCommands_CreatePretorianClan:
-		HandleCreatePretorianClan(UserIndex);
-
-		/* '/ELIMINARPRETORIANOS */
-		break;
-
-	case eGMCommands_RemovePretorianClan:
-		HandleDeletePretorianClan(UserIndex);
-
-		/* '/DENUNCIAS */
-		break;
-
-	case eGMCommands_EnableDenounces:
-		HandleEnableDenounces(UserIndex);
-
-		/* '/SHOW DENUNCIAS */
-		break;
-
-	case eGMCommands_ShowDenouncesList:
-		HandleShowDenouncesList(UserIndex);
-
-		/* '/SETDIALOG */
-		break;
-
-	case eGMCommands_SetDialog:
-		HandleSetDialog(UserIndex);
-
-		/* '/IMPERSONAR */
-		break;
-
-	case eGMCommands_Impersonate:
-		HandleImpersonate(UserIndex);
-
-		/* '/MIMETIZAR */
-		break;
-
-	case eGMCommands_Imitate:
-		HandleImitate(UserIndex);
-
-		break;
-
-	case eGMCommands_RecordAdd:
-		HandleRecordAdd(UserIndex);
-
-		break;
-
-	case eGMCommands_RecordAddObs:
-		HandleRecordAddObs(UserIndex);
-
-		break;
-
-	case eGMCommands_RecordRemove:
-		HandleRecordRemove(UserIndex);
-
-		break;
-
-	case eGMCommands_RecordListRequest:
-		HandleRecordListRequest(UserIndex);
-
-		break;
-
-	case eGMCommands_RecordDetailsRequest:
-		HandleRecordDetailsRequest(UserIndex);
-
-		break;
-
-	case eGMCommands_HigherAdminsMessage:
-		HandleHigherAdminsMessage(UserIndex);
-
-		/* '/ACLAN */
-		break;
-
-	case eGMCommands_AlterGuildName:
-		HandleAlterGuildName(UserIndex);
-		break;
-
-	default:
-		throw std::runtime_error("Unkwnown GM Command");
-	}
+dakara::protocol::client::ClientPacketHandler* DakaraPacketHandler::getPacketHandlerClientPacket() {
+	return &clientPacketHandler;
 }
+
+dakara::protocol::clientgm::ClientGMPacketHandler* DakaraPacketHandler::getPacketHandlerClientGMPacket() {
+	return &clientPacketHandler;
+}
+
+dakara::protocol::server::ServerPacketHandler* DakaraPacketHandler::getPacketHandlerServerPacket() {
+	return nullptr;
+}
+
+void DakaraClientPacketHandler::handleGMCommands(dakara::protocol::client::GMCommands* p) {
+	p->composite->dispatch(&(UserProtocolHandler[UserIndex]));
+}
+
+using namespace dakara::protocol::client;
+using namespace dakara::protocol::clientgm;
+
 
 /* '' */
 /* ' Handles the "Home" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
-void HandleHome(int UserIndex) {
+
+void DakaraClientPacketHandler::handleHome(Home* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Budi */
 	/* 'Creation Date: 06/01/2010 */
 	/* 'Last Modification: 05/06/10 */
 	/* 'Pato - 05/06/10: Add the Ucase$ to prevent problems. */
 	/* '*************************************************** */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 	if (UserList[UserIndex].flags.TargetNpcTipo == eNPCType_Gobernador) {
 		setHome(UserIndex, static_cast<eCiudad>(Npclist[UserList[UserIndex].flags.TargetNPC].Ciudad),
 				UserList[UserIndex].flags.TargetNPC);
@@ -1817,44 +177,23 @@ void HandleHome(int UserIndex) {
 /* '' */
 /* ' Handles the "LoginExistingChar" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleLoginExistingChar(int UserIndex) {
+
+void DakaraClientPacketHandler::handleLoginExistingChar(LoginExistingChar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* # IF SeguridadAlkon THEN */
-	/* # ELSE */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 6) {
-		throw insufficient_data_error();
-		return;
-	}
-	/* # END IF */
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string UserName;
-	std::string Password;
+	std::string& UserName = p->UserName;
+	std::string& Password = p->Password;
 	std::string version;
 
-	UserName = buffer->ReadUnicodeString();
-
-	/* # IF SeguridadAlkon THEN */
-	/* # ELSE */
-	Password = buffer->ReadUnicodeString();
-	/* # END IF */
-
 	{
-		int vera = buffer->ReadByte();
-		int verb = buffer->ReadByte();
-		int verc = buffer->ReadByte();
+		int vera = p->VerA;
+		int verb = p->VerB;
+		int verc = p->VerC;
 
 		/* 'Convert version number to string */
 		version = vb6::CStr(vera) + "." + vb6::CStr(verb) + "." + vb6::CStr(verc);
@@ -1891,16 +230,14 @@ void HandleLoginExistingChar(int UserIndex) {
 /* '' */
 /* ' Handles the "ThrowDices" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleThrowDices(int UserIndex) {
+
+void DakaraClientPacketHandler::handleThrowDices(ThrowDices* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Last Modification: 05/17/06 */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	UserList[UserIndex].Stats.UserAtributos[eAtributos_Fuerza] = MaximoInt(15,
 			13 + RandomNumber(0, 3) + RandomNumber(0, 2));
@@ -1919,31 +256,17 @@ void HandleThrowDices(int UserIndex) {
 /* '' */
 /* ' Handles the "LoginNewChar" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleLoginNewChar(int UserIndex) {
+
+void DakaraClientPacketHandler::handleLoginNewChar(LoginNewChar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* # IF SeguridadAlkon THEN */
-	/* # ELSE */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 15) {
-		throw insufficient_data_error();
-		return;
-	}
-	/* # END IF */
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string UserName;
-	std::string Password;
+	std::string& UserName = p->UserName;
+	std::string& Password = p->Password;
 	std::string version;
 	eRaza race;
 	eGenero gender;
@@ -1951,9 +274,6 @@ void HandleLoginNewChar(int UserIndex) {
 	eClass Class;
 	int Head;
 	std::string mail;
-
-	/* # IF SeguridadAlkon THEN */
-	/* # END IF */
 
 	if (PuedeCrearPersonajes == 0) {
 		WriteErrorMsg(UserIndex, "La creación de personajes en este servidor se ha deshabilitado.");
@@ -1980,35 +300,21 @@ void HandleLoginNewChar(int UserIndex) {
 		return;
 	}
 
-	UserName = buffer->ReadUnicodeString();
-
-	/* # IF SeguridadAlkon THEN */
-	/* # ELSE */
-	Password = buffer->ReadUnicodeString();
-
-	/* # END IF */
-
 	{
-		int vera = buffer->ReadByte();
-		int verb = buffer->ReadByte();
-		int verc = buffer->ReadByte();
+		int vera = p->VerA;
+		int verb = p->VerB;
+		int verc = p->VerC;
 
 		/* 'Convert version number to string */ /* FIXME: Undefined order! */
 		version = vb6::CStr(vera) + "." + vb6::CStr(verb) + "." + vb6::CStr(verc);
 	}
 
-	/* # IF SeguridadAlkon THEN */
-	/* # END IF */
-
-	race = static_cast<eRaza>(buffer->ReadByte());
-	gender = static_cast<eGenero>(buffer->ReadByte());
-	Class = static_cast<eClass>(buffer->ReadByte());
-	Head = buffer->ReadInteger();
-	mail = buffer->ReadUnicodeString();
-	homeland = static_cast<eCiudad>(buffer->ReadByte());
-
-	/* # IF SeguridadAlkon THEN */
-	/* # END IF */
+	race = static_cast<eRaza>(p->Race);
+	gender = static_cast<eGenero>(p->Gender);
+	Class = static_cast<eClass>(p->Class);
+	Head = p->Head;
+	mail = p->Mail;
+	homeland = static_cast<eCiudad>(p->Homeland);
 
 	if (!VersionOK(version)) {
 		WriteErrorMsg(UserIndex,
@@ -2020,16 +326,16 @@ void HandleLoginNewChar(int UserIndex) {
 	/* # IF SeguridadAlkon THEN */
 	/* # END IF */
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 }
 
 /* '' */
 /* ' Handles the "Talk" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleTalk(int UserIndex) {
+
+void DakaraClientPacketHandler::handleTalk(Talk* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 13/01/2010 */
@@ -2037,21 +343,7 @@ void HandleTalk(int UserIndex) {
 	/* '23/09/2009: ZaMa - Now invisible admins can't send empty chat. */
 	/* '13/01/2010: ZaMa - Now hidden on boat pirats recover the proper boat body. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string Chat;
-
-	Chat = buffer->ReadUnicodeString();
+	std::string& Chat = p->Chat;
 
 	/* '[Consejeros & GMs] */
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Consejero, PlayerType_SemiDios)) {
@@ -2087,52 +379,38 @@ void HandleTalk(int UserIndex) {
 		if (!(UserList[UserIndex].flags.AdminInvisible == 1)) {
 			if (UserList[UserIndex].flags.Muerto == 1) {
 				SendData(SendTarget_ToDeadArea, UserIndex,
-						PrepareMessageChatOverHead(Chat, UserList[UserIndex].Char.CharIndex,
+						BuildChatOverHead(Chat, UserList[UserIndex].Char.CharIndex,
 								CHAT_COLOR_DEAD_CHAR));
 			} else {
 				SendData(SendTarget_ToPCArea, UserIndex,
-						PrepareMessageChatOverHead(Chat, UserList[UserIndex].Char.CharIndex,
+						BuildChatOverHead(Chat, UserList[UserIndex].Char.CharIndex,
 								UserList[UserIndex].flags.ChatColor));
 			}
 		} else {
 			if (vb6::RTrim(Chat) != "") {
 				SendData(SendTarget_ToPCArea, UserIndex,
-						PrepareMessageConsoleMsg("Gm> " + Chat, FontTypeNames_FONTTYPE_GM));
+						dakara::protocol::server::BuildConsoleMsg("Gm> " + Chat, FontTypeNames_FONTTYPE_GM));
 			}
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 }
 
 /* '' */
 /* ' Handles the "Yell" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleYell(int UserIndex) {
+
+void DakaraClientPacketHandler::handleYell(Yell* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 13/01/2010 (ZaMa) */
 	/* '15/07/2009: ZaMa - Now invisible admins yell by console. */
 	/* '13/01/2010: ZaMa - Now hidden on boat pirats recover the proper boat body. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string Chat;
-
-	Chat = buffer->ReadUnicodeString();
+	std::string& Chat = p->Chat;
 
 	/* '[Consejeros & GMs] */
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Consejero, PlayerType_SemiDios)) {
@@ -2168,34 +446,34 @@ void HandleYell(int UserIndex) {
 		if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 			if (UserList[UserIndex].flags.Muerto == 1) {
 				SendData(SendTarget_ToDeadArea, UserIndex,
-						PrepareMessageChatOverHead(Chat, UserList[UserIndex].Char.CharIndex,
+						BuildChatOverHead(Chat, UserList[UserIndex].Char.CharIndex,
 								CHAT_COLOR_DEAD_CHAR));
 			} else {
 				SendData(SendTarget_ToPCArea, UserIndex,
-						PrepareMessageChatOverHead(Chat, UserList[UserIndex].Char.CharIndex, vbRed));
+						BuildChatOverHead(Chat, UserList[UserIndex].Char.CharIndex, vbRed));
 			}
 		} else {
 			if (!(UserList[UserIndex].flags.AdminInvisible == 1)) {
 				SendData(SendTarget_ToPCArea, UserIndex,
-						PrepareMessageChatOverHead(Chat, UserList[UserIndex].Char.CharIndex,
+						BuildChatOverHead(Chat, UserList[UserIndex].Char.CharIndex,
 								CHAT_COLOR_GM_YELL));
 			} else {
 				SendData(SendTarget_ToPCArea, UserIndex,
-						PrepareMessageConsoleMsg("Gm> " + Chat, FontTypeNames_FONTTYPE_GM));
+						dakara::protocol::server::BuildConsoleMsg("Gm> " + Chat, FontTypeNames_FONTTYPE_GM));
 			}
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 }
 
 /* '' */
 /* ' Handles the "Whisper" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleWhisper(int UserIndex) {
+
+void DakaraClientPacketHandler::handleWhisper(Whisper* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 03/12/2010 */
@@ -2203,24 +481,10 @@ void HandleWhisper(int UserIndex) {
 	/* '15/07/2009: ZaMa - Now invisible admins wisper by console. */
 	/* '03/12/2010: Enanoh - Agregué susurro a Admins en modo consulta y Los Dioses pueden susurrar en ciertos casos. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string Chat;
+	std::string& Chat = p->Chat;
 	int TargetUserIndex;
-	std::string TargetName;
-
-	TargetName = buffer->ReadUnicodeString();
-	Chat = buffer->ReadUnicodeString();
+	std::string& TargetName = p->TargetName;
 
 	if (UserList[UserIndex].flags.Muerto) {
 		WriteConsoleMsg(UserIndex,
@@ -2303,7 +567,7 @@ void HandleWhisper(int UserIndex) {
 						/* '[CDT 17-02-2004] */
 						if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero)) {
 							SendData(SendTarget_ToAdminsAreaButConsejeros, UserIndex,
-									PrepareMessageChatOverHead(
+									BuildChatOverHead(
 											"A " + UserList[TargetUserIndex].Name + "> " + Chat,
 											UserList[UserIndex].Char.CharIndex, vbYellow));
 						}
@@ -2316,7 +580,7 @@ void HandleWhisper(int UserIndex) {
 
 						if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero)) {
 							SendData(SendTarget_ToAdminsAreaButConsejeros, UserIndex,
-									PrepareMessageConsoleMsg(
+									dakara::protocol::server::BuildConsoleMsg(
 											"Gm dijo a " + UserList[TargetUserIndex].Name + "> " + Chat,
 											FontTypeNames_FONTTYPE_GM));
 						}
@@ -2326,35 +590,28 @@ void HandleWhisper(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 }
 
 /* '' */
 /* ' Handles the "Walk" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleWalk(int UserIndex) {
+
+void DakaraClientPacketHandler::handleWalk(Walk* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 13/01/2010 (ZaMa) */
 	/* '11/19/09 Pato - Now the class bandit can walk hidden. */
 	/* '13/01/2010: ZaMa - Now hidden on boat pirats recover the proper boat body. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
 
 	int dummy;
 	int TempTick;
 	eHeading heading;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	heading = static_cast<eHeading>(UserList[UserIndex].sockctx->incomingData->ReadByte());
+	heading = static_cast<eHeading>(p->Heading);
 
 	/* 'Prevent SpeedHack */
 	if (UserList[UserIndex].flags.TimesWalk >= 30) {
@@ -2375,7 +632,7 @@ void HandleWalk(int UserIndex) {
 
 				LogHackAttemp("Tramposo SH: " + UserList[UserIndex].Name + " , " + vb6::CStr(dummy));
 				SendData(SendTarget_ToAdmins, 0,
-						PrepareMessageConsoleMsg(
+						dakara::protocol::server::BuildConsoleMsg(
 								"Servidor> " + UserList[UserIndex].Name
 										+ " ha sido echado por el servidor por posible uso de SH.",
 								FontTypeNames_FONTTYPE_SERVER));
@@ -2412,7 +669,7 @@ void HandleWalk(int UserIndex) {
 			WriteConsoleMsg(UserIndex, "Dejas de meditar.", FontTypeNames_FONTTYPE_INFO);
 
 			SendData(SendTarget_ToPCArea, UserIndex,
-					PrepareMessageCreateFX(UserList[UserIndex].Char.CharIndex, 0, 0));
+					dakara::protocol::server::BuildCreateFX(UserList[UserIndex].Char.CharIndex, 0, 0));
 		} else {
 			/* 'Move user */
 			MoveUserChar(UserIndex, heading);
@@ -2466,26 +723,23 @@ void HandleWalk(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestPositionUpdate" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestPositionUpdate(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestPositionUpdate(RequestPositionUpdate* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
 	WritePosUpdate(UserIndex);
 }
 
 /* '' */
 /* ' Handles the "Attack" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleAttack(int UserIndex) {
+
+void DakaraClientPacketHandler::handleAttack(Attack* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 13/01/2010 */
@@ -2494,9 +748,6 @@ void HandleAttack(int UserIndex) {
 	/* '13/11/2009: ZaMa - Se cancela el estado no atacable al atcar. */
 	/* '13/01/2010: ZaMa - Now hidden on boat pirats recover the proper boat body. */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
 	/* 'If dead, can't attack */
 	if (UserList[UserIndex].flags.Muerto == 1) {
 		WriteConsoleMsg(UserIndex, "¡¡Estás muerto!!", FontTypeNames_FONTTYPE_INFO);
@@ -2556,16 +807,14 @@ void HandleAttack(int UserIndex) {
 /* '' */
 /* ' Handles the "PickUp" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePickUp(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePickUp(PickUp* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 07/25/09 */
 	/* '02/26/2006: Marco - Agregué un checkeo por si el usuario trata de agarrar un item mientras comercia. */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	/* 'If dead, it can't pick up objects */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -2591,16 +840,14 @@ void HandlePickUp(int UserIndex) {
 /* '' */
 /* ' Handles the "SafeToggle" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleSafeToggle(int UserIndex) {
+
+void DakaraClientPacketHandler::handleSafeToggle(SafeToggle* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserList[UserIndex].flags.Seguro) {
 		/* 'Call WriteSafeModeOff(UserIndex) */
@@ -2616,14 +863,13 @@ void HandleSafeToggle(int UserIndex) {
 /* '' */
 /* ' Handles the "ResuscitationSafeToggle" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleResuscitationToggle(int UserIndex) {
+
+void DakaraClientPacketHandler::handleResuscitationSafeToggle(ResuscitationSafeToggle* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Rapsodius */
 	/* 'Creation Date: 10/10/07 */
 	/* '*************************************************** */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	UserList[UserIndex].flags.SeguroResu = !UserList[UserIndex].flags.SeguroResu;
 
@@ -2639,16 +885,14 @@ void HandleResuscitationToggle(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestGuildLeaderInfo" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestGuildLeaderInfo(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestGuildLeaderInfo(RequestGuildLeaderInfo* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	SendGuildLeaderInfo(UserIndex);
 }
@@ -2656,16 +900,14 @@ void HandleRequestGuildLeaderInfo(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestAtributes" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestAtributes(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestAtributes(RequestAtributes* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	WriteAttributes(UserIndex);
 }
@@ -2673,16 +915,14 @@ void HandleRequestAtributes(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestFame" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestFame(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestFame(RequestFame* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	EnviarFama(UserIndex);
 }
@@ -2690,16 +930,14 @@ void HandleRequestFame(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestSkills" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestSkills(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestSkills(RequestSkills* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	WriteSendSkills(UserIndex);
 }
@@ -2707,16 +945,14 @@ void HandleRequestSkills(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestMiniStats" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestMiniStats(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestMiniStats(RequestMiniStats* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	WriteMiniStats(UserIndex);
 }
@@ -2724,16 +960,14 @@ void HandleRequestMiniStats(int UserIndex) {
 /* '' */
 /* ' Handles the "CommerceEnd" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCommerceEnd(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCommerceEnd(CommerceEnd* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	/* 'User quits commerce mode */
 	UserList[UserIndex].flags.Comerciando = false;
@@ -2743,16 +977,14 @@ void HandleCommerceEnd(int UserIndex) {
 /* '' */
 /* ' Handles the "UserCommerceEnd" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleUserCommerceEnd(int UserIndex) {
+
+void DakaraClientPacketHandler::handleUserCommerceEnd(UserCommerceEnd* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 11/03/2010 */
 	/* '11/03/2010: ZaMa - Le avisa por consola al que cencela que dejo de comerciar. */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	/* 'Quits commerce mode with user */
 	if (UserList[UserIndex].ComUsu.DestUsu > 0) {
@@ -2774,16 +1006,16 @@ void HandleUserCommerceEnd(int UserIndex) {
 /* '' */
 /* ' Handles the "UserCommerceConfirm" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
-void HandleUserCommerceConfirm(int UserIndex) {
+
+void DakaraClientPacketHandler::handleUserCommerceConfirm(UserCommerceConfirm* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 14/12/2009 */
 	/* ' */
 	/* '*************************************************** */
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Validate the commerce */
 	if (PuedeSeguirComerciando(UserIndex)) {
@@ -2794,27 +1026,14 @@ void HandleUserCommerceConfirm(int UserIndex) {
 
 }
 
-void HandleCommerceChat(int UserIndex) {
+void DakaraClientPacketHandler::handleCommerceChat(CommerceChat* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 03/12/2009 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string Chat;
-
-	Chat = buffer->ReadUnicodeString();
+	std::string& Chat = p->Chat;
 
 	if (vb6::LenB(Chat) != 0) {
 		if (PuedeSeguirComerciando(UserIndex)) {
@@ -2827,7 +1046,7 @@ void HandleCommerceChat(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -2835,16 +1054,14 @@ void HandleCommerceChat(int UserIndex) {
 /* '' */
 /* ' Handles the "BankEnd" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleBankEnd(int UserIndex) {
+
+void DakaraClientPacketHandler::handleBankEnd(BankEnd* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	/* 'User exits banking mode */
 	UserList[UserIndex].flags.Comerciando = false;
@@ -2854,16 +1071,14 @@ void HandleBankEnd(int UserIndex) {
 /* '' */
 /* ' Handles the "UserCommerceOk" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleUserCommerceOk(int UserIndex) {
+
+void DakaraClientPacketHandler::handleUserCommerceOk(UserCommerceOk* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	/* 'Trade accepted */
 	AceptarComercioUsu(UserIndex);
@@ -2872,18 +1087,15 @@ void HandleUserCommerceOk(int UserIndex) {
 /* '' */
 /* ' Handles the "UserCommerceReject" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleUserCommerceReject(int UserIndex) {
+
+void DakaraClientPacketHandler::handleUserCommerceReject(UserCommerceReject* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
 	int otherUser;
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	otherUser = UserList[UserIndex].ComUsu.DestUsu;
 
@@ -2906,27 +1118,20 @@ void HandleUserCommerceReject(int UserIndex) {
 /* '' */
 /* ' Handles the "Drop" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleDrop(int UserIndex) {
+
+void DakaraClientPacketHandler::handleDrop(Drop* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 07/25/09 */
 	/* '07/25/09: Marco - Agregué un checkeo para patear a los usuarios que tiran items mientras comercian. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 4) {
-		throw insufficient_data_error();
-		return;
-	}
 
 	int Slot;
 	int Amount;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	Slot = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Amount = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	Slot = p->Slot;
+	Amount = p->Amount;
 
 	/* 'low rank admins can't drop item. Neither can the dead nor those sailing. */
 	if (UserList[UserIndex].flags.Navegando == 1 || UserList[UserIndex].flags.Muerto == 1
@@ -2966,25 +1171,18 @@ void HandleDrop(int UserIndex) {
 /* '' */
 /* ' Handles the "CastSpell" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCastSpell(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCastSpell(CastSpell* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* '13/11/2009: ZaMa - Ahora los npcs pueden atacar al usuario si quizo castear un hechizo */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int Spell;
 
-	Spell = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	Spell = p->Spell;
 
 	if (UserList[UserIndex].flags.Muerto == 1) {
 		WriteConsoleMsg(UserIndex, "¡¡Estás muerto!!", FontTypeNames_FONTTYPE_INFO);
@@ -3008,81 +1206,46 @@ void HandleCastSpell(int UserIndex) {
 /* '' */
 /* ' Handles the "LeftClick" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleLeftClick(int UserIndex) {
+
+void DakaraClientPacketHandler::handleLeftClick(LeftClick* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	int X;
-	int Y;
-
-	X = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Y = UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	LookatTile(UserIndex, UserList[UserIndex].Pos.Map, X, Y);
+	LookatTile(UserIndex, UserList[UserIndex].Pos.Map, p->X, p->Y);
 }
 
 /* '' */
 /* ' Handles the "DoubleClick" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleDoubleClick(int UserIndex) {
+
+void DakaraClientPacketHandler::handleDoubleClick(DoubleClick* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	int X;
-	int Y;
-
-	X = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Y = UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	Accion(UserIndex, UserList[UserIndex].Pos.Map, X, Y);
+	Accion(UserIndex, UserList[UserIndex].Pos.Map, p->X, p->Y);
 }
 
 /* '' */
 /* ' Handles the "Work" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleWork(int UserIndex) {
+
+void DakaraClientPacketHandler::handleWork(Work* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 13/01/2010 (ZaMa) */
 	/* '13/01/2010: ZaMa - El pirata se puede ocultar en barca */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	eSkill Skill;
-
-	Skill = static_cast<eSkill> (UserList[UserIndex].sockctx->incomingData->ReadByte());
+	eSkill Skill = static_cast<eSkill>( p->Skill );
 
 	if (UserList[UserIndex].flags.Muerto == 1) {
 		return;
@@ -3147,9 +1310,9 @@ void HandleWork(int UserIndex) {
 /* '' */
 /* ' Handles the "InitCrafting" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleInitCrafting(int UserIndex) {
+
+void DakaraClientPacketHandler::handleInitCrafting(InitCrafting* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 29/01/2010 */
@@ -3158,14 +1321,10 @@ void HandleInitCrafting(int UserIndex) {
 	int TotalItems;
 	int ItemsPorCiclo;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	TotalItems = UserList[UserIndex].sockctx->incomingData->ReadLong();
-	ItemsPorCiclo = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	TotalItems = p->TotalItems;
+	ItemsPorCiclo = p->ItemsPorCiclo;
 
 	if (TotalItems > 0) {
-
 		UserList[UserIndex].Construir.Cantidad = TotalItems;
 		UserList[UserIndex].Construir.PorCiclo = MinimoInt(MaxItemsConstruibles(UserIndex), ItemsPorCiclo);
 	}
@@ -3174,19 +1333,17 @@ void HandleInitCrafting(int UserIndex) {
 /* '' */
 /* ' Handles the "UseSpellMacro" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleUseSpellMacro(int UserIndex) {
+
+void DakaraClientPacketHandler::handleUseSpellMacro(UseSpellMacro* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	SendData(SendTarget_ToAdmins, UserIndex,
-			PrepareMessageConsoleMsg(UserList[UserIndex].Name + " fue expulsado por Anti-macro de hechizos.",
+			dakara::protocol::server::BuildConsoleMsg(UserList[UserIndex].Name + " fue expulsado por Anti-macro de hechizos.",
 					FontTypeNames_FONTTYPE_VENENO));
 	WriteErrorMsg(UserIndex,
 			"Has sido expulsado por usar macro de hechizos. Recomendamos leer el reglamento sobre el tema macros.");
@@ -3197,25 +1354,16 @@ void HandleUseSpellMacro(int UserIndex) {
 /* '' */
 /* ' Handles the "UseItem" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleUseItem(int UserIndex) {
+
+void DakaraClientPacketHandler::handleUseItem(UseItem* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	int Slot;
-
-	Slot = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	int Slot = p->Slot;
 
 	if (Slot <= UserList[UserIndex].CurrentInventorySlots && Slot > 0) {
 		if (UserList[UserIndex].Invent.Object[Slot].ObjIndex == 0) {
@@ -3237,25 +1385,16 @@ void HandleUseItem(int UserIndex) {
 /* '' */
 /* ' Handles the "CraftBlacksmith" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCraftBlacksmith(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCraftBlacksmith(CraftBlacksmith* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	int Item;
-
-	Item = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	int Item = p->Item;
 
 	if (Item < 1) {
 		return;
@@ -3274,25 +1413,16 @@ void HandleCraftBlacksmith(int UserIndex) {
 /* '' */
 /* ' Handles the "CraftCarpenter" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCraftCarpenter(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCraftCarpenter(CraftCarpenter* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	int Item;
-
-	Item = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	int Item = p->Item;
 
 	if (Item < 1) {
 		return;
@@ -3311,9 +1441,9 @@ void HandleCraftCarpenter(int UserIndex) {
 /* '' */
 /* ' Handles the "WorkLeftClick" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleWorkLeftClick(int UserIndex) {
+
+void DakaraClientPacketHandler::handleWorkLeftClick(WorkLeftClick* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 14/01/2010 (ZaMa) */
@@ -3321,13 +1451,6 @@ void HandleWorkLeftClick(int UserIndex) {
 	/* '12/01/2010: ZaMa - Ahora se admiten armas arrojadizas (proyectiles sin municiones). */
 	/* '14/01/2010: ZaMa - Ya no se pierden municiones al atacar npcs con dueno. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 4) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int X;
 	int Y;
@@ -3340,10 +1463,10 @@ void HandleWorkLeftClick(int UserIndex) {
 
 	int WeaponIndex;
 
-	X = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Y = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	X = p->X;
+	Y = p->Y;
 
-	Skill = static_cast<eSkill> (UserList[UserIndex].sockctx->incomingData->ReadByte());
+	Skill = static_cast<eSkill> (p->Skill);
 
 	if (UserList[UserIndex].flags.Muerto == 1 || UserList[UserIndex].flags.Descansar
 			|| UserList[UserIndex].flags.Meditando || !InMapBounds(UserList[UserIndex].Pos.Map, X, Y)) {
@@ -3484,7 +1607,7 @@ void HandleWorkLeftClick(int UserIndex) {
 
 			/* 'Play sound! */
 			SendData(SendTarget_ToPCArea, UserIndex,
-					PrepareMessagePlayWave(SND_PESCAR, UserList[UserIndex].Pos.X, UserList[UserIndex].Pos.Y));
+					dakara::protocol::server::BuildPlayWave(SND_PESCAR, UserList[UserIndex].Pos.X, UserList[UserIndex].Pos.Y));
 		} else {
 			WriteConsoleMsg(UserIndex, "No hay agua donde pescar. Busca un lago, río o mar.",
 					FontTypeNames_FONTTYPE_INFO);
@@ -3579,7 +1702,7 @@ void HandleWorkLeftClick(int UserIndex) {
 			if (ObjData[DummyInt].OBJType == eOBJType_otArboles) {
 				if (WeaponIndex == HACHA_LENADOR || WeaponIndex == HACHA_LENADOR_NEWBIE) {
 					SendData(SendTarget_ToPCArea, UserIndex,
-							PrepareMessagePlayWave(SND_TALAR, UserList[UserIndex].Pos.X,
+							dakara::protocol::server::BuildPlayWave(SND_TALAR, UserList[UserIndex].Pos.X,
 									UserList[UserIndex].Pos.Y));
 					DoTalar(UserIndex);
 				} else {
@@ -3592,7 +1715,7 @@ void HandleWorkLeftClick(int UserIndex) {
 
 				if (WeaponIndex == HACHA_LENA_ELFICA) {
 					SendData(SendTarget_ToPCArea, UserIndex,
-							PrepareMessagePlayWave(SND_TALAR, UserList[UserIndex].Pos.X,
+							dakara::protocol::server::BuildPlayWave(SND_TALAR, UserList[UserIndex].Pos.X,
 									UserList[UserIndex].Pos.Y));
 					DoTalar(UserIndex, true);
 				} else {
@@ -3753,79 +1876,56 @@ void HandleWorkLeftClick(int UserIndex) {
 /* '' */
 /* ' Handles the "CreateNewGuild" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCreateNewGuild(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCreateNewGuild(CreateNewGuild* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/11/09 */
 	/* '05/11/09: Pato - Ahora se quitan los espacios del principio y del fin del nombre del clan */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 9) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string desc;
+	std::string& desc = p->Desc;
 	std::string GuildName;
-	std::string site;
+	std::string& site = p->Site;
 	std::vector<std::string> codex;
 	std::string errorStr;
 
-	desc = buffer->ReadUnicodeString();
-	GuildName = vb6::Trim(buffer->ReadUnicodeString());
-	site = buffer->ReadUnicodeString();
-	codex = vb6::Split(buffer->ReadUnicodeString(), SEPARATOR);
+	GuildName = vb6::Trim(p->GuildName);
+	codex = vb6::Split(p->Codex, SEPARATOR);
 
 	if (CrearNuevoClan(UserIndex, desc, GuildName, site, codex, UserList[UserIndex].FundandoGuildAlineacion,
 			errorStr)) {
 		SendData(SendTarget_ToAll, UserIndex,
-				PrepareMessageConsoleMsg(
+				dakara::protocol::server::BuildConsoleMsg(
 						UserList[UserIndex].Name + " fundó el clan " + GuildName + " de alineación "
 								+ GuildAlignment(UserList[UserIndex].GuildIndex) + ".",
 						FontTypeNames_FONTTYPE_GUILD));
-		SendData(SendTarget_ToAll, 0, PrepareMessagePlayWave(44, NO_3D_SOUND, NO_3D_SOUND));
+		SendData(SendTarget_ToAll, 0, dakara::protocol::server::BuildPlayWave(44, NO_3D_SOUND, NO_3D_SOUND));
 
 		/* 'Update tag */
 		RefreshCharStatus(UserIndex);
 	} else {
 		WriteConsoleMsg(UserIndex, errorStr, FontTypeNames_FONTTYPE_GUILD);
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
 }
 
 /* '' */
 /* ' Handles the "SpellInfo" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleSpellInfo(int UserIndex) {
+
+void DakaraClientPacketHandler::handleSpellInfo(SpellInfo* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int spellSlot;
 	int Spell;
 
-	spellSlot = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	spellSlot = p->Slot;
 
 	/* 'Validate slot */
 	if (spellSlot < 1 || spellSlot > MAXUSERHECHIZOS) {
@@ -3850,25 +1950,18 @@ void HandleSpellInfo(int UserIndex) {
 /* '' */
 /* ' Handles the "EquipItem" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleEquipItem(int UserIndex) {
+
+void DakaraClientPacketHandler::handleEquipItem(EquipItem* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int itemSlot;
 
-	itemSlot = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	itemSlot = p->Slot;
 
 	/* 'Dead users can't equip items */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -3890,9 +1983,9 @@ void HandleEquipItem(int UserIndex) {
 /* '' */
 /* ' Handles the "ChangeHeading" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleChangeHeading(int UserIndex) {
+
+void DakaraClientPacketHandler::handleChangeHeading(ChangeHeading* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 06/28/2008 */
@@ -3900,19 +1993,12 @@ void HandleChangeHeading(int UserIndex) {
 	/* ' 10/01/2008: Tavo - Se cancela la salida del juego si el user esta saliendo */
 	/* ' 06/28/2008: NicoNZ - Sólo se puede cambiar si está inmovilizado. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	eHeading heading;
 	int posX = 0;
 	int posY = 0;
 
-	heading = static_cast<eHeading> (UserList[UserIndex].sockctx->incomingData->ReadByte());
+	heading = static_cast<eHeading> (p->Heading);
 
 	if (UserList[UserIndex].flags.Paralizado == 1 && UserList[UserIndex].flags.Inmovilizado == 0) {
 		switch (heading) {
@@ -3955,21 +2041,14 @@ void HandleChangeHeading(int UserIndex) {
 /* '' */
 /* ' Handles the "ModifySkills" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleModifySkills(int UserIndex) {
+
+void DakaraClientPacketHandler::handleModifySkills(ModifySkills* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 11/19/09 */
 	/* '11/19/09: Pato - Adapting to new skills system. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 1 + NUMSKILLS) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int i;
 	int Count = 0;
@@ -3980,7 +2059,7 @@ void HandleModifySkills(int UserIndex) {
 	/* 'Codigo para prevenir el hackeo de los skills */
 	/* '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 	for (i = (1); i <= (NUMSKILLS); i++) {
-		points[i] = UserList[UserIndex].sockctx->incomingData->ReadByte();
+		points[i] = p->Skills[i - 1];
 
 		if (points[i] < 0) {
 			LogHackAttemp(
@@ -4035,26 +2114,19 @@ void HandleModifySkills(int UserIndex) {
 /* '' */
 /* ' Handles the "Train" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleTrain(int UserIndex) {
+
+void DakaraClientPacketHandler::handleTrain(Train* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int SpawnedNpc;
 	int PetIndex;
 
-	PetIndex = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	PetIndex = p->PetIndex;
 
 	if (UserList[UserIndex].flags.TargetNPC == 0) {
 		return;
@@ -4078,7 +2150,7 @@ void HandleTrain(int UserIndex) {
 		}
 	} else {
 		SendData(SendTarget_ToPCArea, UserIndex,
-				PrepareMessageChatOverHead("No puedo traer más criaturas, mata las existentes.",
+				BuildChatOverHead("No puedo traer más criaturas, mata las existentes.",
 						Npclist[UserList[UserIndex].flags.TargetNPC].Char.CharIndex, 0x00ffffff));
 	}
 }
@@ -4086,27 +2158,20 @@ void HandleTrain(int UserIndex) {
 /* '' */
 /* ' Handles the "CommerceBuy" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCommerceBuy(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCommerceBuy(CommerceBuy* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 4) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int Slot;
 	int Amount;
 
-	Slot = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Amount = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	Slot = p->Slot;
+	Amount = p->Amount;
 
 	/* 'Dead people can't commerce... */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -4122,7 +2187,7 @@ void HandleCommerceBuy(int UserIndex) {
 	/* '¿El NPC puede comerciar? */
 	if (Npclist[UserList[UserIndex].flags.TargetNPC].Comercia == 0) {
 		SendData(SendTarget_ToPCArea, UserIndex,
-				PrepareMessageChatOverHead("No tengo ningún interés en comerciar.",
+				BuildChatOverHead("No tengo ningún interés en comerciar.",
 						Npclist[UserList[UserIndex].flags.TargetNPC].Char.CharIndex, 0x00ffffff));
 		return;
 	}
@@ -4140,27 +2205,20 @@ void HandleCommerceBuy(int UserIndex) {
 /* '' */
 /* ' Handles the "BankExtractItem" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleBankExtractItem(int UserIndex) {
+
+void DakaraClientPacketHandler::handleBankExtractItem(BankExtractItem* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 4) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int Slot;
 	int Amount;
 
-	Slot = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Amount = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	Slot = p->Slot;
+	Amount = p->Amount;
 
 	/* 'Dead people can't commerce */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -4185,27 +2243,20 @@ void HandleBankExtractItem(int UserIndex) {
 /* '' */
 /* ' Handles the "CommerceSell" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCommerceSell(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCommerceSell(CommerceSell* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 4) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int Slot;
 	int Amount;
 
-	Slot = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Amount = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	Slot = p->Slot;
+	Amount = p->Amount;
 
 	/* 'Dead people can't commerce... */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -4221,7 +2272,7 @@ void HandleCommerceSell(int UserIndex) {
 	/* '¿El NPC puede comerciar? */
 	if (Npclist[UserList[UserIndex].flags.TargetNPC].Comercia == 0) {
 		SendData(SendTarget_ToPCArea, UserIndex,
-				PrepareMessageChatOverHead("No tengo ningún interés en comerciar.",
+				BuildChatOverHead("No tengo ningún interés en comerciar.",
 						Npclist[UserList[UserIndex].flags.TargetNPC].Char.CharIndex, 0x00ffffff));
 		return;
 	}
@@ -4233,27 +2284,20 @@ void HandleCommerceSell(int UserIndex) {
 /* '' */
 /* ' Handles the "BankDeposit" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleBankDeposit(int UserIndex) {
+
+void DakaraClientPacketHandler::handleBankDeposit(BankDeposit* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 4) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int Slot;
 	int Amount;
 
-	Slot = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Amount = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	Slot = p->Slot;
+	Amount = p->Amount;
 
 	/* 'Dead people can't commerce... */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -4278,25 +2322,14 @@ void HandleBankDeposit(int UserIndex) {
 /* '' */
 /* ' Handles the "ForumPost" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleForumPost(int UserIndex) {
+
+void DakaraClientPacketHandler::handleForumPost(ForumPost* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 02/01/2010 */
 	/* '02/01/2010: ZaMa - Implemento nuevo sistema de foros */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 6) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	eForumMsgType ForumMsgType;
 
@@ -4307,10 +2340,10 @@ void HandleForumPost(int UserIndex) {
 	std::string postFile;
 	int ForumType;
 
-	ForumMsgType = static_cast<eForumMsgType>(buffer->ReadByte());
+	ForumMsgType = static_cast<eForumMsgType>(p->MsgType);
 
-	Title = buffer->ReadUnicodeString();
-	Post = buffer->ReadUnicodeString();
+	Title = p->Title;
+	Post = p->Post;
 
 	if (UserList[UserIndex].flags.TargetObj > 0) {
 		ForumType = ForumAlignment(ForumMsgType);
@@ -4335,72 +2368,54 @@ void HandleForumPost(int UserIndex) {
 
 		AddPost(ForumIndex, Post, UserList[UserIndex].Name, Title, EsAnuncio(ForumMsgType));
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "MoveSpell" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleMoveSpell(int UserIndex) {
+
+void DakaraClientPacketHandler::handleMoveSpell(MoveSpell* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int dir;
 
-	if (UserList[UserIndex].sockctx->incomingData->ReadBoolean()) {
+	if (p->Direction) {
 		dir = 1;
 	} else {
 		dir = -1;
 	}
 
-	DesplazarHechizo(UserIndex, dir, UserList[UserIndex].sockctx->incomingData->ReadByte());
+	DesplazarHechizo(UserIndex, dir, p->Slot);
 }
 
 /* '' */
 /* ' Handles the "MoveBank" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleMoveBank(int UserIndex) {
+
+void DakaraClientPacketHandler::handleMoveBank(MoveBank* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Torres Patricio (Pato) */
 	/* 'Last Modification: 06/14/09 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int dir;
 	int Slot;
 	struct Obj TempItem;
 
-	if (UserList[UserIndex].sockctx->incomingData->ReadBoolean()) {
+	if (p->Direction) {
 		dir = 1;
 	} else {
 		dir = -1;
 	}
 
-	Slot = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	Slot = p->Slot;
 
 	TempItem.ObjIndex = UserList[UserIndex].BancoInvent.Object[Slot].ObjIndex;
 	TempItem.Amount = UserList[UserIndex].BancoInvent.Object[Slot].Amount;
@@ -4425,56 +2440,35 @@ void HandleMoveBank(int UserIndex) {
 /* '' */
 /* ' Handles the "ClanCodexUpdate" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleClanCodexUpdate(int UserIndex) {
+
+void DakaraClientPacketHandler::handleClanCodexUpdate(ClanCodexUpdate* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string desc;
 	std::vector<std::string> codex;
 
-	desc = buffer->ReadUnicodeString();
-	codex = vb6::Split(buffer->ReadUnicodeString(), SEPARATOR);
+	desc = p->Desc;
+	codex = vb6::Split(p->Codex, SEPARATOR);
 
 	ChangeCodexAndDesc(desc, codex, UserList[UserIndex].GuildIndex);
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
 }
 
 /* '' */
 /* ' Handles the "UserCommerceOffer" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleUserCommerceOffer(int UserIndex) {
+
+void DakaraClientPacketHandler::handleUserCommerceOffer(UserCommerceOffer* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 24/11/2009 */
 	/* '24/11/2009: ZaMa - Nuevo sistema de comercio */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 7) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int Amount;
 	int Slot;
@@ -4482,9 +2476,9 @@ void HandleUserCommerceOffer(int UserIndex) {
 	int OfferSlot;
 	int ObjIndex = 0;
 
-	Slot = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Amount = UserList[UserIndex].sockctx->incomingData->ReadLong();
-	OfferSlot = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	Slot = p->Slot;
+	Amount = p->Amount;
+	OfferSlot = p->OfferSlot;
 
 	if (!PuedeSeguirComerciando(UserIndex)) {
 		return;
@@ -4591,31 +2585,20 @@ void HandleUserCommerceOffer(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildAcceptPeace" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildAcceptPeace(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildAcceptPeace(GuildAcceptPeace* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 	std::string errorStr;
 	int otherClanIndex;
 
-	guild = buffer->ReadUnicodeString();
+	guild = p->Guild;
 
 	otherClanIndex = r_AceptarPropuestaDePaz(UserIndex, guild, errorStr);
 
@@ -4623,46 +2606,35 @@ void HandleGuildAcceptPeace(int UserIndex) {
 		WriteConsoleMsg(UserIndex, errorStr, FontTypeNames_FONTTYPE_GUILD);
 	} else {
 		SendData(SendTarget_ToGuildMembers, UserList[UserIndex].GuildIndex,
-				PrepareMessageConsoleMsg("Tu clan ha firmado la paz con " + guild + ".",
+				dakara::protocol::server::BuildConsoleMsg("Tu clan ha firmado la paz con " + guild + ".",
 						FontTypeNames_FONTTYPE_GUILD));
 		SendData(SendTarget_ToGuildMembers, otherClanIndex,
-				PrepareMessageConsoleMsg(
+				dakara::protocol::server::BuildConsoleMsg(
 						"Tu clan ha firmado la paz con " + GuildName(UserList[UserIndex].GuildIndex) + ".",
 						FontTypeNames_FONTTYPE_GUILD));
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 }
 
 /* '' */
 /* ' Handles the "GuildRejectAlliance" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildRejectAlliance(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildRejectAlliance(GuildRejectAlliance* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 	std::string errorStr;
 	int otherClanIndex;
 
-	guild = buffer->ReadUnicodeString();
+	guild = p->Guild;
 
 	otherClanIndex = r_RechazarPropuestaDeAlianza(UserIndex, guild, errorStr);
 
@@ -4670,16 +2642,16 @@ void HandleGuildRejectAlliance(int UserIndex) {
 		WriteConsoleMsg(UserIndex, errorStr, FontTypeNames_FONTTYPE_GUILD);
 	} else {
 		SendData(SendTarget_ToGuildMembers, UserList[UserIndex].GuildIndex,
-				PrepareMessageConsoleMsg("Tu clan rechazado la propuesta de alianza de " + guild,
+				dakara::protocol::server::BuildConsoleMsg("Tu clan rechazado la propuesta de alianza de " + guild,
 						FontTypeNames_FONTTYPE_GUILD));
 		SendData(SendTarget_ToGuildMembers, otherClanIndex,
-				PrepareMessageConsoleMsg(
+				dakara::protocol::server::BuildConsoleMsg(
 						GuildName(UserList[UserIndex].GuildIndex)
 								+ " ha rechazado nuestra propuesta de alianza con su clan.",
 						FontTypeNames_FONTTYPE_GUILD));
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -4687,31 +2659,20 @@ void HandleGuildRejectAlliance(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildRejectPeace" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildRejectPeace(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildRejectPeace(GuildRejectPeace* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 	std::string errorStr;
 	int otherClanIndex;
 
-	guild = buffer->ReadUnicodeString();
+	guild = p->Guild;
 
 	otherClanIndex = r_RechazarPropuestaDePaz(UserIndex, guild, errorStr);
 
@@ -4719,16 +2680,16 @@ void HandleGuildRejectPeace(int UserIndex) {
 		WriteConsoleMsg(UserIndex, errorStr, FontTypeNames_FONTTYPE_GUILD);
 	} else {
 		SendData(SendTarget_ToGuildMembers, UserList[UserIndex].GuildIndex,
-				PrepareMessageConsoleMsg("Tu clan rechazado la propuesta de paz de " + guild + ".",
+				dakara::protocol::server::BuildConsoleMsg("Tu clan rechazado la propuesta de paz de " + guild + ".",
 						FontTypeNames_FONTTYPE_GUILD));
 		SendData(SendTarget_ToGuildMembers, otherClanIndex,
-				PrepareMessageConsoleMsg(
+				dakara::protocol::server::BuildConsoleMsg(
 						GuildName(UserList[UserIndex].GuildIndex)
 								+ " ha rechazado nuestra propuesta de paz con su clan.",
 						FontTypeNames_FONTTYPE_GUILD));
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -4736,31 +2697,20 @@ void HandleGuildRejectPeace(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildAcceptAlliance" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildAcceptAlliance(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildAcceptAlliance(GuildAcceptAlliance* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 	std::string errorStr;
 	int otherClanIndex;
 
-	guild = buffer->ReadUnicodeString();
+	guild = p->Guild;
 
 	otherClanIndex = r_AceptarPropuestaDeAlianza(UserIndex, guild, errorStr);
 
@@ -4768,129 +2718,84 @@ void HandleGuildAcceptAlliance(int UserIndex) {
 		WriteConsoleMsg(UserIndex, errorStr, FontTypeNames_FONTTYPE_GUILD);
 	} else {
 		SendData(SendTarget_ToGuildMembers, UserList[UserIndex].GuildIndex,
-				PrepareMessageConsoleMsg("Tu clan ha firmado la alianza con " + guild + ".",
+				dakara::protocol::server::BuildConsoleMsg("Tu clan ha firmado la alianza con " + guild + ".",
 						FontTypeNames_FONTTYPE_GUILD));
 		SendData(SendTarget_ToGuildMembers, otherClanIndex,
-				PrepareMessageConsoleMsg(
+				dakara::protocol::server::BuildConsoleMsg(
 						"Tu clan ha firmado la paz con " + GuildName(UserList[UserIndex].GuildIndex) + ".",
 						FontTypeNames_FONTTYPE_GUILD));
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "GuildOfferPeace" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildOfferPeace(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildOfferPeace(GuildOfferPeace* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 	std::string proposal;
 	std::string errorStr;
 
-	guild = buffer->ReadUnicodeString();
-	proposal = buffer->ReadUnicodeString();
+	guild = p->Guild;
+	proposal = p->Proposal;
 
 	if (r_ClanGeneraPropuesta(UserIndex, guild, RELACIONES_GUILD_PAZ, proposal, errorStr)) {
 		WriteConsoleMsg(UserIndex, "Propuesta de paz enviada.", FontTypeNames_FONTTYPE_GUILD);
 	} else {
 		WriteConsoleMsg(UserIndex, errorStr, FontTypeNames_FONTTYPE_GUILD);
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "GuildOfferAlliance" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildOfferAlliance(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildOfferAlliance(GuildOfferAlliance* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 	std::string proposal;
 	std::string errorStr;
 
-	guild = buffer->ReadUnicodeString();
-	proposal = buffer->ReadUnicodeString();
+	guild = p->Guild;
+	proposal = p->Proposal;
 
 	if (r_ClanGeneraPropuesta(UserIndex, guild, RELACIONES_GUILD_ALIADOS, proposal, errorStr)) {
 		WriteConsoleMsg(UserIndex, "Propuesta de alianza enviada.", FontTypeNames_FONTTYPE_GUILD);
 	} else {
 		WriteConsoleMsg(UserIndex, errorStr, FontTypeNames_FONTTYPE_GUILD);
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "GuildAllianceDetails" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildAllianceDetails(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildAllianceDetails(GuildAllianceDetails* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 	std::string errorStr;
 	std::string details;
 
-	guild = buffer->ReadUnicodeString();
+	guild = p->Guild;
 
 	details = r_VerPropuesta(UserIndex, guild, RELACIONES_GUILD_ALIADOS, errorStr);
 
@@ -4899,40 +2804,25 @@ void HandleGuildAllianceDetails(int UserIndex) {
 	} else {
 		WriteOfferDetails(UserIndex, details);
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "GuildPeaceDetails" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildPeaceDetails(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildPeaceDetails(GuildPeaceDetails* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 	std::string errorStr;
 	std::string details;
 
-	guild = buffer->ReadUnicodeString();
+	guild = p->Guild;
 
 	details = r_VerPropuesta(UserIndex, guild, RELACIONES_GUILD_PAZ, errorStr);
 
@@ -4941,39 +2831,24 @@ void HandleGuildPeaceDetails(int UserIndex) {
 	} else {
 		WriteOfferDetails(UserIndex, details);
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "GuildRequestJoinerInfo" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildRequestJoinerInfo(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildRequestJoinerInfo(GuildRequestJoinerInfo* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string User;
 	std::string details;
 
-	User = buffer->ReadUnicodeString();
+	User = p->User;
 
 	details = a_DetallesAspirante(UserIndex, User);
 
@@ -4983,25 +2858,19 @@ void HandleGuildRequestJoinerInfo(int UserIndex) {
 	} else {
 		WriteShowUserRequest(UserIndex, details);
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "GuildAlliancePropList" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildAlliancePropList(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildAlliancePropList(GuildAlliancePropList* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	WriteAlianceProposalsList(UserIndex, r_ListaDePropuestas(UserIndex, RELACIONES_GUILD_ALIADOS));
 }
@@ -5009,16 +2878,14 @@ void HandleGuildAlliancePropList(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildPeacePropList" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildPeacePropList(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildPeacePropList(GuildPeacePropList* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	WritePeaceProposalsList(UserIndex, r_ListaDePropuestas(UserIndex, RELACIONES_GUILD_PAZ));
 }
@@ -5026,31 +2893,20 @@ void HandleGuildPeacePropList(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildDeclareWar" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildDeclareWar(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildDeclareWar(GuildDeclareWar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 	std::string errorStr;
 	int otherGuildIndex;
 
-	guild = buffer->ReadUnicodeString();
+	guild = p->Guild;
 
 	otherGuildIndex = r_DeclararGuerra(UserIndex, guild, errorStr);
 
@@ -5059,19 +2915,19 @@ void HandleGuildDeclareWar(int UserIndex) {
 	} else {
 		/* 'WAR shall be! */
 		SendData(SendTarget_ToGuildMembers, UserList[UserIndex].GuildIndex,
-				PrepareMessageConsoleMsg("TU CLAN HA ENTRADO EN GUERRA CON " + guild + ".",
+				dakara::protocol::server::BuildConsoleMsg("TU CLAN HA ENTRADO EN GUERRA CON " + guild + ".",
 						FontTypeNames_FONTTYPE_GUILD));
 		SendData(SendTarget_ToGuildMembers, otherGuildIndex,
-				PrepareMessageConsoleMsg(
+				dakara::protocol::server::BuildConsoleMsg(
 						GuildName(UserList[UserIndex].GuildIndex) + " LE DECLARA LA GUERRA A TU CLAN.",
 						FontTypeNames_FONTTYPE_GUILD));
 		SendData(SendTarget_ToGuildMembers, UserList[UserIndex].GuildIndex,
-				PrepareMessagePlayWave(45, NO_3D_SOUND, NO_3D_SOUND));
+				dakara::protocol::server::BuildPlayWave(45, NO_3D_SOUND, NO_3D_SOUND));
 		SendData(SendTarget_ToGuildMembers, otherGuildIndex,
-				PrepareMessagePlayWave(45, NO_3D_SOUND, NO_3D_SOUND));
+				dakara::protocol::server::BuildPlayWave(45, NO_3D_SOUND, NO_3D_SOUND));
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -5079,61 +2935,35 @@ void HandleGuildDeclareWar(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildNewWebsite" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildNewWebsite(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildNewWebsite(GuildNewWebsite* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	ActualizarWebSite(UserIndex, buffer->ReadUnicodeString());
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
+	ActualizarWebSite(UserIndex, p->Website);
 }
 
 /* '' */
 /* ' Handles the "GuildAcceptNewMember" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildAcceptNewMember(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildAcceptNewMember(GuildAcceptNewMember* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string errorStr;
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!a_AceptarAspirante(UserIndex, UserName, errorStr)) {
 		WriteConsoleMsg(UserIndex, errorStr, FontTypeNames_FONTTYPE_GUILD);
@@ -5145,13 +2975,13 @@ void HandleGuildAcceptNewMember(int UserIndex) {
 		}
 
 		SendData(SendTarget_ToGuildMembers, UserList[UserIndex].GuildIndex,
-				PrepareMessageConsoleMsg(UserName + " ha sido aceptado como miembro del clan.",
+				dakara::protocol::server::BuildConsoleMsg(UserName + " ha sido aceptado como miembro del clan.",
 						FontTypeNames_FONTTYPE_GUILD));
 		SendData(SendTarget_ToGuildMembers, UserList[UserIndex].GuildIndex,
-				PrepareMessagePlayWave(43, NO_3D_SOUND, NO_3D_SOUND));
+				dakara::protocol::server::BuildPlayWave(43, NO_3D_SOUND, NO_3D_SOUND));
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -5159,34 +2989,23 @@ void HandleGuildAcceptNewMember(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildRejectNewMember" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildRejectNewMember(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildRejectNewMember(GuildRejectNewMember* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 01/08/07 */
 	/* 'Last Modification by: (liquid) */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string errorStr;
 	std::string UserName;
 	std::string Reason;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
-	Reason = buffer->ReadUnicodeString();
+	UserName = p->UserName;
+	Reason = p->Reason;
 
 	if (!a_RechazarAspirante(UserIndex, UserName, errorStr)) {
 		WriteConsoleMsg(UserIndex, errorStr, FontTypeNames_FONTTYPE_GUILD);
@@ -5201,7 +3020,7 @@ void HandleGuildRejectNewMember(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -5209,121 +3028,75 @@ void HandleGuildRejectNewMember(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildKickMember" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildKickMember(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildKickMember(GuildKickMember* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int GuildIndex;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	GuildIndex = m_EcharMiembroDeClan(UserIndex, UserName);
 
 	if (GuildIndex > 0) {
 		SendData(SendTarget_ToGuildMembers, GuildIndex,
-				PrepareMessageConsoleMsg(UserName + " fue expulsado del clan.",
+				dakara::protocol::server::BuildConsoleMsg(UserName + " fue expulsado del clan.",
 						FontTypeNames_FONTTYPE_GUILD));
-		SendData(SendTarget_ToGuildMembers, GuildIndex, PrepareMessagePlayWave(45, NO_3D_SOUND, NO_3D_SOUND));
+		SendData(SendTarget_ToGuildMembers, GuildIndex, dakara::protocol::server::BuildPlayWave(45, NO_3D_SOUND, NO_3D_SOUND));
 	} else {
 		WriteConsoleMsg(UserIndex, "No puedes expulsar ese personaje del clan.",
 				FontTypeNames_FONTTYPE_GUILD);
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
 
 }
 
 /* '' */
 /* ' Handles the "GuildUpdateNews" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildUpdateNews(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildUpdateNews(GuildUpdateNews* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	ActualizarNoticias(UserIndex, buffer->ReadUnicodeString());
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
+	ActualizarNoticias(UserIndex, p->News);
 }
 
 /* '' */
 /* ' Handles the "GuildMemberInfo" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildMemberInfo(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildMemberInfo(GuildMemberInfo* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	SendDetallesPersonaje(UserIndex, buffer->ReadUnicodeString());
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
+	SendDetallesPersonaje(UserIndex, p->UserName);
 }
 
 /* '' */
 /* ' Handles the "GuildOpenElections" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildOpenElections(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildOpenElections(GuildOpenElections* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	std::string ERROR;
 
@@ -5331,7 +3104,7 @@ void HandleGuildOpenElections(int UserIndex) {
 		WriteConsoleMsg(UserIndex, ERROR, FontTypeNames_FONTTYPE_GUILD);
 	} else {
 		SendData(SendTarget_ToGuildMembers, UserList[UserIndex].GuildIndex,
-				PrepareMessageConsoleMsg(
+				dakara::protocol::server::BuildConsoleMsg(
 						"¡Han comenzado las elecciones del clan! Puedes votar escribiendo /VOTO seguido del nombre del personaje, por ejemplo: /VOTO "
 								+ UserList[UserIndex].Name, FontTypeNames_FONTTYPE_GUILD));
 	}
@@ -5340,32 +3113,21 @@ void HandleGuildOpenElections(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildRequestMembership" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildRequestMembership(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildRequestMembership(GuildRequestMembership* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 	std::string application;
 	std::string errorStr;
 
-	guild = buffer->ReadUnicodeString();
-	application = buffer->ReadUnicodeString();
+	guild = p->Guild;
+	application = p->Application;
 
 	if (!a_NuevoAspirante(UserIndex, guild, application, errorStr)) {
 		WriteConsoleMsg(UserIndex, errorStr, FontTypeNames_FONTTYPE_GUILD);
@@ -5374,48 +3136,30 @@ void HandleGuildRequestMembership(int UserIndex) {
 				"Tu solicitud ha sido enviada. Espera prontas noticias del líder de " + guild + ".",
 				FontTypeNames_FONTTYPE_GUILD);
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "GuildRequestDetails" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildRequestDetails(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildRequestDetails(GuildRequestDetails* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	SendGuildDetails(UserIndex, buffer->ReadUnicodeString());
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
+	SendGuildDetails(UserIndex, p->Guild);
 
 }
 
 /* '' */
 /* ' Handles the "Online" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleOnline(int UserIndex) {
+
+void DakaraClientPacketHandler::handleOnline(Online* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
@@ -5423,9 +3167,6 @@ void HandleOnline(int UserIndex) {
 	/* '*************************************************** */
 	int i;
 	int Count = 0;
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	for (i = (1); i <= (LastUser); i++) {
 		if (vb6::LenB(UserList[i].Name) != 0) {
@@ -5441,9 +3182,9 @@ void HandleOnline(int UserIndex) {
 /* '' */
 /* ' Handles the "Quit" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleQuit(int UserIndex) {
+
+void DakaraClientPacketHandler::handleQuit(Quit* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 04/15/2008 (NicoNZ) */
@@ -5451,9 +3192,6 @@ void HandleQuit(int UserIndex) {
 	/* 'visible before doing the countdown to exit */
 	/* '04/15/2008 - No se reseteaban lso contadores de invi ni de ocultar. (NicoNZ) */
 	/* '*************************************************** */
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserList[UserIndex].flags.Paralizado == 1) {
 		WriteConsoleMsg(UserIndex, "No puedes salir estando paralizado.", FontTypeNames_FONTTYPE_WARNING);
@@ -5466,9 +3204,9 @@ void HandleQuit(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildLeave" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildLeave(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildLeave(GuildLeave* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
@@ -5476,16 +3214,13 @@ void HandleGuildLeave(int UserIndex) {
 	/* '*************************************************** */
 	int GuildIndex;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
 	/* 'obtengo el guildindex */
 	GuildIndex = m_EcharMiembroDeClan(UserIndex, UserList[UserIndex].Name);
 
 	if (GuildIndex > 0) {
 		WriteConsoleMsg(UserIndex, "Dejas el clan.", FontTypeNames_FONTTYPE_GUILD);
 		SendData(SendTarget_ToGuildMembers, GuildIndex,
-				PrepareMessageConsoleMsg(UserList[UserIndex].Name + " deja el clan.",
+				dakara::protocol::server::BuildConsoleMsg(UserList[UserIndex].Name + " deja el clan.",
 						FontTypeNames_FONTTYPE_GUILD));
 	} else {
 		WriteConsoleMsg(UserIndex, "Tú no puedes salir de este clan.", FontTypeNames_FONTTYPE_GUILD);
@@ -5495,9 +3230,9 @@ void HandleGuildLeave(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestAccountState" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestAccountState(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestAccountState(RequestAccountState* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
@@ -5506,8 +3241,8 @@ void HandleRequestAccountState(int UserIndex) {
 	int earnings = 0;
 	int Percentage = 0;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Dead people can't check their accounts */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -5563,16 +3298,16 @@ void HandleRequestAccountState(int UserIndex) {
 /* '' */
 /* ' Handles the "PetStand" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePetStand(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePetStand(PetStand* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Dead people can't use pets */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -5608,16 +3343,16 @@ void HandlePetStand(int UserIndex) {
 /* '' */
 /* ' Handles the "PetFollow" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePetFollow(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePetFollow(PetFollow* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Dead users can't use pets */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -5653,16 +3388,16 @@ void HandlePetFollow(int UserIndex) {
 /* '' */
 /* ' Handles the "ReleasePet" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleReleasePet(int UserIndex) {
+
+void DakaraClientPacketHandler::handleReleasePet(ReleasePet* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 18/11/2009 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Dead users can't use pets */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -5697,16 +3432,16 @@ void HandleReleasePet(int UserIndex) {
 /* '' */
 /* ' Handles the "TrainList" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleTrainList(int UserIndex) {
+
+void DakaraClientPacketHandler::handleTrainList(TrainList* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Dead users can't use pets */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -5739,16 +3474,16 @@ void HandleTrainList(int UserIndex) {
 /* '' */
 /* ' Handles the "Rest" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRest(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRest(Rest* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Dead users can't use pets */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -5785,17 +3520,17 @@ void HandleRest(int UserIndex) {
 /* '' */
 /* ' Handles the "Meditate" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleMeditate(int UserIndex) {
+
+void DakaraClientPacketHandler::handleMeditate(Meditate* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 04/15/08 (NicoNZ) */
 	/* 'Arreglé un bug que mandaba un index de la meditacion diferente */
 	/* 'al que decia el server. */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Dead users can't use pets */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -5857,7 +3592,7 @@ void HandleMeditate(int UserIndex) {
 		}
 
 		SendData(SendTarget_ToPCArea, UserIndex,
-				PrepareMessageCreateFX(UserList[UserIndex].Char.CharIndex, UserList[UserIndex].Char.FX,
+				dakara::protocol::server::BuildCreateFX(UserList[UserIndex].Char.CharIndex, UserList[UserIndex].Char.FX,
 						INFINITE_LOOPS));
 	} else {
 		UserList[UserIndex].Counters.bPuedeMeditar = false;
@@ -5865,23 +3600,23 @@ void HandleMeditate(int UserIndex) {
 		UserList[UserIndex].Char.FX = 0;
 		UserList[UserIndex].Char.loops = 0;
 		SendData(SendTarget_ToPCArea, UserIndex,
-				PrepareMessageCreateFX(UserList[UserIndex].Char.CharIndex, 0, 0));
+				dakara::protocol::server::BuildCreateFX(UserList[UserIndex].Char.CharIndex, 0, 0));
 	}
 }
 
 /* '' */
 /* ' Handles the "Resucitate" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleResucitate(int UserIndex) {
+
+void DakaraClientPacketHandler::handleResucitate(Resucitate* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Se asegura que el target es un npc */
 	if (UserList[UserIndex].flags.TargetNPC == 0) {
@@ -5913,9 +3648,9 @@ void HandleResucitate(int UserIndex) {
 /* '' */
 /* ' Handles the "Consultation" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleConsultation(int UserIndex) {
+
+void DakaraClientPacketHandler::handleConsultation(Consultation* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 01/05/2010 */
@@ -5926,8 +3661,8 @@ void HandleConsultation(int UserIndex) {
 
 	int UserConsulta;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* ' Comando exclusivo para gms */
 	if (!EsGm(UserIndex)) {
@@ -5996,16 +3731,16 @@ void HandleConsultation(int UserIndex) {
 /* '' */
 /* ' Handles the "Heal" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleHeal(int UserIndex) {
+
+void DakaraClientPacketHandler::handleHeal(Heal* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Se asegura que el target es un npc */
 	if (UserList[UserIndex].flags.TargetNPC == 0) {
@@ -6037,16 +3772,16 @@ void HandleHeal(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestStats" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestStats(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestStats(RequestStats* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	SendUserStatsTxt(UserIndex, UserIndex);
 }
@@ -6054,16 +3789,16 @@ void HandleRequestStats(int UserIndex) {
 /* '' */
 /* ' Handles the "Help" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleHelp(int UserIndex) {
+
+void DakaraClientPacketHandler::handleHelp(Help* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	SendHelp(UserIndex);
 }
@@ -6071,17 +3806,17 @@ void HandleHelp(int UserIndex) {
 /* '' */
 /* ' Handles the "CommerceStart" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCommerceStart(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCommerceStart(CommerceStart* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
 	int i;
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Dead people can't commerce */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -6173,16 +3908,16 @@ void HandleCommerceStart(int UserIndex) {
 /* '' */
 /* ' Handles the "BankStart" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleBankStart(int UserIndex) {
+
+void DakaraClientPacketHandler::handleBankStart(BankStart* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Dead people can't commerce */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -6215,16 +3950,16 @@ void HandleBankStart(int UserIndex) {
 /* '' */
 /* ' Handles the "Enlist" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleEnlist(int UserIndex) {
+
+void DakaraClientPacketHandler::handleEnlist(Enlist* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Validate target NPC */
 	if (UserList[UserIndex].flags.TargetNPC == 0) {
@@ -6254,9 +3989,9 @@ void HandleEnlist(int UserIndex) {
 /* '' */
 /* ' Handles the "Information" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleInformation(int UserIndex) {
+
+void DakaraClientPacketHandler::handleInformation(Information* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
@@ -6266,8 +4001,8 @@ void HandleInformation(int UserIndex) {
 	int NextRecom;
 	int Diferencia;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Validate target NPC */
 	if (UserList[UserIndex].flags.TargetNPC == 0) {
@@ -6335,16 +4070,16 @@ void HandleInformation(int UserIndex) {
 /* '' */
 /* ' Handles the "Reward" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleReward(int UserIndex) {
+
+void DakaraClientPacketHandler::handleReward(Reward* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Validate target NPC */
 	if (UserList[UserIndex].flags.TargetNPC == 0) {
@@ -6384,16 +4119,16 @@ void HandleReward(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestMOTD" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestMOTD(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestMOTD(RequestMOTD* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	SendMOTD(UserIndex);
 }
@@ -6401,16 +4136,16 @@ void HandleRequestMOTD(int UserIndex) {
 /* '' */
 /* ' Handles the "UpTime" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleUpTime(int UserIndex) {
+
+void DakaraClientPacketHandler::handleUpTime(UpTime* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 01/10/08 */
 	/* '01/10/2008 - Marcos Martinez (ByVal) - Automatic restart removed from the server along with all their assignments and varibles */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	int time;
 	std::string UpTimeStr;
@@ -6440,16 +4175,16 @@ void HandleUpTime(int UserIndex) {
 /* '' */
 /* ' Handles the "PartyLeave" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePartyLeave(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePartyLeave(PartyLeave* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	SalirDeParty(UserIndex);
 }
@@ -6457,16 +4192,16 @@ void HandlePartyLeave(int UserIndex) {
 /* '' */
 /* ' Handles the "PartyCreate" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePartyCreate(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePartyCreate(PartyCreate* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (!PuedeCrearParty(UserIndex)) {
 		return;
@@ -6478,16 +4213,16 @@ void HandlePartyCreate(int UserIndex) {
 /* '' */
 /* ' Handles the "PartyJoin" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePartyJoin(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePartyJoin(PartyJoin* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	SolicitarIngresoAParty(UserIndex);
 }
@@ -6495,9 +4230,9 @@ void HandlePartyJoin(int UserIndex) {
 /* '' */
 /* ' Handles the "ShareNpc" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleShareNpc(int UserIndex) {
+
+void DakaraClientPacketHandler::handleShareNpc(ShareNpc* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 15/04/2010 */
@@ -6507,8 +4242,8 @@ void HandleShareNpc(int UserIndex) {
 	int TargetUserIndex;
 	int SharingUserIndex;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* ' Didn't target any user */
 	TargetUserIndex = UserList[UserIndex].flags.TargetUser;
@@ -6576,9 +4311,9 @@ void HandleShareNpc(int UserIndex) {
 /* '' */
 /* ' Handles the "StopSharingNpc" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleStopSharingNpc(int UserIndex) {
+
+void DakaraClientPacketHandler::handleStopSharingNpc(StopSharingNpc* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 15/04/2010 */
@@ -6587,8 +4322,8 @@ void HandleStopSharingNpc(int UserIndex) {
 
 	int SharingUserIndex;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	SharingUserIndex = UserList[UserIndex].flags.ShareNpcWith;
 
@@ -6610,16 +4345,14 @@ void HandleStopSharingNpc(int UserIndex) {
 /* '' */
 /* ' Handles the "Inquiry" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleInquiry(int UserIndex) {
+
+void DakaraClientPacketHandler::handleInquiry(Inquiry* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	ConsultaPopular->SendInfoEncuesta(UserIndex);
 }
@@ -6627,30 +4360,19 @@ void HandleInquiry(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildMessage" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildMessage(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildMessage(GuildMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 15/07/2009 */
 	/* '02/03/2009: ZaMa - Arreglado un indice mal pasado a la funcion de cartel de clanes overhead. */
 	/* '15/07/2009: ZaMa - Now invisible admins only speak by console */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string Chat;
 
-	Chat = buffer->ReadUnicodeString();
+	Chat = p->Chat;
 
 	if (vb6::LenB(Chat) != 0) {
 		/* 'Analize chat... */
@@ -6658,17 +4380,17 @@ void HandleGuildMessage(int UserIndex) {
 
 		if (UserList[UserIndex].GuildIndex > 0) {
 			SendData(SendTarget_ToDiosesYclan, UserList[UserIndex].GuildIndex,
-					PrepareMessageGuildChat(UserList[UserIndex].Name + "> " + Chat));
+					dakara::protocol::server::BuildGuildChat(UserList[UserIndex].Name + "> " + Chat));
 
 			if (!(UserList[UserIndex].flags.AdminInvisible == 1)) {
 				SendData(SendTarget_ToClanArea, UserIndex,
-						PrepareMessageChatOverHead("< " + Chat + " >", UserList[UserIndex].Char.CharIndex,
+						BuildChatOverHead("< " + Chat + " >", UserList[UserIndex].Char.CharIndex,
 								vbYellow));
 			}
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -6676,29 +4398,18 @@ void HandleGuildMessage(int UserIndex) {
 /* '' */
 /* ' Handles the "PartyMessage" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePartyMessage(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePartyMessage(PartyMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string Chat;
 
-	Chat = buffer->ReadUnicodeString();
+	Chat = p->Chat;
 
 	if (vb6::LenB(Chat) != 0) {
 		/* 'Analize chat... */
@@ -6709,7 +4420,7 @@ void HandlePartyMessage(int UserIndex) {
 		/* 'Call SendData(SendTarget.ToPartyArea, UserIndex, UserList(UserIndex).Pos.map, "||" & vbYellow & "°< " & mid$(rData, 7) & " >°" & CStr(UserList(UserIndex).Char.CharIndex)) */
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -6717,38 +4428,29 @@ void HandlePartyMessage(int UserIndex) {
 /* '' */
 /* ' Handles the "CentinelReport" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCentinelReport(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCentinelReport(CentinelReport* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	CentinelaCheckClave(UserIndex, UserList[UserIndex].sockctx->incomingData->ReadInteger());
+	CentinelaCheckClave(UserIndex, p->Code);
 }
 
 /* '' */
 /* ' Handles the "GuildOnline" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildOnline(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildOnline(GuildOnline* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	std::string onlineList;
 
@@ -6765,16 +4467,16 @@ void HandleGuildOnline(int UserIndex) {
 /* '' */
 /* ' Handles the "PartyOnline" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePartyOnline(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePartyOnline(PartyOnline* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	OnlineParty(UserIndex);
 }
@@ -6782,29 +4484,18 @@ void HandlePartyOnline(int UserIndex) {
 /* '' */
 /* ' Handles the "CouncilMessage" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCouncilMessage(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCouncilMessage(CouncilMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string Chat;
 
-	Chat = buffer->ReadUnicodeString();
+	Chat = p->Chat;
 
 	if (vb6::LenB(Chat) != 0) {
 		/* 'Analize chat... */
@@ -6812,70 +4503,54 @@ void HandleCouncilMessage(int UserIndex) {
 
 		if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_RoyalCouncil)) {
 			SendData(SendTarget_ToConsejo, UserIndex,
-					PrepareMessageConsoleMsg("(Consejero) " + UserList[UserIndex].Name + "> " + Chat,
+					dakara::protocol::server::BuildConsoleMsg("(Consejero) " + UserList[UserIndex].Name + "> " + Chat,
 							FontTypeNames_FONTTYPE_CONSEJO));
 		} else if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_ChaosCouncil)) {
 			SendData(SendTarget_ToConsejoCaos, UserIndex,
-					PrepareMessageConsoleMsg("(Consejero) " + UserList[UserIndex].Name + "> " + Chat,
+					dakara::protocol::server::BuildConsoleMsg("(Consejero) " + UserList[UserIndex].Name + "> " + Chat,
 							FontTypeNames_FONTTYPE_CONSEJOCAOS));
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 }
 
 /* '' */
 /* ' Handles the "RoleMasterRequest" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRoleMasterRequest(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRoleMasterRequest(RoleMasterRequest* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string request;
 
-	request = buffer->ReadUnicodeString();
+	request = p->Request;
 
 	if (vb6::LenB(request) != 0) {
 		WriteConsoleMsg(UserIndex, "Su solicitud ha sido enviada.", FontTypeNames_FONTTYPE_INFO);
 		SendData(SendTarget_ToRMsAndHigherAdmins, 0,
-				PrepareMessageConsoleMsg(UserList[UserIndex].Name + " PREGUNTA ROL: " + request,
+				dakara::protocol::server::BuildConsoleMsg(UserList[UserIndex].Name + " PREGUNTA ROL: " + request,
 						FontTypeNames_FONTTYPE_GUILDMSG));
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
 }
 
 /* '' */
 /* ' Handles the "GMRequest" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGMRequest(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGMRequest(GMRequest* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	auto it = std::find(Ayuda.begin(), Ayuda.end(), UserList[UserIndex].Name);
 	if (it == Ayuda.end()) {
@@ -6895,62 +4570,38 @@ void HandleGMRequest(int UserIndex) {
 /* '' */
 /* ' Handles the "BugReport" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleBugReport(int UserIndex) {
+
+void DakaraClientPacketHandler::handleBugReport(BugReport* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string bugReport;
 
-	bugReport = buffer->ReadUnicodeString();
+	bugReport = p->Report;
 
 	LogBugReport(UserIndex, bugReport);
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
 
 }
 
 /* '' */
 /* ' Handles the "ChangeDescription" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleChangeDescription(int UserIndex) {
+
+void DakaraClientPacketHandler::handleChangeDescription(ChangeDescription* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string description;
 
-	description = buffer->ReadUnicodeString();
+	description = p->Description;
 
 	if (UserList[UserIndex].flags.Muerto == 1) {
 		WriteConsoleMsg(UserIndex, "No puedes cambiar la descripción estando muerto.",
@@ -6965,38 +4616,24 @@ void HandleChangeDescription(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "GuildVote" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildVote(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildVote(GuildVote* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string vote;
 	std::string errorStr;
 
-	vote = buffer->ReadUnicodeString();
+	vote = p->Vote;
 
 	if (!v_UsuarioVota(UserIndex, vote, errorStr)) {
 		WriteConsoleMsg(UserIndex, "Voto NO contabilizado: " + errorStr, FontTypeNames_FONTTYPE_GUILD);
@@ -7004,7 +4641,7 @@ void HandleGuildVote(int UserIndex) {
 		WriteConsoleMsg(UserIndex, "Voto contabilizado.", FontTypeNames_FONTTYPE_GUILD);
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -7012,17 +4649,17 @@ void HandleGuildVote(int UserIndex) {
 /* '' */
 /* ' Handles the "ShowGuildNews" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleShowGuildNews(int UserIndex) {
+
+void DakaraClientPacketHandler::handleShowGuildNews(ShowGuildNews* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMA */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	SendGuildNews(UserIndex);
 }
@@ -7030,30 +4667,19 @@ void HandleShowGuildNews(int UserIndex) {
 /* '' */
 /* ' Handles the "Punishments" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePunishments(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePunishments(Punishments* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 25/08/2009 */
 	/* '25/08/2009: ZaMa - Now only admins can see other admins' punishment list */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string Name;
 	int Count;
 
-	Name = buffer->ReadUnicodeString();
+	Name = p->Name;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		return;
@@ -7102,35 +4728,21 @@ void HandlePunishments(int UserIndex) {
 /* '' */
 /* ' Handles the "ChangePassword" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleChangePassword(int UserIndex) {
+
+void DakaraClientPacketHandler::handleChangePassword(ChangePassword* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Creation Date: 10/10/07 */
 	/* 'Last Modified By: Rapsodius */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
 
 	std::string oldPass;
 	std::string newPass;
 	std::string oldPass2;
 
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	/* # IF SeguridadAlkon THEN */
-	/* # ELSE */
-	oldPass = (buffer->ReadUnicodeString());
-	newPass = (buffer->ReadUnicodeString());
-	/* # END IF */
+	oldPass = p->OldPass;
+	newPass = p->NewPass;
 
 	if (vb6::LenB(newPass) == 0) {
 		WriteConsoleMsg(UserIndex, "Debes especificar una contrasena nueva, inténtalo de nuevo.",
@@ -7147,33 +4759,23 @@ void HandleChangePassword(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "Gamble" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGamble(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGamble(Gamble* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* '10/07/2010: ZaMa - Now normal npcs don't answer if asked to gamble. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int Amount;
 
-	Amount = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	Amount = p->Amount;
 
 	/* ' Dead? */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -7245,25 +4847,18 @@ void HandleGamble(int UserIndex) {
 /* '' */
 /* ' Handles the "InquiryVote" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleInquiryVote(int UserIndex) {
+
+void DakaraClientPacketHandler::handleInquiryVote(InquiryVote* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int opt;
 
-	opt = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	opt = p->Opt;
 
 	WriteConsoleMsg(UserIndex, ConsultaPopular->doVotar(UserIndex, opt), FontTypeNames_FONTTYPE_GUILD);
 }
@@ -7271,25 +4866,18 @@ void HandleInquiryVote(int UserIndex) {
 /* '' */
 /* ' Handles the "BankExtractGold" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleBankExtractGold(int UserIndex) {
+
+void DakaraClientPacketHandler::handleBankExtractGold(BankExtractGold* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int Amount;
 
-	Amount = UserList[UserIndex].sockctx->incomingData->ReadLong();
+	Amount = p->Amount;
 
 	/* 'Dead people can't leave a faction.. they can't talk... */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -7332,9 +4920,9 @@ void HandleBankExtractGold(int UserIndex) {
 /* '' */
 /* ' Handles the "LeaveFaction" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleLeaveFaction(int UserIndex) {
+
+void DakaraClientPacketHandler::handleLeaveFaction(LeaveFaction* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 09/28/2010 */
@@ -7346,8 +4934,8 @@ void HandleLeaveFaction(int UserIndex) {
 	bool TalkToDemon = false;
 	int NpcIndex = 0;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* 'Dead people can't leave a faction.. they can't talk... */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -7443,25 +5031,18 @@ void HandleLeaveFaction(int UserIndex) {
 /* '' */
 /* ' Handles the "BankDepositGold" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleBankDepositGold(int UserIndex) {
+
+void DakaraClientPacketHandler::handleBankDepositGold(BankDepositGold* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int Amount;
 
-	Amount = UserList[UserIndex].sockctx->incomingData->ReadLong();
+	Amount = p->Amount;
 
 	/* 'Dead people can't leave a faction.. they can't talk... */
 	if (UserList[UserIndex].flags.Muerto == 1) {
@@ -7504,30 +5085,19 @@ void HandleBankDepositGold(int UserIndex) {
 /* '' */
 /* ' Handles the "Denounce" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleDenounce(int UserIndex) {
+
+void DakaraClientPacketHandler::handleDenounce(Denounce* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 14/11/2010 */
 	/* '14/11/2010: ZaMa - Now denounces can be desactivated. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string Text;
 	std::string msg;
 
-	Text = buffer->ReadUnicodeString();
+	Text = p->Text;
 
 	if (UserList[UserIndex].flags.Silenciado == 0) {
 		/* 'Analize chat... */
@@ -7535,7 +5105,7 @@ void HandleDenounce(int UserIndex) {
 
 		msg = vb6::LCase(UserList[UserIndex].Name) + " DENUNCIA: " + Text;
 
-		SendData(SendTarget_ToAdmins, 0, PrepareMessageConsoleMsg(msg, FontTypeNames_FONTTYPE_GUILDMSG),
+		SendData(SendTarget_ToAdmins, 0, dakara::protocol::server::BuildConsoleMsg(msg, FontTypeNames_FONTTYPE_GUILDMSG),
 				true);
 
 		Denuncias.push_back(msg);
@@ -7544,7 +5114,7 @@ void HandleDenounce(int UserIndex) {
 		WriteConsoleMsg(UserIndex, "Denuncia enviada, espere..", FontTypeNames_FONTTYPE_INFO);
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -7552,20 +5122,14 @@ void HandleDenounce(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildFundate" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildFundate(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildFundate(GuildFundate* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 14/12/2009 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 1) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (HasFound(UserList[UserIndex].Name)) {
 		WriteConsoleMsg(UserIndex, "¡Ya has fundado un clan, no puedes fundar otro!",
@@ -7579,26 +5143,19 @@ void HandleGuildFundate(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildFundation" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildFundation(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildFundation(GuildFundation* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 14/12/2009 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	eClanType clanType;
 	std::string ERROR;
 
-	clanType = static_cast<eClanType>(UserList[UserIndex].sockctx->incomingData->ReadByte());
+	clanType = static_cast<eClanType>(p->ClanType);
 
 	if (HasFound(UserList[UserIndex].Name)) {
 		WriteConsoleMsg(UserIndex, "¡Ya has fundado un clan, no puedes fundar otro!",
@@ -7652,31 +5209,20 @@ void HandleGuildFundation(int UserIndex) {
 /* '' */
 /* ' Handles the "PartyKick" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePartyKick(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePartyKick(PartyKick* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/05/09 */
 	/* 'Last Modification by: Marco Vanotti (Marco) */
 	/* '- 05/05/09: Now it uses "UserPuedeEjecutarComandos" to check if the user can use party commands */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (UserPuedeEjecutarComandos(UserIndex)) {
 		tUser = NameIndex(UserName);
@@ -7693,7 +5239,7 @@ void HandlePartyKick(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -7701,33 +5247,23 @@ void HandlePartyKick(int UserIndex) {
 /* '' */
 /* ' Handles the "PartySetLeader" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePartySetLeader(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePartySetLeader(PartySetLeader* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/05/09 */
 	/* 'Last Modification by: Marco Vanotti (MarKoxX) */
 	/* '- 05/05/09: Now it uses "UserPuedeEjecutarComandos" to check if the user can use party commands */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 	//int rank;
 	//rank = PlayerType_Admin || PlayerType_Dios || PlayerType_SemiDios || PlayerType_Consejero;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
+
 	if (UserPuedeEjecutarComandos(UserIndex)) {
 		tUser = NameIndex(UserName);
 		if (tUser > 0) {
@@ -7748,7 +5284,7 @@ void HandlePartySetLeader(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -7756,32 +5292,22 @@ void HandlePartySetLeader(int UserIndex) {
 /* '' */
 /* ' Handles the "PartyAcceptMember" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePartyAcceptMember(int UserIndex) {
+
+void DakaraClientPacketHandler::handlePartyAcceptMember(PartyAcceptMember* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/05/09 */
 	/* 'Last Modification by: Marco Vanotti (Marco) */
 	/* '- 05/05/09: Now it uses "UserPuedeEjecutarComandos" to check if the user can use party commands */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 	bool bUserVivo = false;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
+
 	if (UserList[UserIndex].flags.Muerto) {
 		WriteConsoleMsg(UserIndex, "¡¡Estás muerto!!", FontTypeNames_FONTTYPE_PARTY);
 	} else {
@@ -7814,7 +5340,7 @@ void HandlePartyAcceptMember(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -7822,32 +5348,21 @@ void HandlePartyAcceptMember(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildMemberList" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildMemberList(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildMemberList(GuildMemberList* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 	int memberCount;
 	int i;
 	std::string UserName;
 
-	guild = buffer->ReadUnicodeString();
+	guild = p->GuildName;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		if ((vb6::InStrB(guild, "/") != 0)) {
@@ -7874,7 +5389,7 @@ void HandleGuildMemberList(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -7882,29 +5397,18 @@ void HandleGuildMemberList(int UserIndex) {
 /* '' */
 /* ' Handles the "GMMessage" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGMMessage(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGMMessage(GMMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 01/08/07 */
 	/* 'Last Modification by: (liquid) */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string message;
 
-	message = buffer->ReadUnicodeString();
+	message = p->Chat;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		LogGM(UserList[UserIndex].Name, "Mensaje a Gms:" + message);
@@ -7914,12 +5418,12 @@ void HandleGMMessage(int UserIndex) {
 			ParseChat(message);
 
 			SendData(SendTarget_ToAdmins, 0,
-					PrepareMessageConsoleMsg(UserList[UserIndex].Name + "> " + message,
+					dakara::protocol::server::BuildConsoleMsg(UserList[UserIndex].Name + "> " + message,
 							FontTypeNames_FONTTYPE_GMMSG));
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -7927,16 +5431,16 @@ void HandleGMMessage(int UserIndex) {
 /* '' */
 /* ' Handles the "ShowName" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleShowName(int UserIndex) {
+
+void DakaraClientPacketHandler::handleShowName(ShowName* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Dios, PlayerType_Admin, PlayerType_RoleMaster)) {
 		/* 'Show / Hide the name */
@@ -7949,16 +5453,16 @@ void HandleShowName(int UserIndex) {
 /* '' */
 /* ' Handles the "OnlineRoyalArmy" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleOnlineRoyalArmy(int UserIndex) {
+
+void DakaraClientPacketHandler::handleOnlineRoyalArmy(OnlineRoyalArmy* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 28/05/2010 */
 	/* '28/05/2010: ZaMa - Ahora solo dioses pueden ver otros dioses online. */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		return;
@@ -7994,16 +5498,16 @@ void HandleOnlineRoyalArmy(int UserIndex) {
 /* '' */
 /* ' Handles the "OnlineChaosLegion" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleOnlineChaosLegion(int UserIndex) {
+
+void DakaraClientPacketHandler::handleOnlineChaosLegion(OnlineChaosLegion* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 28/05/2010 */
 	/* '28/05/2010: ZaMa - Ahora solo dioses pueden ver otros dioses online. */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		return;
@@ -8039,29 +5543,18 @@ void HandleOnlineChaosLegion(int UserIndex) {
 /* '' */
 /* ' Handles the "GoNearby" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGoNearby(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGoNearby(GoNearby* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 01/10/07 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	int tIndex;
 	int X;
@@ -8118,7 +5611,7 @@ void HandleGoNearby(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -8126,35 +5619,23 @@ void HandleGoNearby(int UserIndex) {
 /* '' */
 /* ' Handles the "Comment" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleComment(int UserIndex) {
+
+void DakaraClientPacketHandler::handleComment(Comment* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string comment;
-	comment = buffer->ReadUnicodeString();
+	std::string& comment = p->Data;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		LogGM(UserList[UserIndex].Name, "Comentario: " + comment);
 		WriteConsoleMsg(UserIndex, "Comentario salvado...", FontTypeNames_FONTTYPE_INFO);
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -8162,16 +5643,16 @@ void HandleComment(int UserIndex) {
 /* '' */
 /* ' Handles the "ServerTime" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleServerTime(int UserIndex) {
+
+void DakaraClientPacketHandler::handleServerTime(ServerTime* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 01/08/07 */
 	/* 'Last Modification by: (liquid) */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		return;
@@ -8180,38 +5661,27 @@ void HandleServerTime(int UserIndex) {
 	LogGM(UserList[UserIndex].Name, "Hora.");
 
 	SendData(SendTarget_ToAll, 0,
-			PrepareMessageConsoleMsg("Hora: " + vb6::dateToString(vb6::Now()), FontTypeNames_FONTTYPE_INFO));
+			dakara::protocol::server::BuildConsoleMsg("Hora: " + vb6::dateToString(vb6::Now()), FontTypeNames_FONTTYPE_INFO));
 }
 
 /* '' */
 /* ' Handles the "Where" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleWhere(int UserIndex) {
+
+void DakaraClientPacketHandler::handleWhere(Where* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 18/11/2010 */
 	/* '07/06/2010: ZaMa - Ahora no se puede usar para saber si hay dioses/admins online. */
 	/* '18/11/2010: ZaMa - Obtengo los privs del charfile antes de mostrar la posicion de un usuario offline. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 	std::string miPos;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 
@@ -8253,7 +5723,7 @@ void HandleWhere(int UserIndex) {
 		LogGM(UserList[UserIndex].Name, "/Donde " + UserName);
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -8261,21 +5731,14 @@ void HandleWhere(int UserIndex) {
 /* '' */
 /* ' Handles the "CreaturesInMap" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCreaturesInMap(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCreaturesInMap(CreaturesInMap* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 30/07/06 */
 	/* 'Pablo (ToxicWaste): modificaciones generales para simplificar la visualización. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int Map;
 	int i;
@@ -8287,7 +5750,7 @@ void HandleCreaturesInMap(int UserIndex) {
 	vb6::array<std::string> List1;
 	vb6::array<std::string> List2;
 
-	Map = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	Map = p->Map;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		return;
@@ -8378,16 +5841,16 @@ void HandleCreaturesInMap(int UserIndex) {
 /* '' */
 /* ' Handles the "WarpMeToTarget" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleWarpMeToTarget(int UserIndex) {
+
+void DakaraClientPacketHandler::handleWarpMeToTarget(WarpMeToTarget* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 26/03/09 */
 	/* '26/03/06: ZaMa - Chequeo que no se teletransporte donde haya un char o npc */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	int X;
 	int Y;
@@ -8409,25 +5872,14 @@ void HandleWarpMeToTarget(int UserIndex) {
 /* '' */
 /* ' Handles the "WarpChar" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleWarpChar(int UserIndex) {
+
+void DakaraClientPacketHandler::handleWarpChar(WarpChar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 26/03/2009 */
 	/* '26/03/2009: ZaMa -  Chequeo que no se teletransporte a un tile donde haya un char o npc. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 7) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int Map;
@@ -8435,10 +5887,10 @@ void HandleWarpChar(int UserIndex) {
 	int Y;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
-	Map = buffer->ReadInteger();
-	X = buffer->ReadByte();
-	Y = buffer->ReadByte();
+	UserName = p->UserName;
+	Map = p->Map;
+	X = p->X;
+	Y = p->Y;
 
 	UserName = vb6::Replace(UserName, "+", " ");
 
@@ -8478,7 +5930,7 @@ void HandleWarpChar(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -8486,30 +5938,19 @@ void HandleWarpChar(int UserIndex) {
 /* '' */
 /* ' Handles the "Silence" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleSilence(int UserIndex) {
+
+void DakaraClientPacketHandler::handleSilence(Silence* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		tUser = NameIndex(UserName);
@@ -8534,7 +5975,7 @@ void HandleSilence(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -8542,16 +5983,16 @@ void HandleSilence(int UserIndex) {
 /* '' */
 /* ' Handles the "SOSShowList" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleSOSShowList(int UserIndex) {
+
+void DakaraClientPacketHandler::handleSOSShowList(SOSShowList* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		return;
@@ -8562,16 +6003,15 @@ void HandleSOSShowList(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestPartyForm" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandlePartyForm(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestPartyForm(RequestPartyForm* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Budi */
 	/* 'Last Modification: 11/26/09 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
 	if (UserList[UserIndex].PartyIndex > 0) {
 		WriteShowPartyForm(UserIndex);
 
@@ -8583,9 +6023,9 @@ void HandlePartyForm(int UserIndex) {
 /* '' */
 /* ' Handles the "ItemUpgrade" message. */
 /* ' */
-/* ' @param    UserIndex The index of the user sending the message. */
 
-void HandleItemUpgrade(int UserIndex) {
+
+void DakaraClientPacketHandler::handleItemUpgrade(ItemUpgrade* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Torres Patricio */
 	/* 'Last Modification: 12/09/09 */
@@ -8593,10 +6033,7 @@ void HandleItemUpgrade(int UserIndex) {
 	/* '*************************************************** */
 	int ItemIndex;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	ItemIndex = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	ItemIndex = p->ItemIndex;
 
 	if (ItemIndex <= 0) {
 		return;
@@ -8614,28 +6051,17 @@ void HandleItemUpgrade(int UserIndex) {
 /* '' */
 /* ' Handles the "SOSRemove" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleSOSRemove(int UserIndex) {
+
+void DakaraClientPacketHandler::handleSOSRemove(SOSRemove* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		auto it = std::find(Ayuda.begin(), Ayuda.end(), UserName);
@@ -8644,7 +6070,7 @@ void HandleSOSRemove(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -8652,32 +6078,21 @@ void HandleSOSRemove(int UserIndex) {
 /* '' */
 /* ' Handles the "GoToChar" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGoToChar(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGoToChar(GoToChar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 26/03/2009 */
 	/* '26/03/2009: ZaMa -  Chequeo que no se teletransporte a un tile donde haya un char o npc. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 	int X;
 	int Y;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 	tUser = NameIndex(UserName);
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Dios, PlayerType_Admin, PlayerType_SemiDios, PlayerType_Consejero)) {
@@ -8708,7 +6123,7 @@ void HandleGoToChar(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -8716,16 +6131,16 @@ void HandleGoToChar(int UserIndex) {
 /* '' */
 /* ' Handles the "Invisible" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleInvisible(int UserIndex) {
+
+void DakaraClientPacketHandler::handleInvisible(Invisible* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		return;
@@ -8738,16 +6153,16 @@ void HandleInvisible(int UserIndex) {
 /* '' */
 /* ' Handles the "GMPanel" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGMPanel(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGMPanel(GMPanel* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		return;
@@ -8759,9 +6174,9 @@ void HandleGMPanel(int UserIndex) {
 /* '' */
 /* ' Handles the "GMPanel" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestUserList(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestUserList(RequestUserList* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 01/09/07 */
@@ -8772,8 +6187,8 @@ void HandleRequestUserList(int UserIndex) {
 	std::vector<std::string> names;
 	int Count;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_RoleMaster)) {
 		return;
@@ -8800,9 +6215,9 @@ void HandleRequestUserList(int UserIndex) {
 /* '' */
 /* ' Handles the "Working" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleWorking(int UserIndex) {
+
+void DakaraClientPacketHandler::handleWorking(Working* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 07/10/2010 */
@@ -8811,8 +6226,8 @@ void HandleWorking(int UserIndex) {
 	int i;
 	std::string users;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_RoleMaster)) {
 		return;
@@ -8840,9 +6255,9 @@ void HandleWorking(int UserIndex) {
 /* '' */
 /* ' Handles the "Hiding" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleHiding(int UserIndex) {
+
+void DakaraClientPacketHandler::handleHiding(Hiding* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 05/17/06 */
@@ -8851,8 +6266,8 @@ void HandleHiding(int UserIndex) {
 	int i;
 	std::string users;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_RoleMaster)) {
 		return;
@@ -8875,25 +6290,14 @@ void HandleHiding(int UserIndex) {
 /* '' */
 /* ' Handles the "Jail" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleJail(int UserIndex) {
+
+void DakaraClientPacketHandler::handleJail(Jail* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 07/06/2010 */
 	/* '07/06/2010: ZaMa - Ahora no se puede usar para saber si hay dioses/admins online. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 6) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	std::string Reason;
@@ -8901,9 +6305,9 @@ void HandleJail(int UserIndex) {
 	int Count;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
-	Reason = buffer->ReadUnicodeString();
-	jailTime = buffer->ReadByte();
+	UserName = p->UserName;
+	Reason = p->Reason;
+	jailTime = p->JailTime;
 
 	if (vb6::InStr(1, UserName, "+")) {
 		UserName = vb6::Replace(UserName, "+", " ");
@@ -8954,7 +6358,7 @@ void HandleJail(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -8962,16 +6366,16 @@ void HandleJail(int UserIndex) {
 /* '' */
 /* ' Handles the "KillNPC" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleKillNPC(int UserIndex) {
+
+void DakaraClientPacketHandler::handleKillNPC(KillNPC* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 04/22/08 (NicoNZ) */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User)) {
 		return;
@@ -9007,33 +6411,22 @@ void HandleKillNPC(int UserIndex) {
 /* '' */
 /* ' Handles the "WarnUser" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleWarnUser(int UserIndex) {
+
+void DakaraClientPacketHandler::handleWarnUser(WarnUser* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/26/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	std::string Reason;
 	PlayerType Privs;
 	int Count;
 
-	UserName = buffer->ReadUnicodeString();
-	Reason = buffer->ReadUnicodeString();
+	UserName = p->UserName;
+	Reason = p->Reason;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_RoleMaster, PlayerType_User)) {
 		if (vb6::LenB(UserName) == 0 || vb6::LenB(Reason) == 0) {
@@ -9067,16 +6460,16 @@ void HandleWarnUser(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 }
 
 /* '' */
 /* ' Handles the "EditChar" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleEditChar(int UserIndex) {
+
+void DakaraClientPacketHandler::handleEditChar(EditChar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 18/09/2010 */
@@ -9084,17 +6477,6 @@ void HandleEditChar(int UserIndex) {
 	/* '11/06/2009: ZaMa - Todos los comandos se pueden usar aunque el pj este offline */
 	/* '18/09/2010: ZaMa - Ahora se puede editar la vida del propio pj (cualquier rm o dios). */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 8) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
@@ -9107,7 +6489,7 @@ void HandleEditChar(int UserIndex) {
 	std::string UserCharPath;
 	int Var;
 
-	UserName = vb6::Replace(buffer->ReadUnicodeString(), "+", " ");
+	UserName = vb6::Replace(p->UserName, "+", " ");
 
 	if (vb6::UCase(UserName) == "YO") {
 		tUser = UserIndex;
@@ -9115,9 +6497,9 @@ void HandleEditChar(int UserIndex) {
 		tUser = NameIndex(UserName);
 	}
 
-	opcion = buffer->ReadByte();
-	Arg1 = buffer->ReadUnicodeString();
-	Arg2 = buffer->ReadUnicodeString();
+	opcion = p->Opcion;
+	Arg1 = p->Arg1;
+	Arg2 = p->Arg2;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_RoleMaster)) {
 		if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Consejero)) {
@@ -9312,7 +6694,7 @@ void HandleEditChar(int UserIndex) {
 							m_EcharMiembroDeClan(-1, UserName);
 
 							SendData(SendTarget_ToGuildMembers, GI,
-									PrepareMessageConsoleMsg(UserName + " deja el clan.",
+									dakara::protocol::server::BuildConsoleMsg(UserName + " deja el clan.",
 											FontTypeNames_FONTTYPE_GUILD));
 							/* ' Si esta online le avisamos */
 							if (tUser > 0) {
@@ -9605,7 +6987,7 @@ void HandleEditChar(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -9613,30 +6995,19 @@ void HandleEditChar(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestCharInfo" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestCharInfo(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestCharInfo(RequestCharInfo* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Fredy Horacio Treboux (liquid) */
 	/* 'Last Modification: 01/08/07 */
 	/* 'Last Modification by: (liquid).. alto bug zapallo.. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string TargetName;
 	int TargetIndex;
 
-	TargetName = vb6::Replace(buffer->ReadUnicodeString(), "+", " ");
+	TargetName = vb6::Replace(p->TargetName, "+", " ");
 	TargetIndex = NameIndex(TargetName);
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
@@ -9656,7 +7027,7 @@ void HandleRequestCharInfo(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -9664,25 +7035,14 @@ void HandleRequestCharInfo(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestCharStats" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestCharStats(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestCharStats(RequestCharStats* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 07/06/2010 */
 	/* '07/06/2010: ZaMa - Ahora no se puede usar para saber si hay dioses/admins online. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
@@ -9690,7 +7050,7 @@ void HandleRequestCharStats(int UserIndex) {
 	bool UserIsAdmin = false;
 	bool OtherUserIsAdmin = false;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	UserIsAdmin = UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios);
 
@@ -9722,7 +7082,7 @@ void HandleRequestCharStats(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -9730,25 +7090,14 @@ void HandleRequestCharStats(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestCharGold" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestCharGold(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestCharGold(RequestCharGold* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 07/06/2010 */
 	/* '07/06/2010: ZaMa - Ahora no se puede usar para saber si hay dioses/admins online. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
@@ -9756,7 +7105,7 @@ void HandleRequestCharGold(int UserIndex) {
 	bool UserIsAdmin = false;
 	bool OtherUserIsAdmin = false;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	UserIsAdmin = (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios));
 
@@ -9792,7 +7141,7 @@ void HandleRequestCharGold(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -9800,25 +7149,14 @@ void HandleRequestCharGold(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestCharInventory" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestCharInventory(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestCharInventory(RequestCharInventory* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 07/06/2010 */
 	/* '07/06/2010: ZaMa - Ahora no se puede usar para saber si hay dioses/admins online. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
@@ -9826,7 +7164,7 @@ void HandleRequestCharInventory(int UserIndex) {
 	bool UserIsAdmin = false;
 	bool OtherUserIsAdmin = false;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	UserIsAdmin = (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios));
 
@@ -9859,7 +7197,7 @@ void HandleRequestCharInventory(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -9867,25 +7205,14 @@ void HandleRequestCharInventory(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestCharBank" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestCharBank(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestCharBank(RequestCharBank* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 07/06/2010 */
 	/* '07/06/2010: ZaMa - Ahora no se puede usar para saber si hay dioses/admins online. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
@@ -9893,7 +7220,7 @@ void HandleRequestCharBank(int UserIndex) {
 	bool UserIsAdmin = false;
 	bool OtherUserIsAdmin = false;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	UserIsAdmin = (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios));
 
@@ -9926,7 +7253,7 @@ void HandleRequestCharBank(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -9934,32 +7261,21 @@ void HandleRequestCharBank(int UserIndex) {
 /* '' */
 /* ' Handles the "RequestCharSkills" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRequestCharSkills(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRequestCharSkills(RequestCharSkills* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 	int LoopC;
 	std::string message;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 	tUser = NameIndex(UserName);
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
@@ -9987,7 +7303,7 @@ void HandleRequestCharSkills(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -9995,30 +7311,19 @@ void HandleRequestCharSkills(int UserIndex) {
 /* '' */
 /* ' Handles the "ReviveChar" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleReviveChar(int UserIndex) {
+
+void DakaraClientPacketHandler::handleReviveChar(ReviveChar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 11/03/2010 */
 	/* '11/03/2010: ZaMa - Al revivir con el comando, si esta navegando le da cuerpo e barca. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
 		if (vb6::UCase(UserName) != "YO") {
@@ -10073,7 +7378,7 @@ void HandleReviveChar(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -10081,9 +7386,9 @@ void HandleReviveChar(int UserIndex) {
 /* '' */
 /* ' Handles the "OnlineGM" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleOnlineGM(int UserIndex) {
+
+void DakaraClientPacketHandler::handleOnlineGM(OnlineGM* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Fredy Horacio Treboux (liquid) */
 	/* 'Last Modification: 12/28/06 */
@@ -10093,8 +7398,8 @@ void HandleOnlineGM(int UserIndex) {
 	std::string list;
 	bool esdios = false;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero)) {
 		return;
@@ -10125,19 +7430,19 @@ void HandleOnlineGM(int UserIndex) {
 /* '' */
 /* ' Handles the "OnlineMap" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleOnlineMap(int UserIndex) {
+
+void DakaraClientPacketHandler::handleOnlineMap(OnlineMap* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 23/03/2009 */
 	/* '23/03/2009: ZaMa - Ahora no requiere estar en el mapa, sino que por defecto se toma en el que esta, pero se puede especificar otro */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	int Map;
-	Map = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	Map = p->Map;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero)) {
 		return;
@@ -10170,30 +7475,19 @@ void HandleOnlineMap(int UserIndex) {
 /* '' */
 /* ' Handles the "Forgive" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleForgive(int UserIndex) {
+
+void DakaraClientPacketHandler::handleForgive(Forgive* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 07/06/2010 */
 	/* '07/06/2010: ZaMa - Ahora no se puede usar para saber si hay dioses/admins online. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!UserTienePrivilegio(UserIndex, PlayerType_RoleMaster)
 			&& UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
@@ -10212,40 +7506,25 @@ void HandleForgive(int UserIndex) {
 			}
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "Kick" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleKick(int UserIndex) {
+
+void DakaraClientPacketHandler::handleKick(Kick* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 07/06/2010 */
 	/* '07/06/2010: ZaMa - Ahora no se puede usar para saber si hay dioses/admins online. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 	bool IsAdmin;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 	IsAdmin = UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios);
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_SemiDios) | IsAdmin) {
@@ -10269,7 +7548,7 @@ void HandleKick(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -10277,30 +7556,19 @@ void HandleKick(int UserIndex) {
 /* '' */
 /* ' Handles the "Execute" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleExecute(int UserIndex) {
+
+void DakaraClientPacketHandler::handleExecute(Execute* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 07/06/2010 */
 	/* '07/06/2010: ZaMa - Ahora no se puede usar para saber si hay dioses/admins online. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_RoleMaster)
 			&& UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
@@ -10313,7 +7581,7 @@ void HandleExecute(int UserIndex) {
 			} else {
 				UserDie(tUser);
 				SendData(SendTarget_ToAll, 0,
-						PrepareMessageConsoleMsg(
+						dakara::protocol::server::BuildConsoleMsg(
 								UserList[UserIndex].Name + " ha ejecutado a " + UserName + ".",
 								FontTypeNames_FONTTYPE_EJECUCION));
 				LogGM(UserList[UserIndex].Name, " ejecuto a " + UserName);
@@ -10328,7 +7596,7 @@ void HandleExecute(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -10336,69 +7604,43 @@ void HandleExecute(int UserIndex) {
 /* '' */
 /* ' Handles the "BanChar" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleBanChar(int UserIndex) {
+
+void DakaraClientPacketHandler::handleBanChar(BanChar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	std::string Reason;
 
-	UserName = buffer->ReadUnicodeString();
-	Reason = buffer->ReadUnicodeString();
+	UserName = p->UserName;
+	Reason = p->Reason;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_RoleMaster)
 			&& UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
 		BanCharacter(UserIndex, UserName, Reason);
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "UnbanChar" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleUnbanChar(int UserIndex) {
+
+void DakaraClientPacketHandler::handleUnbanChar(UnbanChar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int cantPenas;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_RoleMaster)
 			&& UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
@@ -10430,7 +7672,7 @@ void HandleUnbanChar(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -10438,16 +7680,14 @@ void HandleUnbanChar(int UserIndex) {
 /* '' */
 /* ' Handles the "NPCFollow" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleNPCFollow(int UserIndex) {
+
+void DakaraClientPacketHandler::handleNPCFollow(NPCFollow* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero)) {
 		return;
@@ -10464,32 +7704,21 @@ void HandleNPCFollow(int UserIndex) {
 /* '' */
 /* ' Handles the "SummonChar" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleSummonChar(int UserIndex) {
+
+void DakaraClientPacketHandler::handleSummonChar(SummonChar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 26/03/2009 */
 	/* '26/03/2009: ZaMa - Chequeo que no se teletransporte donde haya un char o npc */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 	int X;
 	int Y;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
 		tUser = NameIndex(UserName);
@@ -10523,25 +7752,21 @@ void HandleSummonChar(int UserIndex) {
 			}
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "SpawnListRequest" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleSpawnListRequest(int UserIndex) {
+
+void DakaraClientPacketHandler::handleSpawnListRequest(SpawnListRequest* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero)) {
 		return;
@@ -10553,24 +7778,17 @@ void HandleSpawnListRequest(int UserIndex) {
 /* '' */
 /* ' Handles the "SpawnCreature" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleSpawnCreature(int UserIndex) {
+
+void DakaraClientPacketHandler::handleSpawnCreature(SpawnCreature* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int npc;
-	npc = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	npc = p->NPC;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
 		if (npc > 0 && npc <= vb6::UBound(SpawnList)) {
@@ -10584,16 +7802,16 @@ void HandleSpawnCreature(int UserIndex) {
 /* '' */
 /* ' Handles the "ResetNPCInventory" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleResetNPCInventory(int UserIndex) {
+
+void DakaraClientPacketHandler::handleResetNPCInventory(ResetNPCInventory* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_RoleMaster)) {
 		return;
@@ -10610,16 +7828,16 @@ void HandleResetNPCInventory(int UserIndex) {
 /* '' */
 /* ' Handles the "CleanWorld" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCleanWorld(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCleanWorld(CleanWorld* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_RoleMaster)) {
 		return;
@@ -10631,68 +7849,39 @@ void HandleCleanWorld(int UserIndex) {
 /* '' */
 /* ' Handles the "ServerMessage" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleServerMessage(int UserIndex) {
+
+void DakaraClientPacketHandler::handleServerMessage(ServerMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 28/05/2010 */
 	/* '28/05/2010: ZaMa - Ahora no dice el nombre del gm que lo dice. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string message;
-	message = buffer->ReadUnicodeString();
+	std::string& message = p->Message;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
 		if (vb6::LenB(message) != 0) {
 			LogGM(UserList[UserIndex].Name, "Mensaje Broadcast:" + message);
-			SendData(SendTarget_ToAll, 0, PrepareMessageConsoleMsg(message, FontTypeNames_FONTTYPE_TALK));
+			SendData(SendTarget_ToAll, 0, dakara::protocol::server::BuildConsoleMsg(message, FontTypeNames_FONTTYPE_TALK));
 			/* ''''''''''''''''SOLO PARA EL TESTEO''''''' */
 			/* ''''''''''SE USA PARA COMUNICARSE CON EL SERVER''''''''''' */
 			/* 'frmMain.txtChat.Text = frmMain.txtChat.Text & vbNewLine & UserList(UserIndex).name & " > " & message */
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "MapMessage" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleMapMessage(int UserIndex) {
+
+void DakaraClientPacketHandler::handleMapMessage(MapMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 14/11/2010 */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string message;
-	message = buffer->ReadUnicodeString();
+	std::string& message = p->Message;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)
 			|| (UserTienePrivilegio(UserIndex, PlayerType_Consejero)
@@ -10704,11 +7893,11 @@ void HandleMapMessage(int UserIndex) {
 			mapa = UserList[UserIndex].Pos.Map;
 
 			LogGM(UserList[UserIndex].Name, "Mensaje a mapa " + vb6::CStr(mapa) + ":" + message);
-			SendData(SendTarget_toMap, mapa, PrepareMessageConsoleMsg(message, FontTypeNames_FONTTYPE_TALK));
+			SendData(SendTarget_toMap, mapa, dakara::protocol::server::BuildConsoleMsg(message, FontTypeNames_FONTTYPE_TALK));
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -10716,32 +7905,21 @@ void HandleMapMessage(int UserIndex) {
 /* '' */
 /* ' Handles the "NickToIP" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleNickToIP(int UserIndex) {
+
+void DakaraClientPacketHandler::handleNickToIP(NickToIP* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 07/06/2010 */
 	/* 'Pablo (ToxicWaste): Agrego para que el /nick2ip tambien diga los nicks en esa ip por pedido de la DGM. */
 	/* '07/06/2010: ZaMa - Ahora no se puede usar para saber si hay dioses/admins online. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 	bool IsAdmin = false;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!UserTienePrivilegio(UserIndex, PlayerType_RoleMaster)
 			&& UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
@@ -10789,7 +7967,7 @@ void HandleNickToIP(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -10797,33 +7975,20 @@ void HandleNickToIP(int UserIndex) {
 /* '' */
 /* ' Handles the "IPToNick" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleIPToNick(int UserIndex) {
+
+void DakaraClientPacketHandler::handleIPToNick(IPToNick* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	std::string ip;
 	int LoopC;
 	std::string lista;
 
-	{
-		int a = UserList[UserIndex].sockctx->incomingData->ReadByte();
-		int b = UserList[UserIndex].sockctx->incomingData->ReadByte();
-		int c = UserList[UserIndex].sockctx->incomingData->ReadByte();
-		int d = UserList[UserIndex].sockctx->incomingData->ReadByte();
-		ip = vb6::string_format("%d.%d.%d.%d", a, b, c, d);
-	}
+	ip = vb6::string_format("%d.%d.%d.%d", p->A, p->B, p->C, p->D);
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_RoleMaster)) {
 		return;
@@ -10857,30 +8022,19 @@ void HandleIPToNick(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildOnlineMembers" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildOnlineMembers(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildOnlineMembers(GuildOnlineMembers* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string GuildName;
 	int tGuild;
 
-	GuildName = buffer->ReadUnicodeString();
+	GuildName = p->GuildName;
 
 	if ((vb6::InStrB(GuildName, "+") != 0)) {
 		GuildName = vb6::Replace(GuildName, "+", " ");
@@ -10896,41 +8050,30 @@ void HandleGuildOnlineMembers(int UserIndex) {
 					FontTypeNames_FONTTYPE_GUILDMSG);
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "TeleportCreate" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleTeleportCreate(int UserIndex) {
+
+void DakaraClientPacketHandler::handleTeleportCreate(TeleportCreate* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 22/03/2010 */
 	/* '15/11/2009: ZaMa - Ahora se crea un teleport con un radio especificado. */
 	/* '22/03/2010: ZaMa - Harcodeo los teleps y radios en el dat, para evitar mapas bugueados. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 6) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int mapa;
 	int X;
 	int Y;
 	int Radio;
 
-	mapa = UserList[UserIndex].sockctx->incomingData->ReadInteger();
-	X = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Y = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Radio = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	mapa = p->Map;
+	X = p->X;
+	Y = p->Y;
+	Radio = p->Radio;
 
 	Radio = MinimoInt(Radio, 6);
 
@@ -10983,9 +8126,9 @@ void HandleTeleportCreate(int UserIndex) {
 /* '' */
 /* ' Handles the "TeleportDestroy" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleTeleportDestroy(int UserIndex) {
+
+void DakaraClientPacketHandler::handleTeleportDestroy(TeleportDestroy* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
@@ -10995,8 +8138,8 @@ void HandleTeleportDestroy(int UserIndex) {
 	int X;
 	int Y;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	/* '/dt */
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
@@ -11036,16 +8179,16 @@ void HandleTeleportDestroy(int UserIndex) {
 /* '' */
 /* ' Handles the "RainToggle" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRainToggle(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRainToggle(RainToggle* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero)) {
 		return;
@@ -11054,23 +8197,20 @@ void HandleRainToggle(int UserIndex) {
 	LogGM(UserList[UserIndex].Name, "/LLUVIA");
 	Lloviendo = !Lloviendo;
 
-	SendData(SendTarget_ToAll, 0, PrepareMessageRainToggle());
+	SendData(SendTarget_ToAll, 0, dakara::protocol::server::BuildRainToggle());
 }
 
 /* '' */
 /* ' Handles the "EnableDenounces" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleEnableDenounces(int UserIndex) {
+
+void DakaraClientPacketHandler::handleEnableDenounces(EnableDenounces* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 14/11/2010 */
 	/* 'Enables/Disables */
 	/* '*************************************************** */
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	/* ' Gm? */
 	if (!EsGm(UserIndex)) {
@@ -11098,16 +8238,14 @@ void HandleEnableDenounces(int UserIndex) {
 /* '' */
 /* ' Handles the "ShowDenouncesList" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleShowDenouncesList(int UserIndex) {
+
+void DakaraClientPacketHandler::handleShowDenouncesList(ShowDenouncesList* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 14/11/2010 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_RoleMaster)) {
 		return;
@@ -11118,30 +8256,19 @@ void HandleShowDenouncesList(int UserIndex) {
 /* '' */
 /* ' Handles the "SetCharDescription" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleSetCharDescription(int UserIndex) {
+
+void DakaraClientPacketHandler::handleSetCharDescription(SetCharDescription* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	int tUser = 0;
 	std::string desc;
 
-	desc = buffer->ReadUnicodeString();
+	desc = p->Description;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Dios, PlayerType_Admin, PlayerType_RoleMaster)) {
 		tUser = UserList[UserIndex].flags.TargetUser;
@@ -11151,36 +8278,25 @@ void HandleSetCharDescription(int UserIndex) {
 			WriteConsoleMsg(UserIndex, "Haz click sobre un personaje antes.", FontTypeNames_FONTTYPE_INFO);
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "ForceMIDIToMap" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HanldeForceMIDIToMap(int UserIndex) {
+
+void DakaraClientPacketHandler::handleForceMIDIToMap(ForceMIDIToMap* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 4) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int midiID;
 	int mapa;
 
-	midiID = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	mapa = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	midiID = p->MidiID;
+	mapa = p->Map;
 
 	/* 'Solo dioses, admins y RMS */
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Dios, PlayerType_Admin, PlayerType_RoleMaster)) {
@@ -11192,10 +8308,10 @@ void HanldeForceMIDIToMap(int UserIndex) {
 		if (midiID == 0) {
 			/* 'Ponemos el default del mapa */
 			SendData(SendTarget_toMap, mapa,
-					PrepareMessagePlayMidi(MapInfo[UserList[UserIndex].Pos.Map].Music));
+					dakara::protocol::server::BuildPlayMidi(MapInfo[UserList[UserIndex].Pos.Map].Music, 0));
 		} else {
 			/* 'Ponemos el pedido por el GM */
-			SendData(SendTarget_toMap, mapa, PrepareMessagePlayMidi(midiID));
+			SendData(SendTarget_toMap, mapa, dakara::protocol::server::BuildPlayMidi(midiID, 0));
 		}
 	}
 }
@@ -11203,31 +8319,24 @@ void HanldeForceMIDIToMap(int UserIndex) {
 /* '' */
 /* ' Handles the "ForceWAVEToMap" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleForceWAVEToMap(int UserIndex) {
+
+void DakaraClientPacketHandler::handleForceWAVEToMap(ForceWAVEToMap* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 6) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int waveID;
 	int mapa;
 	int X;
 	int Y;
 
-	waveID = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	mapa = UserList[UserIndex].sockctx->incomingData->ReadInteger();
-	X = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Y = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	waveID = p->Wave;
+	mapa = p->Map;
+	X = p->X;
+	Y = p->Y;
 
 	/* 'Solo dioses, admins y RMS */
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Dios, PlayerType_Admin, PlayerType_RoleMaster)) {
@@ -11239,117 +8348,73 @@ void HandleForceWAVEToMap(int UserIndex) {
 		}
 
 		/* 'Ponemos el pedido por el GM */
-		SendData(SendTarget_toMap, mapa, PrepareMessagePlayWave(waveID, X, Y));
+		SendData(SendTarget_toMap, mapa, dakara::protocol::server::BuildPlayWave(waveID, X, Y));
 	}
 }
 
 /* '' */
 /* ' Handles the "RoyalArmyMessage" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRoyalArmyMessage(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRoyalArmyMessage(RoyalArmyMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string message;
-	message = buffer->ReadUnicodeString();
+	std::string& message = p->Message;
 
 	/* 'Solo dioses, admins, semis y RMS */
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Dios, PlayerType_Admin, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		SendData(SendTarget_ToRealYRMs, 0,
-				PrepareMessageConsoleMsg("EJÉRCITO REAL> " + message, FontTypeNames_FONTTYPE_TALK));
+				dakara::protocol::server::BuildConsoleMsg("EJÉRCITO REAL> " + message, FontTypeNames_FONTTYPE_TALK));
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "ChaosLegionMessage" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleChaosLegionMessage(int UserIndex) {
+
+void DakaraClientPacketHandler::handleChaosLegionMessage(ChaosLegionMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string message;
-	message = buffer->ReadUnicodeString();
+	std::string& message = p->Message;
 
 	/* 'Solo dioses, admins, semis y RMS */
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Dios, PlayerType_Admin, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		SendData(SendTarget_ToCaosYRMs, 0,
-				PrepareMessageConsoleMsg("FUERZAS DEL CAOS> " + message, FontTypeNames_FONTTYPE_TALK));
+				dakara::protocol::server::BuildConsoleMsg("FUERZAS DEL CAOS> " + message, FontTypeNames_FONTTYPE_TALK));
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "CitizenMessage" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCitizenMessage(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCitizenMessage(CitizenMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string message;
-	message = buffer->ReadUnicodeString();
+	std::string& message = p->Message;
 
 	/* 'Solo dioses, admins, semis y RMS */
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Dios, PlayerType_Admin, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		SendData(SendTarget_ToCiudadanosYRMs, 0,
-				PrepareMessageConsoleMsg("CIUDADANOS> " + message, FontTypeNames_FONTTYPE_TALK));
+				dakara::protocol::server::BuildConsoleMsg("CIUDADANOS> " + message, FontTypeNames_FONTTYPE_TALK));
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -11357,36 +8422,25 @@ void HandleCitizenMessage(int UserIndex) {
 /* '' */
 /* ' Handles the "CriminalMessage" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCriminalMessage(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCriminalMessage(CriminalMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
+	std::string& message = p->Message;
 
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string message;
-	message = buffer->ReadUnicodeString();
 
 	/* 'Solo dioses, admins y RMS */
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Dios, PlayerType_Admin, PlayerType_RoleMaster)) {
 		SendData(SendTarget_ToCriminalesYRMs, 0,
-				PrepareMessageConsoleMsg("CRIMINALES> " + message, FontTypeNames_FONTTYPE_TALK));
+				dakara::protocol::server::BuildConsoleMsg("CRIMINALES> " + message, FontTypeNames_FONTTYPE_TALK));
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -11394,35 +8448,23 @@ void HandleCriminalMessage(int UserIndex) {
 /* '' */
 /* ' Handles the "TalkAsNPC" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleTalkAsNPC(int UserIndex) {
+
+void DakaraClientPacketHandler::handleTalkAsNPC(TalkAsNPC* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/29/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string message;
-	message = buffer->ReadUnicodeString();
+	std::string& message = p->Message;
 
 	/* 'Solo dioses, admins y RMS */
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Dios, PlayerType_Admin, PlayerType_RoleMaster)) {
 		/* 'Asegurarse haya un NPC seleccionado */
 		if (UserList[UserIndex].flags.TargetNPC > 0) {
 			SendData(SendTarget_ToNPCArea, UserList[UserIndex].flags.TargetNPC,
-					PrepareMessageChatOverHead(message,
+					BuildChatOverHead(message,
 							Npclist[UserList[UserIndex].flags.TargetNPC].Char.CharIndex, 0x00ffffff));
 		} else {
 			WriteConsoleMsg(UserIndex,
@@ -11431,7 +8473,7 @@ void HandleTalkAsNPC(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -11439,16 +8481,16 @@ void HandleTalkAsNPC(int UserIndex) {
 /* '' */
 /* ' Handles the "DestroyAllItemsInArea" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleDestroyAllItemsInArea(int UserIndex) {
+
+void DakaraClientPacketHandler::handleDestroyAllItemsInArea(DestroyAllItemsInArea* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -11480,30 +8522,19 @@ void HandleDestroyAllItemsInArea(int UserIndex) {
 /* '' */
 /* ' Handles the "AcceptRoyalCouncilMember" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleAcceptRoyalCouncilMember(int UserIndex) {
+
+void DakaraClientPacketHandler::handleAcceptRoyalCouncilMember(AcceptRoyalCouncilMember* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_RoleMaster)
 			&& UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
@@ -11512,7 +8543,7 @@ void HandleAcceptRoyalCouncilMember(int UserIndex) {
 			WriteConsoleMsg(UserIndex, "Usuario offline", FontTypeNames_FONTTYPE_INFO);
 		} else {
 			SendData(SendTarget_ToAll, 0,
-					PrepareMessageConsoleMsg(
+					dakara::protocol::server::BuildConsoleMsg(
 							UserName + " fue aceptado en el honorable Consejo Real de Banderbill.",
 							FontTypeNames_FONTTYPE_CONSEJO));
 			if (UserTienePrivilegio(tUser, PlayerType_ChaosCouncil)) {
@@ -11530,30 +8561,19 @@ void HandleAcceptRoyalCouncilMember(int UserIndex) {
 /* '' */
 /* ' Handles the "ChaosCouncilMember" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleAcceptChaosCouncilMember(int UserIndex) {
+
+void DakaraClientPacketHandler::handleAcceptChaosCouncilMember(AcceptChaosCouncilMember* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_RoleMaster)
 			&& UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
@@ -11562,7 +8582,7 @@ void HandleAcceptChaosCouncilMember(int UserIndex) {
 			WriteConsoleMsg(UserIndex, "Usuario offline", FontTypeNames_FONTTYPE_INFO);
 		} else {
 			SendData(SendTarget_ToAll, 0,
-					PrepareMessageConsoleMsg(UserName + " fue aceptado en el Concilio de las Sombras.",
+					dakara::protocol::server::BuildConsoleMsg(UserName + " fue aceptado en el Concilio de las Sombras.",
 							FontTypeNames_FONTTYPE_CONSEJO));
 
 			if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_RoyalCouncil)) {
@@ -11576,7 +8596,7 @@ void HandleAcceptChaosCouncilMember(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -11584,16 +8604,16 @@ void HandleAcceptChaosCouncilMember(int UserIndex) {
 /* '' */
 /* ' Handles the "ItemsInTheFloor" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleItemsInTheFloor(int UserIndex) {
+
+void DakaraClientPacketHandler::handleItemsInTheFloor(ItemsInTheFloor* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -11620,30 +8640,19 @@ void HandleItemsInTheFloor(int UserIndex) {
 /* '' */
 /* ' Handles the "MakeDumb" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleMakeDumb(int UserIndex) {
+
+void DakaraClientPacketHandler::handleMakeDumb(MakeDumb* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)
@@ -11659,7 +8668,7 @@ void HandleMakeDumb(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -11667,30 +8676,19 @@ void HandleMakeDumb(int UserIndex) {
 /* '' */
 /* ' Handles the "MakeDumbNoMore" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleMakeDumbNoMore(int UserIndex) {
+
+void DakaraClientPacketHandler::handleMakeDumbNoMore(MakeDumbNoMore* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)
 			|| (UserTienePrivilegio(UserIndex, PlayerType_SemiDios)
@@ -11705,7 +8703,7 @@ void HandleMakeDumbNoMore(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -11713,16 +8711,14 @@ void HandleMakeDumbNoMore(int UserIndex) {
 /* '' */
 /* ' Handles the "DumpIPTables" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleDumpIPTables(int UserIndex) {
+
+void DakaraClientPacketHandler::handleDumpIPTables(DumpIPTables* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -11734,30 +8730,19 @@ void HandleDumpIPTables(int UserIndex) {
 /* '' */
 /* ' Handles the "CouncilKick" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCouncilKick(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCouncilKick(CouncilKick* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)
 			&& (!UserTienePrivilegio(UserIndex, PlayerType_RoleMaster))) {
@@ -11782,7 +8767,7 @@ void HandleCouncilKick(int UserIndex) {
 				WarpUserChar(tUser, UserList[tUser].Pos.Map, UserList[tUser].Pos.X, UserList[tUser].Pos.Y,
 						false);
 				SendData(SendTarget_ToAll, 0,
-						PrepareMessageConsoleMsg(UserName + " fue expulsado del consejo de Banderbill.",
+						dakara::protocol::server::BuildConsoleMsg(UserName + " fue expulsado del consejo de Banderbill.",
 								FontTypeNames_FONTTYPE_CONSEJO));
 			}
 
@@ -11794,13 +8779,13 @@ void HandleCouncilKick(int UserIndex) {
 				WarpUserChar(tUser, UserList[tUser].Pos.Map, UserList[tUser].Pos.X, UserList[tUser].Pos.Y,
 						false);
 				SendData(SendTarget_ToAll, 0,
-						PrepareMessageConsoleMsg(UserName + " fue expulsado del Concilio de las Sombras.",
+						dakara::protocol::server::BuildConsoleMsg(UserName + " fue expulsado del Concilio de las Sombras.",
 								FontTypeNames_FONTTYPE_CONSEJO));
 			}
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -11808,26 +8793,19 @@ void HandleCouncilKick(int UserIndex) {
 /* '' */
 /* ' Handles the "SetTrigger" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleSetTrigger(int UserIndex) {
+
+void DakaraClientPacketHandler::handleSetTrigger(SetTrigger* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int tTrigger;
 	std::string tLog;
 
-	tTrigger = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	tTrigger = p->Trigger;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -11849,18 +8827,15 @@ void HandleSetTrigger(int UserIndex) {
 /* '' */
 /* ' Handles the "AskTrigger" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleAskTrigger(int UserIndex) {
+
+void DakaraClientPacketHandler::handleAskTrigger(AskTrigger* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 04/13/07 */
 	/* ' */
 	/* '*************************************************** */
 	int tTrigger;
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -11888,16 +8863,14 @@ void HandleAskTrigger(int UserIndex) {
 /* '' */
 /* ' Handles the "BannedIPList" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleBannedIPList(int UserIndex) {
+
+void DakaraClientPacketHandler::handleBannedIPList(BannedIPList* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -11921,16 +8894,14 @@ void HandleBannedIPList(int UserIndex) {
 /* '' */
 /* ' Handles the "BannedIPReload" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleBannedIPReload(int UserIndex) {
+
+void DakaraClientPacketHandler::handleBannedIPReload(BannedIPReload* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -11943,25 +8914,14 @@ void HandleBannedIPReload(int UserIndex) {
 /* '' */
 /* ' Handles the "GuildBan" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleGuildBan(int UserIndex) {
+
+void DakaraClientPacketHandler::handleGuildBan(GuildBan* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string GuildName;
 	int cantMembers;
@@ -11971,7 +8931,7 @@ void HandleGuildBan(int UserIndex) {
 	int tIndex;
 	std::string tFile;
 
-	GuildName = buffer->ReadUnicodeString();
+	GuildName = p->GuildName;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)
 			&& (!UserTienePrivilegio(UserIndex, PlayerType_RoleMaster))) {
@@ -11982,7 +8942,7 @@ void HandleGuildBan(int UserIndex) {
 			WriteConsoleMsg(UserIndex, "No existe el clan: " + GuildName, FontTypeNames_FONTTYPE_INFO);
 		} else {
 			SendData(SendTarget_ToAll, 0,
-					PrepareMessageConsoleMsg(
+					dakara::protocol::server::BuildConsoleMsg(
 							UserList[UserIndex].Name + " baneó al clan " + vb6::UCase(GuildName),
 							FontTypeNames_FONTTYPE_FIGHT));
 
@@ -11998,7 +8958,7 @@ void HandleGuildBan(int UserIndex) {
 				Ban(member, "Administracion del servidor", "Clan Banned");
 
 				SendData(SendTarget_ToAll, 0,
-						PrepareMessageConsoleMsg(
+						dakara::protocol::server::BuildConsoleMsg(
 								"   " + member + "<" + GuildName + "> ha sido expulsado del servidor.",
 								FontTypeNames_FONTTYPE_FIGHT));
 
@@ -12020,18 +8980,14 @@ void HandleGuildBan(int UserIndex) {
 			}
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "BanIP" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleBanIP(int UserIndex) {
+
+void DakaraClientPacketHandler::handleBanIP(BanIP* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 07/02/09 */
@@ -12039,39 +8995,14 @@ void HandleBanIP(int UserIndex) {
 	/* 'inifito al intentar banear una ip ya baneada. (NicoNZ) */
 	/* '07/02/09 Pato - Ahora no es posible saber si un gm está o no online. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 6) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string bannedIP;
 	int tUser = 0;
 	std::string Reason;
 	int i;
 
-	/* ' Is it by ip?? */
-	if (buffer->ReadBoolean()) {
-		int a = buffer->ReadByte();
-		int b = buffer->ReadByte();
-		int c = buffer->ReadByte();
-		int d = buffer->ReadByte();
-		bannedIP = vb6::string_format("%d.%d.%d.%d", a, b, c, d);
-	} else {
-		tUser = NameIndex(buffer->ReadUnicodeString());
-
-		if (tUser > 0) {
-			bannedIP = UserList[tUser].ip;
-		}
-	}
-
-	Reason = buffer->ReadUnicodeString();
+	bannedIP = p->IP;
+	Reason = p->Reason;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		if (vb6::LenB(bannedIP) > 0) {
@@ -12083,7 +9014,7 @@ void HandleBanIP(int UserIndex) {
 			} else {
 				BanIpAgrega(bannedIP);
 				SendData(SendTarget_ToAdmins, 0,
-						PrepareMessageConsoleMsg(
+						dakara::protocol::server::BuildConsoleMsg(
 								UserList[UserIndex].Name + " baneó la IP " + bannedIP + " por " + Reason,
 								FontTypeNames_FONTTYPE_FIGHT));
 
@@ -12100,40 +9031,21 @@ void HandleBanIP(int UserIndex) {
 			WriteConsoleMsg(UserIndex, "El personaje no está online.", FontTypeNames_FONTTYPE_INFO);
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "UnbanIP" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleUnbanIP(int UserIndex) {
+
+void DakaraClientPacketHandler::handleUnbanIP(UnbanIP* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	std::string bannedIP;
-
-	{
-		int a = UserList[UserIndex].sockctx->incomingData->ReadByte();
-		int b = UserList[UserIndex].sockctx->incomingData->ReadByte();
-		int c = UserList[UserIndex].sockctx->incomingData->ReadByte();
-		int d = UserList[UserIndex].sockctx->incomingData->ReadByte();
-		bannedIP = vb6::string_format("%d.%d.%d.%d", a, b, c, d);
-	}
+	std::string bannedIP = p->IP;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -12151,25 +9063,18 @@ void HandleUnbanIP(int UserIndex) {
 /* '' */
 /* ' Handles the "CreateItem" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCreateItem(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCreateItem(CreateItem* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int tObj;
 	std::string tStr;
-	tObj = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	tObj = p->Item;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -12222,16 +9127,14 @@ void HandleCreateItem(int UserIndex) {
 /* '' */
 /* ' Handles the "DestroyItems" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleDestroyItems(int UserIndex) {
+
+void DakaraClientPacketHandler::handleDestroyItems(DestroyItems* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -12269,33 +9172,22 @@ void HandleDestroyItems(int UserIndex) {
 /* '' */
 /* ' Handles the "ChaosLegionKick" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleChaosLegionKick(int UserIndex) {
+
+void DakaraClientPacketHandler::handleChaosLegionKick(ChaosLegionKick* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	std::string Reason;
 	int tUser = 0;
 	int cantPenas;
 
-	UserName = buffer->ReadUnicodeString();
-	Reason = buffer->ReadUnicodeString();
+	UserName = p->UserName;
+	Reason = p->Reason;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)
 			|| UserList[UserIndex].flags.PrivEspecial) {
@@ -12349,7 +9241,7 @@ void HandleChaosLegionKick(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -12357,33 +9249,22 @@ void HandleChaosLegionKick(int UserIndex) {
 /* '' */
 /* ' Handles the "RoyalArmyKick" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRoyalArmyKick(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRoyalArmyKick(RoyalArmyKick* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	std::string Reason;
 	int tUser = 0;
 	int cantPenas;
 
-	UserName = buffer->ReadUnicodeString();
-	Reason = buffer->ReadUnicodeString();
+	UserName = p->UserName;
+	Reason = p->Reason;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)
 			|| UserList[UserIndex].flags.PrivEspecial) {
@@ -12435,7 +9316,7 @@ void HandleRoyalArmyKick(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -12443,95 +9324,70 @@ void HandleRoyalArmyKick(int UserIndex) {
 /* '' */
 /* ' Handles the "ForceMIDIAll" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleForceMIDIAll(int UserIndex) {
+
+void DakaraClientPacketHandler::handleForceMIDIAll(ForceMIDIAll* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int midiID;
-	midiID = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	midiID = p->MidiID;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
 	}
 
 	SendData(SendTarget_ToAll, 0,
-			PrepareMessageConsoleMsg(UserList[UserIndex].Name + " broadcast música: " + vb6::CStr(midiID),
+			dakara::protocol::server::BuildConsoleMsg(UserList[UserIndex].Name + " broadcast música: " + vb6::CStr(midiID),
 					FontTypeNames_FONTTYPE_SERVER));
 
-	SendData(SendTarget_ToAll, 0, PrepareMessagePlayMidi(midiID));
+	SendData(SendTarget_ToAll, 0, dakara::protocol::server::BuildPlayMidi(midiID, 0));
 }
 
 /* '' */
 /* ' Handles the "ForceWAVEAll" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleForceWAVEAll(int UserIndex) {
+
+void DakaraClientPacketHandler::handleForceWAVEAll(ForceWAVEAll* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int waveID;
-	waveID = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	waveID = p->WaveID;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
 	}
 
-	SendData(SendTarget_ToAll, 0, PrepareMessagePlayWave(waveID, NO_3D_SOUND, NO_3D_SOUND));
+	SendData(SendTarget_ToAll, 0, dakara::protocol::server::BuildPlayWave(waveID, NO_3D_SOUND, NO_3D_SOUND));
 }
 
 /* '' */
 /* ' Handles the "RemovePunishment" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRemovePunishment(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRemovePunishment(RemovePunishment* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 1/05/07 */
 	/* 'Pablo (ToxicWaste): 1/05/07, You can now edit the punishment. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 6) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int punishment;
 	std::string NewText;
 
-	UserName = buffer->ReadUnicodeString();
-	punishment = buffer->ReadByte();
-	NewText = buffer->ReadUnicodeString();
+	UserName = p->UserName;
+	punishment = p->Punishment;
+	NewText = p->NewText;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)
 			&& (!UserTienePrivilegio(UserIndex, PlayerType_RoleMaster))) {
@@ -12562,7 +9418,7 @@ void HandleRemovePunishment(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -12570,16 +9426,16 @@ void HandleRemovePunishment(int UserIndex) {
 /* '' */
 /* ' Handles the "TileBlockedToggle" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleTileBlockedToggle(int UserIndex) {
+
+void DakaraClientPacketHandler::handleTileBlockedToggle(TileBlockedToggle* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -12603,16 +9459,16 @@ void HandleTileBlockedToggle(int UserIndex) {
 /* '' */
 /* ' Handles the "KillNPCNoRespawn" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleKillNPCNoRespawn(int UserIndex) {
+
+void DakaraClientPacketHandler::handleKillNPCNoRespawn(KillNPCNoRespawn* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -12629,16 +9485,16 @@ void HandleKillNPCNoRespawn(int UserIndex) {
 /* '' */
 /* ' Handles the "KillAllNearbyNPCs" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleKillAllNearbyNPCs(int UserIndex) {
+
+void DakaraClientPacketHandler::handleKillAllNearbyNPCs(KillAllNearbyNPCs* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -12664,25 +9520,14 @@ void HandleKillAllNearbyNPCs(int UserIndex) {
 /* '' */
 /* ' Handles the "LastIP" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleLastIP(int UserIndex) {
+
+void DakaraClientPacketHandler::handleLastIP(LastIP* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Nicolas Matias Gonzalez (NIGO) */
 	/* 'Last Modification: 12/30/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	std::string lista;
@@ -12691,7 +9536,7 @@ void HandleLastIP(int UserIndex) {
 	bool validCheck = false;
 
 	priv = PlayerType_Admin | PlayerType_Dios | PlayerType_SemiDios | PlayerType_Consejero;
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)
 			&& (!UserTienePrivilegio(UserIndex, PlayerType_RoleMaster))) {
@@ -12736,40 +9581,24 @@ void HandleLastIP(int UserIndex) {
 					FontTypeNames_FONTTYPE_INFO);
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
 /* ' Handles the "ChatColor" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleChatColor(int UserIndex) {
+
+void DakaraClientPacketHandler::handleChatColor(ChatColor* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Change the user`s chat color */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 4) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int color;
 
-	{
-		int r = UserList[UserIndex].sockctx->incomingData->ReadByte();
-		int g = UserList[UserIndex].sockctx->incomingData->ReadByte();
-		int b = UserList[UserIndex].sockctx->incomingData->ReadByte();
-		color = vb6::RGB(r,g,b);
-	}
+	color = vb6::RGB(p->R, p->G, p->B);
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_RoleMaster)) {
 		UserList[UserIndex].flags.ChatColor = color;
@@ -12779,16 +9608,14 @@ void HandleChatColor(int UserIndex) {
 /* '' */
 /* ' Handles the "Ignored" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleIgnored(int UserIndex) {
+
+void DakaraClientPacketHandler::handleIgnored(Ignored* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Ignore the user */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios, PlayerType_Consejero)) {
 		UserList[UserIndex].flags.AdminPerseguible = !UserList[UserIndex].flags.AdminPerseguible;
@@ -12798,26 +9625,15 @@ void HandleIgnored(int UserIndex) {
 /* '' */
 /* ' Handles the "CheckSlot" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleCheckSlot(int UserIndex) {
+
+void DakaraClientPacketHandler::handleCheckSlot(CheckSlot* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Pablo (ToxicWaste) */
 	/* 'Last Modification: 07/06/2010 */
 	/* 'Check one Users Slot in Particular from Inventory */
 	/* '07/06/2010: ZaMa - Ahora no se puede usar para saber si hay dioses/admins online. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 4) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	/* 'Reads the UserName and Slot Packets */
 	std::string UserName;
@@ -12828,9 +9644,9 @@ void HandleCheckSlot(int UserIndex) {
 	bool OtherUserIsAdmin = false;
 
 	/* 'Que UserName? */
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 	/* 'Que Slot? */
-	Slot = buffer->ReadByte();
+	Slot = p->Slot;
 
 	UserIsAdmin = UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios);
 
@@ -12873,7 +9689,7 @@ void HandleCheckSlot(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -12881,16 +9697,14 @@ void HandleCheckSlot(int UserIndex) {
 /* '' */
 /* ' Handles the "ResetAutoUpdate" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleResetAutoUpdate(int UserIndex) {
+
+void DakaraClientPacketHandler::handleResetAutoUpdate(ResetAutoUpdate* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Reset the AutoUpdate */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -12910,16 +9724,14 @@ void HandleResetAutoUpdate(int UserIndex) {
 /* '' */
 /* ' Handles the "Restart" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleRestart(int UserIndex) {
+
+void DakaraClientPacketHandler::handleRestart(dakara::protocol::clientgm::Restart* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Restart the game */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -12942,16 +9754,14 @@ void HandleRestart(int UserIndex) {
 /* '' */
 /* ' Handles the "ReloadObjects" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleReloadObjects(int UserIndex) {
+
+void DakaraClientPacketHandler::handleReloadObjects(ReloadObjects* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Reload the objects */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -12967,16 +9777,16 @@ void HandleReloadObjects(int UserIndex) {
 /* '' */
 /* ' Handles the "ReloadSpells" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleReloadSpells(int UserIndex) {
+
+void DakaraClientPacketHandler::handleReloadSpells(ReloadSpells* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Reload the spells */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -12994,14 +9804,12 @@ void HandleReloadSpells(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleReloadServerIni(int UserIndex) {
+void DakaraClientPacketHandler::handleReloadServerIni(ReloadServerIni* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Reload the Server`s INI */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -13019,14 +9827,14 @@ void HandleReloadServerIni(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleReloadNPCs(int UserIndex) {
+void DakaraClientPacketHandler::handleReloadNPCs(ReloadNPCs* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Reload the Server`s NPC */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -13044,14 +9852,14 @@ void HandleReloadNPCs(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleKickAllChars(int UserIndex) {
+void DakaraClientPacketHandler::handleKickAllChars(KickAllChars* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Kick all the chars that are online */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -13067,15 +9875,15 @@ void HandleKickAllChars(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleNight(int UserIndex) {
+void DakaraClientPacketHandler::handleNight(Night* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -13103,14 +9911,14 @@ void HandleNight(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleShowServerForm(int UserIndex) {
+void DakaraClientPacketHandler::handleShowServerForm(ShowServerForm* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Show the server form */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -13125,14 +9933,14 @@ void HandleShowServerForm(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleCleanSOS(int UserIndex) {
+void DakaraClientPacketHandler::handleCleanSOS(CleanSOS* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Clean the SOS */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -13148,14 +9956,14 @@ void HandleCleanSOS(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleSaveChars(int UserIndex) {
+void DakaraClientPacketHandler::handleSaveChars(SaveChars* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/23/06 */
 	/* 'Save the characters */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -13172,24 +9980,17 @@ void HandleSaveChars(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMapInfoBackup(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMapInfoBackup(ChangeMapInfoBackup* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/24/06 */
 	/* 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Change the backup`s info of the map */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	bool doTheBackUp;
 
-	doTheBackUp = UserList[UserIndex].sockctx->incomingData->ReadBoolean();
+	doTheBackUp = p->Backup;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		return;
@@ -13219,24 +10020,17 @@ void HandleChangeMapInfoBackup(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMapInfoPK(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMapInfoPK(ChangeMapInfoPK* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/24/06 */
 	/* 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Change the pk`s info of the  map */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	bool isMapPk;
 
-	isMapPk = UserList[UserIndex].sockctx->incomingData->ReadBoolean();
+	isMapPk = p->Pk;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		return;
@@ -13261,27 +10055,16 @@ void HandleChangeMapInfoPK(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMapInfoRestricted(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMapInfoRestricted(ChangeMapInfoRestricted* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Pablo (ToxicWaste) */
 	/* 'Last Modification: 26/01/2007 */
 	/* 'Restringido -> Options: "NEWBIE", "NO", "ARMADA", "CAOS", "FACCION". */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
 	std::string tStr;
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove Packet ID */
-	buffer->ReadByte();
-
-	tStr = buffer->ReadUnicodeString();
+	tStr = p->RestrictedTo;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		if (tStr == "NEWBIE" || tStr == "NO" || tStr == "ARMADA" || tStr == "CAOS" || tStr == "FACCION") {
@@ -13304,7 +10087,7 @@ void HandleChangeMapInfoRestricted(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -13314,23 +10097,16 @@ void HandleChangeMapInfoRestricted(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMapInfoNoMagic(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMapInfoNoMagic(ChangeMapInfoNoMagic* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Pablo (ToxicWaste) */
 	/* 'Last Modification: 26/01/2007 */
 	/* 'MagiaSinEfecto -> Options: "1" , "0". */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
 
 	bool nomagic;
 
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	nomagic = UserList[UserIndex].sockctx->incomingData->ReadBoolean();
+	nomagic = p->NoMagic;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		LogGM(UserList[UserIndex].Name,
@@ -13350,23 +10126,16 @@ void HandleChangeMapInfoNoMagic(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMapInfoNoInvi(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMapInfoNoInvi(ChangeMapInfoNoInvi* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Pablo (ToxicWaste) */
 	/* 'Last Modification: 26/01/2007 */
 	/* 'InviSinEfecto -> Options: "1", "0" */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
 
 	bool noinvi;
 
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	noinvi = UserList[UserIndex].sockctx->incomingData->ReadBoolean();
+	noinvi = p->NoInvi;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		LogGM(UserList[UserIndex].Name,
@@ -13386,23 +10155,16 @@ void HandleChangeMapInfoNoInvi(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMapInfoNoResu(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMapInfoNoResu(ChangeMapInfoNoResu* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Pablo (ToxicWaste) */
 	/* 'Last Modification: 26/01/2007 */
 	/* 'ResuSinEfecto -> Options: "1", "0" */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
 
 	bool noresu;
 
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	noresu = UserList[UserIndex].sockctx->incomingData->ReadBoolean();
+	noresu = p->NoResu;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		LogGM(UserList[UserIndex].Name,
@@ -13422,27 +10184,15 @@ void HandleChangeMapInfoNoResu(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMapInfoLand(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMapInfoLand(ChangeMapInfoLand* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Pablo (ToxicWaste) */
 	/* 'Last Modification: 26/01/2007 */
 	/* 'Terreno -> Opciones: "BOSQUE", "NIEVE", "DESIERTO", "CIUDAD", "CAMPO", "DUNGEON". */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
 	std::string tStr;
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove Packet ID */
-	buffer->ReadByte();
-
-	tStr = buffer->ReadUnicodeString();
+	tStr = p->Data;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		if (tStr == "BOSQUE" || tStr == "NIEVE" || tStr == "DESIERTO" || tStr == "CIUDAD" || tStr == "CAMPO"
@@ -13468,7 +10218,7 @@ void HandleChangeMapInfoLand(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -13478,27 +10228,16 @@ void HandleChangeMapInfoLand(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMapInfoZone(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMapInfoZone(ChangeMapInfoZone* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Pablo (ToxicWaste) */
 	/* 'Last Modification: 26/01/2007 */
 	/* 'Zona -> Opciones: "BOSQUE", "NIEVE", "DESIERTO", "CIUDAD", "CAMPO", "DUNGEON". */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
 	std::string tStr;
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove Packet ID */
-	buffer->ReadByte();
-
-	tStr = buffer->ReadUnicodeString();
+	tStr = p->Data;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		if (tStr == "BOSQUE" || tStr == "NIEVE" || tStr == "DESIERTO" || tStr == "CIUDAD" || tStr == "CAMPO"
@@ -13520,10 +10259,6 @@ void HandleChangeMapInfoZone(int UserIndex) {
 					FontTypeNames_FONTTYPE_INFO);
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
@@ -13531,23 +10266,16 @@ void HandleChangeMapInfoZone(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMapInfoStealNpc(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMapInfoStealNpc(ChangeMapInfoStealNpc* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 25/07/2010 */
 	/* 'RoboNpcsPermitido -> Options: "1", "0" */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
 
 	int RoboNpc;
 
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	RoboNpc = (vb6::IIf(UserList[UserIndex].sockctx->incomingData->ReadBoolean(), 1, 0));
+	RoboNpc = p->RoboNpc ? 1 : 0;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		LogGM(UserList[UserIndex].Name,
@@ -13570,24 +10298,17 @@ void HandleChangeMapInfoStealNpc(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMapInfoNoOcultar(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMapInfoNoOcultar(ChangeMapInfoNoOcultar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 18/09/2010 */
 	/* 'OcultarSinEfecto -> Options: "1", "0" */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
 
 	int NoOcultar;
 	int mapa;
 
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	NoOcultar = (vb6::IIf(UserList[UserIndex].sockctx->incomingData->ReadBoolean(), 1, 0));
+	NoOcultar = p->NoOcultar ? 1 : 0;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 
@@ -13613,24 +10334,17 @@ void HandleChangeMapInfoNoOcultar(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMapInfoNoInvocar(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMapInfoNoInvocar(ChangeMapInfoNoInvocar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 18/09/2010 */
 	/* 'InvocarSinEfecto -> Options: "1", "0" */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
 
 	int NoInvocar;
 	int mapa;
 
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	NoInvocar = (vb6::IIf(UserList[UserIndex].sockctx->incomingData->ReadBoolean(), 1, 0));
+	NoInvocar = p->NoInvocar ? 1 : 0;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 
@@ -13656,14 +10370,14 @@ void HandleChangeMapInfoNoInvocar(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleSaveMap(int UserIndex) {
+void DakaraClientPacketHandler::handleSaveMap(SaveMap* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/24/06 */
 	/* 'Saves the map */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		return;
@@ -13682,35 +10396,21 @@ void HandleSaveMap(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleShowGuildMessages(int UserIndex) {
+void DakaraClientPacketHandler::handleShowGuildMessages(ShowGuildMessages* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/24/06 */
 	/* 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Allows admins to read guild messages */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string guild;
 
-	guild = buffer->ReadUnicodeString();
+	guild = p->GuildName;
 
 	if (!UserTienePrivilegio(UserIndex, PlayerType_RoleMaster) && UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		GMEscuchaClan(UserIndex, guild);
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
 
 }
 
@@ -13719,14 +10419,12 @@ void HandleShowGuildMessages(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleDoBackUp(int UserIndex) {
+void DakaraClientPacketHandler::handleDoBackUp(dakara::protocol::clientgm::DoBackUp* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/24/06 */
 	/* 'Show guilds messages */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		return;
@@ -13735,7 +10433,7 @@ void HandleDoBackUp(int UserIndex) {
 	LogGM(UserList[UserIndex].Name, UserList[UserIndex].Name + " ha hecho un backup.");
 
 	/* 'Sino lo confunde con la id del paquete */
-	DoBackUp();
+	::DoBackUp();
 }
 
 /* '' */
@@ -13743,15 +10441,15 @@ void HandleDoBackUp(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleToggleCentinelActivated(int UserIndex) {
+void DakaraClientPacketHandler::handleToggleCentinelActivated(ToggleCentinelActivated* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/26/06 */
 	/* 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Activate or desactivate the Centinel */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -13763,10 +10461,10 @@ void HandleToggleCentinelActivated(int UserIndex) {
 
 	if (centinelaActivado) {
 		SendData(SendTarget_ToAdmins, 0,
-				PrepareMessageConsoleMsg("El centinela ha sido activado.", FontTypeNames_FONTTYPE_SERVER));
+				dakara::protocol::server::BuildConsoleMsg("El centinela ha sido activado.", FontTypeNames_FONTTYPE_SERVER));
 	} else {
 		SendData(SendTarget_ToAdmins, 0,
-				PrepareMessageConsoleMsg("El centinela ha sido desactivado.", FontTypeNames_FONTTYPE_SERVER));
+				dakara::protocol::server::BuildConsoleMsg("El centinela ha sido desactivado.", FontTypeNames_FONTTYPE_SERVER));
 	}
 }
 
@@ -13775,23 +10473,11 @@ void HandleToggleCentinelActivated(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleAlterName(int UserIndex) {
+void DakaraClientPacketHandler::handleAlterName(AlterName* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/26/06 */
 	/* 'Change user name */
-	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	/* 'Reads the userName and newUser Packets */
 	std::string UserName;
@@ -13799,8 +10485,8 @@ void HandleAlterName(int UserIndex) {
 	int changeNameUI;
 	int GuildIndex;
 
-	UserName = buffer->ReadUnicodeString();
-	newName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
+	newName = p->NewName;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)
 			|| UserList[UserIndex].flags.PrivEspecial) {
@@ -13856,7 +10542,7 @@ void HandleAlterName(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 }
 
@@ -13865,29 +10551,18 @@ void HandleAlterName(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleAlterMail(int UserIndex) {
+void DakaraClientPacketHandler::handleAlterMail(AlterMail* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/26/06 */
 	/* 'Change user password */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	std::string newMail;
 
-	UserName = buffer->ReadUnicodeString();
-	newMail = buffer->ReadUnicodeString();
+	UserName = p->UserName;
+	newMail = p->NewMail;
 
 	if (!UserTienePrivilegio(UserIndex, PlayerType_RoleMaster) &&
 			UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
@@ -13906,10 +10581,6 @@ void HandleAlterMail(int UserIndex) {
 			LogGM(UserList[UserIndex].Name, "Le ha cambiado el mail a " + UserName);
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
@@ -13917,31 +10588,20 @@ void HandleAlterMail(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleAlterPassword(int UserIndex) {
+void DakaraClientPacketHandler::handleAlterPassword(AlterPassword* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/26/06 */
 	/* 'Change user password */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	std::string copyFrom;
 	std::string Password;
 	int dummy = 0;
 
-	UserName = vb6::Replace(buffer->ReadUnicodeString(), "+", " ");
-	copyFrom = vb6::Replace(buffer->ReadUnicodeString(), "+", " ");
+	UserName = vb6::Replace(p->UserName, "+", " ");
+	copyFrom = vb6::Replace(p->CopyFrom, "+", " ");
 
 	if (!UserTienePrivilegio(UserIndex, PlayerType_RoleMaster) &&
 			UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
@@ -13967,7 +10627,7 @@ void HandleAlterPassword(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -13977,23 +10637,16 @@ void HandleAlterPassword(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleCreateNPC(int UserIndex) {
+void DakaraClientPacketHandler::handleCreateNPC(CreateNPC* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 26/09/2010 */
 	/* '26/09/2010: ZaMa - Ya no se pueden crear npcs pretorianos. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int NpcIndex;
 
-	NpcIndex = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	NpcIndex = p->NpcIndex;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 		return;
@@ -14022,23 +10675,16 @@ void HandleCreateNPC(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleCreateNPCWithRespawn(int UserIndex) {
+void DakaraClientPacketHandler::handleCreateNPCWithRespawn(CreateNPCWithRespawn* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 26/09/2010 */
 	/* '26/09/2010: ZaMa - Ya no se pueden crear npcs pretorianos. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int NpcIndex;
 
-	NpcIndex = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	NpcIndex = p->NpcIndex;
 
 	if (NpcIndex >= 900) {
 		WriteConsoleMsg(UserIndex,
@@ -14064,25 +10710,18 @@ void HandleCreateNPCWithRespawn(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleImperialArmour(int UserIndex) {
+void DakaraClientPacketHandler::handleImperialArmour(ImperialArmour* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/24/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 4) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int index;
 	int ObjIndex;
 
-	index = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	ObjIndex = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	index = p->Index;
+	ObjIndex = p->ObjIndex;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -14115,25 +10754,18 @@ void HandleImperialArmour(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChaosArmour(int UserIndex) {
+void DakaraClientPacketHandler::handleChaosArmour(ChaosArmour* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/24/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 4) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	int index;
 	int ObjIndex;
 
-	index = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	ObjIndex = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	index = p->Index;
+	ObjIndex = p->ObjIndex;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -14166,14 +10798,12 @@ void HandleChaosArmour(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleNavigateToggle(int UserIndex) {
+void DakaraClientPacketHandler::handleNavigateToggle(NavigateToggle* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 01/12/07 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero)) {
 		return;
@@ -14194,14 +10824,12 @@ void HandleNavigateToggle(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleServerOpenToUsersToggle(int UserIndex) {
+void DakaraClientPacketHandler::handleServerOpenToUsersToggle(ServerOpenToUsersToggle* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/24/06 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios, PlayerType_RoleMaster)) {
 		return;
@@ -14221,15 +10849,12 @@ void HandleServerOpenToUsersToggle(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleTurnOffServer(int UserIndex) {
+void DakaraClientPacketHandler::handleTurnOffServer(TurnOffServer* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/24/06 */
 	/* 'Turns off the server */
 	/* '*************************************************** */
-
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios,
 			PlayerType_RoleMaster)) {
@@ -14238,7 +10863,7 @@ void HandleTurnOffServer(int UserIndex) {
 
 	LogGM(UserList[UserIndex].Name, "/APAGAR");
 	SendData(SendTarget_ToAll, 0,
-			PrepareMessageConsoleMsg("¡¡¡" + UserList[UserIndex].Name + " VA A APAGAR EL SERVIDOR!!!",
+			dakara::protocol::server::BuildConsoleMsg("¡¡¡" + UserList[UserIndex].Name + " VA A APAGAR EL SERVIDOR!!!",
 					FontTypeNames_FONTTYPE_FIGHT));
 
 	LogMain(vb6::string_format("%d server apagado por %s", vb6::Now(), UserList[UserIndex].Name.c_str()));
@@ -14249,28 +10874,17 @@ void HandleTurnOffServer(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleTurnCriminal(int UserIndex) {
+void DakaraClientPacketHandler::handleTurnCriminal(TurnCriminal* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/26/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int tUser = 0;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_RoleMaster)
 			&& UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
@@ -14283,7 +10897,7 @@ void HandleTurnCriminal(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -14293,23 +10907,12 @@ void HandleTurnCriminal(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleResetFactions(int UserIndex) {
+void DakaraClientPacketHandler::handleResetFactions(ResetFactions* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 06/09/09 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	std::string Reason;
@@ -14317,7 +10920,7 @@ void HandleResetFactions(int UserIndex) {
 	std::string Char;
 	int cantPenas;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)
 			|| UserList[UserIndex].flags.PrivEspecial) {
@@ -14364,10 +10967,6 @@ void HandleResetFactions(int UserIndex) {
 			}
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
@@ -14375,28 +10974,17 @@ void HandleResetFactions(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleRemoveCharFromGuild(int UserIndex) {
+void DakaraClientPacketHandler::handleRemoveCharFromGuild(RemoveCharFromGuild* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/26/06 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	int GuildIndex;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (!UserTienePrivilegio(UserIndex, PlayerType_RoleMaster)
 			&& UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
@@ -14411,13 +10999,13 @@ void HandleRemoveCharFromGuild(int UserIndex) {
 		} else {
 			WriteConsoleMsg(UserIndex, "Expulsado.", FontTypeNames_FONTTYPE_INFO);
 			SendData(SendTarget_ToGuildMembers, GuildIndex,
-					PrepareMessageConsoleMsg(
+					dakara::protocol::server::BuildConsoleMsg(
 							UserName + " ha sido expulsado del clan por los administradores del servidor.",
 							FontTypeNames_FONTTYPE_GUILD));
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -14427,28 +11015,17 @@ void HandleRemoveCharFromGuild(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleRequestCharMail(int UserIndex) {
+void DakaraClientPacketHandler::handleRequestCharMail(RequestCharMail* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín Sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/26/06 */
 	/* 'Request user mail */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string UserName;
 	std::string mail;
 
-	UserName = buffer->ReadUnicodeString();
+	UserName = p->UserName;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)
 			|| UserList[UserIndex].flags.PrivEspecial) {
@@ -14458,10 +11035,6 @@ void HandleRequestCharMail(int UserIndex) {
 			WriteConsoleMsg(UserIndex, "Last email de " + UserName + ":" + mail, FontTypeNames_FONTTYPE_INFO);
 		}
 	}
-
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
 
 /* '' */
@@ -14469,31 +11042,19 @@ void HandleRequestCharMail(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleSystemMessage(int UserIndex) {
+void DakaraClientPacketHandler::handleSystemMessage(SystemMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/29/06 */
 	/* 'Send a message to all the users */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string message;
-	message = buffer->ReadUnicodeString();
+	std::string& message = p->Message;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		LogGM(UserList[UserIndex].Name, "Mensaje de sistema:" + message);
 
-		SendData(SendTarget_ToAll, 0, PrepareMessageShowMessageBox(message));
+		SendData(SendTarget_ToAll, 0, dakara::protocol::server::BuildShowMessageBox(message));
 	}
 }
 
@@ -14502,7 +11063,7 @@ void HandleSystemMessage(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleSetMOTD(int UserIndex) {
+void DakaraClientPacketHandler::handleSetMOTD(SetMOTD* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 03/31/07 */
@@ -14511,23 +11072,12 @@ void HandleSetMOTD(int UserIndex) {
 	/* '   - Fixed a bug that prevented from properly setting the new number of lines. */
 	/* '   - Fixed a bug that caused the player to be kicked. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string newMOTD;
 	std::vector<std::string> auxiliaryString;
 	int LoopC;
 
-	newMOTD = buffer->ReadUnicodeString();
+	newMOTD = p->Motd;
 	auxiliaryString = vb6::Split(newMOTD, vbCrLf);
 
 	if (((!UserTieneAlgunPrivilegios(UserIndex, PlayerType_RoleMaster)
@@ -14552,7 +11102,7 @@ void HandleSetMOTD(int UserIndex) {
 		WriteConsoleMsg(UserIndex, "Se ha cambiado el MOTD con éxito.", FontTypeNames_FONTTYPE_INFO);
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 
 }
@@ -14562,14 +11112,14 @@ void HandleSetMOTD(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleChangeMOTD(int UserIndex) {
+void DakaraClientPacketHandler::handleChangeMOTD(ChangeMOTD* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Juan Martín sotuyo Dodero (Maraxus) */
 	/* 'Last Modification: 12/29/06 */
 	/* 'Change the MOTD */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if ((!UserTieneAlgunPrivilegios(UserIndex, PlayerType_Dios, PlayerType_Admin))) {
 		return;
@@ -14596,14 +11146,12 @@ void HandleChangeMOTD(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandlePing(int UserIndex) {
+void DakaraClientPacketHandler::handlePing(Ping* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lucas Tavolaro Ortiz (Tavo) */
 	/* 'Last Modification: 12/24/06 */
 	/* 'Show guilds messages */
 	/* '*************************************************** */
-	/* 'Remove Packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	WritePong(UserIndex);
 }
@@ -14613,31 +11161,21 @@ void HandlePing(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleSetIniVar(int UserIndex) {
+void DakaraClientPacketHandler::handleSetIniVar(SetIniVar* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Brian Chaia (BrianPr) */
 	/* 'Last Modification: 01/23/10 (Marco) */
 	/* 'Modify server.ini */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 6) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	std::string sLlave;
 	std::string sClave;
 	std::string sValor;
 
 	/* 'Obtengo los parámetros */
-	sLlave = buffer->ReadUnicodeString();
-	sClave = buffer->ReadUnicodeString();
-	sValor = buffer->ReadUnicodeString();
+	sLlave = p->Seccion;
+	sClave = p->Clave;
+	sValor = p->Valor;
 
 	WriteConsoleMsg(UserIndex, "Comando deshabilitado.", FontTypeNames_FONTTYPE_INFO);
 	return;
@@ -14669,7 +11207,7 @@ void HandleSetIniVar(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 #endif
 }
 
@@ -14678,22 +11216,15 @@ void HandleSetIniVar(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleCreatePretorianClan(int UserIndex) {
+void DakaraClientPacketHandler::handleCreatePretorianClan(CreatePretorianClan* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 29/10/2010 */
 	/* '*************************************************** */
 
-	int Map;
-	int X;
-	int Y;
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	Map = UserList[UserIndex].sockctx->incomingData->ReadInteger();
-	X = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	Y = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	int Map = p->Map;
+	int X = p->X;
+	int Y = p->Y;
 
 	/* ' User Admin? */
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
@@ -14738,18 +11269,13 @@ void HandleCreatePretorianClan(int UserIndex) {
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleDeletePretorianClan(int UserIndex) {
+void DakaraClientPacketHandler::handleRemovePretorianClan(RemovePretorianClan* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 29/10/2010 */
 	/* '*************************************************** */
 
-	int Map;
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	Map = UserList[UserIndex].sockctx->incomingData->ReadInteger();
+	int Map = p->Map;
 
 	/* ' User Admin? */
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
@@ -14786,26 +11312,14 @@ void HandleDeletePretorianClan(int UserIndex) {
 /* ' */
 /* ' @param UserIndex The index of the user sending the message */
 
-void HandleSetDialog(int UserIndex) {
+void DakaraClientPacketHandler::handleSetDialog(SetDialog* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Amraphen */
 	/* 'Last Modification: 18/11/2010 */
 	/* '20/11/2010: ZaMa - Arreglo privilegios. */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet id */
-	buffer->ReadByte();
-
-	std::string NewDialog;
-	NewDialog = buffer->ReadUnicodeString();
+	std::string& NewDialog = p->Message;
 
 	if (UserList[UserIndex].flags.TargetNPC > 0) {
 		/* ' Dsgm/Dsrm/Rm */
@@ -14819,17 +11333,14 @@ void HandleSetDialog(int UserIndex) {
 /* '' */
 /* ' Handles the "Impersonate" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleImpersonate(int UserIndex) {
+
+void DakaraClientPacketHandler::handleImpersonate(Impersonate* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 20/11/2010 */
 	/* ' */
 	/* '*************************************************** */
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	/* ' Dsgm/Dsrm/Rm */
 	if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
@@ -14861,17 +11372,14 @@ void HandleImpersonate(int UserIndex) {
 /* '' */
 /* ' Handles the "Imitate" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleImitate(int UserIndex) {
+
+void DakaraClientPacketHandler::handleImitate(Imitate* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: ZaMa */
 	/* 'Last Modification: 20/11/2010 */
 	/* ' */
 	/* '*************************************************** */
-
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
 
 	/* ' Dsgm/Dsrm/Rm/ConseRm */
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)) {
@@ -14897,29 +11405,18 @@ void HandleImitate(int UserIndex) {
 /* ' */
 /* ' @param UserIndex The index of the user sending the message */
 
-void HandleRecordAdd(int UserIndex) {
+void DakaraClientPacketHandler::handleRecordAdd(RecordAdd* p) { (void)p;
 	/* '************************************************************** */
 	/* 'Author: Amraphen */
 	/* 'Last Modify Date: 29/11/2010 */
 	/* ' */
 	/* '************************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 2) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet id */
-	buffer->ReadByte();
 
 	std::string UserName;
 	std::string Reason;
 
-	UserName = buffer->ReadUnicodeString();
-	Reason = buffer->ReadUnicodeString();
+	UserName = p->UserName;
+	Reason = p->Reason;
 
 	if (!(UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_RoleMaster))) {
 		/* 'Verificamos que exista el personaje */
@@ -14940,29 +11437,17 @@ void HandleRecordAdd(int UserIndex) {
 /* ' */
 /* ' @param UserIndex The index of the user sending the message. */
 
-void HandleRecordAddObs(int UserIndex) {
+void DakaraClientPacketHandler::handleRecordAddObs(RecordAddObs* p) { (void)p;
 	/* '************************************************************** */
 	/* 'Author: Amraphen */
 	/* 'Last Modify Date: 29/11/2010 */
 	/* ' */
 	/* '************************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet id */
-	buffer->ReadByte();
 
 	int RecordIndex;
-	std::string Obs;
+	std::string& Obs = p->Obs;
 
-	RecordIndex = buffer->ReadByte();
-	Obs = buffer->ReadUnicodeString();
+	RecordIndex = p->Index;
 
 	if (!(UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_RoleMaster))) {
 		/* 'Agregamos la observación */
@@ -14978,7 +11463,7 @@ void HandleRecordAddObs(int UserIndex) {
 /* ' */
 /* ' @param UserIndex The index of the user sending the message. */
 
-void HandleRecordRemove(int UserIndex) {
+void DakaraClientPacketHandler::handleRecordRemove(RecordRemove* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Amraphen */
 	/* 'Last Modification: 29/11/2010 */
@@ -14986,10 +11471,7 @@ void HandleRecordRemove(int UserIndex) {
 	/* '*************************************************** */
 	int RecordIndex;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	RecordIndex = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	RecordIndex = p->Index;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_RoleMaster)) {
 		return;
@@ -15010,14 +11492,14 @@ void HandleRecordRemove(int UserIndex) {
 /* ' */
 /* ' @param UserIndex The index of the user sending the message. */
 
-void HandleRecordListRequest(int UserIndex) {
+void DakaraClientPacketHandler::handleRecordListRequest(RecordListRequest* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Amraphen */
 	/* 'Last Modification: 29/11/2010 */
 	/* ' */
 	/* '*************************************************** */
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
+
+
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_RoleMaster)) {
 		return;
@@ -15031,7 +11513,7 @@ void HandleRecordListRequest(int UserIndex) {
 /* ' */
 /* ' @param UserIndex The index of the user sending the message. */
 
-void HandleRecordDetailsRequest(int UserIndex) {
+void DakaraClientPacketHandler::handleRecordDetailsRequest(RecordDetailsRequest* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Amraphen */
 	/* 'Last Modification: 07/04/2011 */
@@ -15039,10 +11521,7 @@ void HandleRecordDetailsRequest(int UserIndex) {
 	/* '*************************************************** */
 	int RecordIndex;
 
-	/* 'Remove packet ID */
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	RecordIndex = UserList[UserIndex].sockctx->incomingData->ReadByte();
+	RecordIndex = p->Index;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_RoleMaster)) {
 		return;
@@ -15051,52 +11530,29 @@ void HandleRecordDetailsRequest(int UserIndex) {
 	WriteRecordDetails(UserIndex, RecordIndex);
 }
 
-void HandleMoveItem(int UserIndex) {
+void DakaraClientPacketHandler::handleMoveItem(MoveItem* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Ignacio Mariano Tirabasso (Budi) */
 	/* 'Last Modification: 01/01/2011 */
 	/* ' */
 	/* '*************************************************** */
 
-	int originalSlot;
-	int newSlot;
-
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	originalSlot = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	newSlot = UserList[UserIndex].sockctx->incomingData->ReadByte();
-	UserList[UserIndex].sockctx->incomingData->ReadByte();
-
-	moveItem(UserIndex, originalSlot, newSlot);
-
+	moveItem(UserIndex, p->OldSlot, p->NewSlot);
 }
 
 /* '' */
 /* ' Handles the "HigherAdminsMessage" message. */
 /* ' */
-/* ' @param    userIndex The index of the user sending the message. */
 
-void HandleHigherAdminsMessage(int UserIndex) {
+
+void DakaraClientPacketHandler::handleHigherAdminsMessage(HigherAdminsMessage* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Torres Patricio (Pato) */
 	/* 'Last Modification: 03/30/12 */
 	/* ' */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 3) {
-		throw insufficient_data_error();
-		return;
-	}
 
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
-
-	std::string message;
-
-	message = buffer->ReadUnicodeString();
+	std::string& message = p->Message;
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios)) {
 		LogGM(UserList[UserIndex].Name, "Mensaje a Dioses:" + message);
@@ -15106,45 +11562,32 @@ void HandleHigherAdminsMessage(int UserIndex) {
 			ParseChat(message);
 
 			SendData(SendTarget_ToHigherAdminsButRMs, 0,
-					PrepareMessageConsoleMsg(UserList[UserIndex].Name + "(Sólo Dioses)> " + message,
+					dakara::protocol::server::BuildConsoleMsg(UserList[UserIndex].Name + "(Sólo Dioses)> " + message,
 							FontTypeNames_FONTTYPE_GMMSG));
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
-
-
 }
+
 /* '' */
 /* ' Handle the "AlterName" message */
 /* ' */
 /* ' @param userIndex The index of the user sending the message */
 
-void HandleAlterGuildName(int UserIndex) {
+void DakaraClientPacketHandler::handleAlterGuildName(AlterGuildName* p) { (void)p;
 	/* '*************************************************** */
 	/* 'Author: Lex! */
 	/* 'Last Modification: 14/05/12 */
 	/* 'Change guild name */
 	/* '*************************************************** */
-	if (UserList[UserIndex].sockctx->incomingData->length() < 5) {
-		throw insufficient_data_error();
-		return;
-	}
-
-	/* 'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet... */
-	clsByteQueue* buffer = UserList[UserIndex].sockctx->incomingData.get();
-
-
-	/* 'Remove packet ID */
-	buffer->ReadByte();
 
 	/* 'Reads the userName and newUser Packets */
 	std::string GuildName;
 	std::string newGuildName;
 	int GuildIndex;
 
-	GuildName = buffer->ReadUnicodeString();
-	newGuildName = buffer->ReadUnicodeString();
+	GuildName = p->OldGuildName;
+	newGuildName = p->NewGuildName;
 	GuildName = vb6::Trim(GuildName);
 	newGuildName = vb6::Trim(newGuildName);
 
@@ -15225,6 +11668,6 @@ void HandleAlterGuildName(int UserIndex) {
 		}
 	}
 
-	/* 'If we got here then packet is complete, copy data back to original queue */
+
 
 }

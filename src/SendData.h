@@ -22,6 +22,8 @@
 #include <string>
 #include "vb6compat.h"
 #include "enums.h"
+#include "ProtocolNew.h"
+
 
 /* '' */
 /* ' Contains all methods to send data to different user groups. */
@@ -31,7 +33,11 @@
 /* ' @version 1.0.0 */
 /* ' @date 20070107 */
 
+std::string PacketToString(const dakara::protocol::Packet& p);
+
 void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDenounce = false);
+
+void SendData(SendTarget sndRoute, int sndIndex, const dakara::protocol::Packet& p, bool IsDenounce = false);
 
 void SendToUserArea(int UserIndex, std::string sdData);
 

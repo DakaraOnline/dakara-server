@@ -433,7 +433,7 @@ void ActualizarNoticias(int UserIndex, std::string Datos) {
 	guilds[GI]->SetGuildNews(Datos);
 
 	SendData(SendTarget_ToDiosesYclan, UserList[UserIndex].GuildIndex,
-			PrepareMessageGuildChat(UserList[UserIndex].Name + " ha actualizado las noticias del clan!"));
+			dakara::protocol::server::BuildGuildChat(UserList[UserIndex].Name + " ha actualizado las noticias del clan!"));
 }
 
 bool CrearNuevoClan(int FundadorIndex, std::string & desc, std::string & GuildName, std::string & URL,
@@ -1072,12 +1072,12 @@ void v_RutinaElecciones() {
 	int i;
 
 	SendData(SendTarget_ToAll, 0,
-			PrepareMessageConsoleMsg("Servidor> Revisando elecciones", FontTypeNames_FONTTYPE_SERVER));
+			dakara::protocol::server::BuildConsoleMsg("Servidor> Revisando elecciones", FontTypeNames_FONTTYPE_SERVER));
 	for (i = (1); i <= (CANTIDADDECLANES); i++) {
 		if (guilds[i] == nullptr) {
 			if (guilds[i]->RevisarElecciones()) {
 				SendData(SendTarget_ToAll, 0,
-						PrepareMessageConsoleMsg(
+						dakara::protocol::server::BuildConsoleMsg(
 								"Servidor> " + guilds[i]->GetLeader() + " es el nuevo líder de "
 										+ guilds[i]->GuildName() + ".", FontTypeNames_FONTTYPE_SERVER));
 			}
@@ -1085,7 +1085,7 @@ void v_RutinaElecciones() {
 		/* FIXME: proximo : */
 	}
 	SendData(SendTarget_ToAll, 0,
-			PrepareMessageConsoleMsg("Servidor> Elecciones revisadas.", FontTypeNames_FONTTYPE_SERVER));
+			dakara::protocol::server::BuildConsoleMsg("Servidor> Elecciones revisadas.", FontTypeNames_FONTTYPE_SERVER));
 }
 
 int GetGuildIndexFromChar(std::string & PlayerName) {

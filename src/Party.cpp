@@ -299,7 +299,7 @@ bool clsParty::HacerLeader(int UserIndex) {
 		LogError("INCONSISTENCIA DE PARTIES");
 		std::cerr << ("INCONSISTENCIA DE PARTIES en HacerLeader") << std::endl;
 		SendData(SendTarget_ToAdmins, 0,
-				PrepareMessageConsoleMsg(
+				dakara::protocol::server::BuildConsoleMsg(
 						"¡¡¡Inconsistencia de parties en HACERLEADER (UII = 0), AVISE A UN PROGRAMADOR ESTO ES UNA CATASTROFE!!!!",
 						FontTypeNames_FONTTYPE_GUILD));
 		retval = false;

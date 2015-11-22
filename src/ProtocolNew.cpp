@@ -535,7 +535,7 @@ ClientPacket* ClientPacketFactory(clsByteQueue* buffer) {
             break;
 
         case 129:
-            p = new moveItem(buffer);
+            p = new MoveItem(buffer);
             break;
 
     }
@@ -1453,7 +1453,7 @@ void ClientPacketDecodeAndDispatch(clsByteQueue* buffer, PacketHandler* handler)
 
         case 129:
         {
-            moveItem p(buffer);
+            MoveItem p(buffer);
             p.dispatch(handler);
             break;
         }
@@ -1480,7 +1480,7 @@ LoginExistingChar::LoginExistingChar(clsByteQueue* buffer) : ClientPacket(Client
 
 }
 
-void LoginExistingChar::serialize(clsByteQueue* buffer) {
+void LoginExistingChar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_LoginExistingChar); /* PacketID: 0 */
     buffer->WriteUnicodeString(UserName);
     buffer->WriteUnicodeString(Password);
@@ -1502,7 +1502,7 @@ ThrowDices::ThrowDices(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Throw
 
 }
 
-void ThrowDices::serialize(clsByteQueue* buffer) {
+void ThrowDices::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ThrowDices); /* PacketID: 1 */
 
 }
@@ -1530,7 +1530,7 @@ LoginNewChar::LoginNewChar(clsByteQueue* buffer) : ClientPacket(ClientPacketID_L
 
 }
 
-void LoginNewChar::serialize(clsByteQueue* buffer) {
+void LoginNewChar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_LoginNewChar); /* PacketID: 2 */
     buffer->WriteUnicodeString(UserName);
     buffer->WriteUnicodeString(Password);
@@ -1559,7 +1559,7 @@ Talk::Talk(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Talk /* 3 */) {
 
 }
 
-void Talk::serialize(clsByteQueue* buffer) {
+void Talk::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Talk); /* PacketID: 3 */
     buffer->WriteUnicodeString(Chat);
 
@@ -1578,7 +1578,7 @@ Yell::Yell(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Yell /* 4 */) {
 
 }
 
-void Yell::serialize(clsByteQueue* buffer) {
+void Yell::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Yell); /* PacketID: 4 */
     buffer->WriteUnicodeString(Chat);
 
@@ -1598,7 +1598,7 @@ Whisper::Whisper(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Whisper /* 
 
 }
 
-void Whisper::serialize(clsByteQueue* buffer) {
+void Whisper::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Whisper); /* PacketID: 5 */
     buffer->WriteUnicodeString(TargetName);
     buffer->WriteUnicodeString(Chat);
@@ -1614,11 +1614,13 @@ Walk::Walk() : ClientPacket(ClientPacketID_Walk /* 6 */) {
 
 Walk::Walk(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Walk /* 6 */) {
     buffer->ReadByte(); /* PacketID */
+    Heading = buffer->ReadByte();
 
 }
 
-void Walk::serialize(clsByteQueue* buffer) {
+void Walk::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Walk); /* PacketID: 6 */
+    buffer->WriteByte(Heading);
 
 }
 
@@ -1634,7 +1636,7 @@ RequestPositionUpdate::RequestPositionUpdate(clsByteQueue* buffer) : ClientPacke
 
 }
 
-void RequestPositionUpdate::serialize(clsByteQueue* buffer) {
+void RequestPositionUpdate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_RequestPositionUpdate); /* PacketID: 7 */
 
 }
@@ -1651,7 +1653,7 @@ Attack::Attack(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Attack /* 8 *
 
 }
 
-void Attack::serialize(clsByteQueue* buffer) {
+void Attack::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Attack); /* PacketID: 8 */
 
 }
@@ -1668,7 +1670,7 @@ PickUp::PickUp(clsByteQueue* buffer) : ClientPacket(ClientPacketID_PickUp /* 9 *
 
 }
 
-void PickUp::serialize(clsByteQueue* buffer) {
+void PickUp::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_PickUp); /* PacketID: 9 */
 
 }
@@ -1685,7 +1687,7 @@ SafeToggle::SafeToggle(clsByteQueue* buffer) : ClientPacket(ClientPacketID_SafeT
 
 }
 
-void SafeToggle::serialize(clsByteQueue* buffer) {
+void SafeToggle::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_SafeToggle); /* PacketID: 10 */
 
 }
@@ -1702,7 +1704,7 @@ ResuscitationSafeToggle::ResuscitationSafeToggle(clsByteQueue* buffer) : ClientP
 
 }
 
-void ResuscitationSafeToggle::serialize(clsByteQueue* buffer) {
+void ResuscitationSafeToggle::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ResuscitationSafeToggle); /* PacketID: 11 */
 
 }
@@ -1719,7 +1721,7 @@ RequestGuildLeaderInfo::RequestGuildLeaderInfo(clsByteQueue* buffer) : ClientPac
 
 }
 
-void RequestGuildLeaderInfo::serialize(clsByteQueue* buffer) {
+void RequestGuildLeaderInfo::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_RequestGuildLeaderInfo); /* PacketID: 12 */
 
 }
@@ -1736,7 +1738,7 @@ RequestAtributes::RequestAtributes(clsByteQueue* buffer) : ClientPacket(ClientPa
 
 }
 
-void RequestAtributes::serialize(clsByteQueue* buffer) {
+void RequestAtributes::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_RequestAtributes); /* PacketID: 13 */
 
 }
@@ -1753,7 +1755,7 @@ RequestFame::RequestFame(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Req
 
 }
 
-void RequestFame::serialize(clsByteQueue* buffer) {
+void RequestFame::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_RequestFame); /* PacketID: 14 */
 
 }
@@ -1770,7 +1772,7 @@ RequestSkills::RequestSkills(clsByteQueue* buffer) : ClientPacket(ClientPacketID
 
 }
 
-void RequestSkills::serialize(clsByteQueue* buffer) {
+void RequestSkills::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_RequestSkills); /* PacketID: 15 */
 
 }
@@ -1787,7 +1789,7 @@ RequestMiniStats::RequestMiniStats(clsByteQueue* buffer) : ClientPacket(ClientPa
 
 }
 
-void RequestMiniStats::serialize(clsByteQueue* buffer) {
+void RequestMiniStats::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_RequestMiniStats); /* PacketID: 16 */
 
 }
@@ -1804,7 +1806,7 @@ CommerceEnd::CommerceEnd(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Com
 
 }
 
-void CommerceEnd::serialize(clsByteQueue* buffer) {
+void CommerceEnd::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_CommerceEnd); /* PacketID: 17 */
 
 }
@@ -1821,7 +1823,7 @@ UserCommerceEnd::UserCommerceEnd(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void UserCommerceEnd::serialize(clsByteQueue* buffer) {
+void UserCommerceEnd::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_UserCommerceEnd); /* PacketID: 18 */
 
 }
@@ -1838,7 +1840,7 @@ UserCommerceConfirm::UserCommerceConfirm(clsByteQueue* buffer) : ClientPacket(Cl
 
 }
 
-void UserCommerceConfirm::serialize(clsByteQueue* buffer) {
+void UserCommerceConfirm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_UserCommerceConfirm); /* PacketID: 19 */
 
 }
@@ -1856,7 +1858,7 @@ CommerceChat::CommerceChat(clsByteQueue* buffer) : ClientPacket(ClientPacketID_C
 
 }
 
-void CommerceChat::serialize(clsByteQueue* buffer) {
+void CommerceChat::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_CommerceChat); /* PacketID: 20 */
     buffer->WriteUnicodeString(Chat);
 
@@ -1874,7 +1876,7 @@ BankEnd::BankEnd(clsByteQueue* buffer) : ClientPacket(ClientPacketID_BankEnd /* 
 
 }
 
-void BankEnd::serialize(clsByteQueue* buffer) {
+void BankEnd::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_BankEnd); /* PacketID: 21 */
 
 }
@@ -1891,7 +1893,7 @@ UserCommerceOk::UserCommerceOk(clsByteQueue* buffer) : ClientPacket(ClientPacket
 
 }
 
-void UserCommerceOk::serialize(clsByteQueue* buffer) {
+void UserCommerceOk::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_UserCommerceOk); /* PacketID: 22 */
 
 }
@@ -1908,7 +1910,7 @@ UserCommerceReject::UserCommerceReject(clsByteQueue* buffer) : ClientPacket(Clie
 
 }
 
-void UserCommerceReject::serialize(clsByteQueue* buffer) {
+void UserCommerceReject::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_UserCommerceReject); /* PacketID: 23 */
 
 }
@@ -1927,7 +1929,7 @@ Drop::Drop(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Drop /* 24 */) {
 
 }
 
-void Drop::serialize(clsByteQueue* buffer) {
+void Drop::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Drop); /* PacketID: 24 */
     buffer->WriteByte(Slot);
     buffer->WriteInteger(Amount);
@@ -1947,7 +1949,7 @@ CastSpell::CastSpell(clsByteQueue* buffer) : ClientPacket(ClientPacketID_CastSpe
 
 }
 
-void CastSpell::serialize(clsByteQueue* buffer) {
+void CastSpell::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_CastSpell); /* PacketID: 25 */
     buffer->WriteByte(Spell);
 
@@ -1967,7 +1969,7 @@ LeftClick::LeftClick(clsByteQueue* buffer) : ClientPacket(ClientPacketID_LeftCli
 
 }
 
-void LeftClick::serialize(clsByteQueue* buffer) {
+void LeftClick::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_LeftClick); /* PacketID: 26 */
     buffer->WriteByte(X);
     buffer->WriteByte(Y);
@@ -1988,7 +1990,7 @@ DoubleClick::DoubleClick(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Dou
 
 }
 
-void DoubleClick::serialize(clsByteQueue* buffer) {
+void DoubleClick::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_DoubleClick); /* PacketID: 27 */
     buffer->WriteByte(X);
     buffer->WriteByte(Y);
@@ -2008,7 +2010,7 @@ Work::Work(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Work /* 28 */) {
 
 }
 
-void Work::serialize(clsByteQueue* buffer) {
+void Work::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Work); /* PacketID: 28 */
     buffer->WriteByte(Skill);
 
@@ -2026,7 +2028,7 @@ UseSpellMacro::UseSpellMacro(clsByteQueue* buffer) : ClientPacket(ClientPacketID
 
 }
 
-void UseSpellMacro::serialize(clsByteQueue* buffer) {
+void UseSpellMacro::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_UseSpellMacro); /* PacketID: 29 */
 
 }
@@ -2044,7 +2046,7 @@ UseItem::UseItem(clsByteQueue* buffer) : ClientPacket(ClientPacketID_UseItem /* 
 
 }
 
-void UseItem::serialize(clsByteQueue* buffer) {
+void UseItem::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_UseItem); /* PacketID: 30 */
     buffer->WriteByte(Slot);
 
@@ -2063,7 +2065,7 @@ CraftBlacksmith::CraftBlacksmith(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void CraftBlacksmith::serialize(clsByteQueue* buffer) {
+void CraftBlacksmith::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_CraftBlacksmith); /* PacketID: 31 */
     buffer->WriteInteger(Item);
 
@@ -2082,7 +2084,7 @@ CraftCarpenter::CraftCarpenter(clsByteQueue* buffer) : ClientPacket(ClientPacket
 
 }
 
-void CraftCarpenter::serialize(clsByteQueue* buffer) {
+void CraftCarpenter::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_CraftCarpenter); /* PacketID: 32 */
     buffer->WriteInteger(Item);
 
@@ -2103,7 +2105,7 @@ WorkLeftClick::WorkLeftClick(clsByteQueue* buffer) : ClientPacket(ClientPacketID
 
 }
 
-void WorkLeftClick::serialize(clsByteQueue* buffer) {
+void WorkLeftClick::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_WorkLeftClick); /* PacketID: 33 */
     buffer->WriteByte(X);
     buffer->WriteByte(Y);
@@ -2127,7 +2129,7 @@ CreateNewGuild::CreateNewGuild(clsByteQueue* buffer) : ClientPacket(ClientPacket
 
 }
 
-void CreateNewGuild::serialize(clsByteQueue* buffer) {
+void CreateNewGuild::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_CreateNewGuild); /* PacketID: 34 */
     buffer->WriteUnicodeString(Desc);
     buffer->WriteUnicodeString(GuildName);
@@ -2149,7 +2151,7 @@ SpellInfo::SpellInfo(clsByteQueue* buffer) : ClientPacket(ClientPacketID_SpellIn
 
 }
 
-void SpellInfo::serialize(clsByteQueue* buffer) {
+void SpellInfo::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_SpellInfo); /* PacketID: 35 */
     buffer->WriteByte(Slot);
 
@@ -2168,7 +2170,7 @@ EquipItem::EquipItem(clsByteQueue* buffer) : ClientPacket(ClientPacketID_EquipIt
 
 }
 
-void EquipItem::serialize(clsByteQueue* buffer) {
+void EquipItem::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_EquipItem); /* PacketID: 36 */
     buffer->WriteByte(Slot);
 
@@ -2187,7 +2189,7 @@ ChangeHeading::ChangeHeading(clsByteQueue* buffer) : ClientPacket(ClientPacketID
 
 }
 
-void ChangeHeading::serialize(clsByteQueue* buffer) {
+void ChangeHeading::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ChangeHeading); /* PacketID: 37 */
     buffer->WriteByte(Heading);
 
@@ -2202,11 +2204,11 @@ ModifySkills::ModifySkills() : ClientPacket(ClientPacketID_ModifySkills /* 38 */
 
 ModifySkills::ModifySkills(clsByteQueue* buffer) : ClientPacket(ClientPacketID_ModifySkills /* 38 */) {
     buffer->ReadByte(); /* PacketID */
-    { int i; for (i=0; i<20; ++i) Skills[i] = buffer->ReadByte(); }
+    { int i; Skills.resize(20); for (i=0; i<20; ++i) Skills[i] = buffer->ReadByte(); }
 
 }
 
-void ModifySkills::serialize(clsByteQueue* buffer) {
+void ModifySkills::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ModifySkills); /* PacketID: 38 */
     { int i; for (i=0; i<20; ++i) buffer->WriteByte(Skills[i]); }
 
@@ -2225,7 +2227,7 @@ Train::Train(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Train /* 39 */)
 
 }
 
-void Train::serialize(clsByteQueue* buffer) {
+void Train::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Train); /* PacketID: 39 */
     buffer->WriteByte(PetIndex);
 
@@ -2245,7 +2247,7 @@ CommerceBuy::CommerceBuy(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Com
 
 }
 
-void CommerceBuy::serialize(clsByteQueue* buffer) {
+void CommerceBuy::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_CommerceBuy); /* PacketID: 40 */
     buffer->WriteByte(Slot);
     buffer->WriteInteger(Amount);
@@ -2266,7 +2268,7 @@ BankExtractItem::BankExtractItem(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void BankExtractItem::serialize(clsByteQueue* buffer) {
+void BankExtractItem::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_BankExtractItem); /* PacketID: 41 */
     buffer->WriteByte(Slot);
     buffer->WriteInteger(Amount);
@@ -2287,7 +2289,7 @@ CommerceSell::CommerceSell(clsByteQueue* buffer) : ClientPacket(ClientPacketID_C
 
 }
 
-void CommerceSell::serialize(clsByteQueue* buffer) {
+void CommerceSell::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_CommerceSell); /* PacketID: 42 */
     buffer->WriteByte(Slot);
     buffer->WriteInteger(Amount);
@@ -2308,7 +2310,7 @@ BankDeposit::BankDeposit(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Ban
 
 }
 
-void BankDeposit::serialize(clsByteQueue* buffer) {
+void BankDeposit::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_BankDeposit); /* PacketID: 43 */
     buffer->WriteByte(Slot);
     buffer->WriteInteger(Amount);
@@ -2330,7 +2332,7 @@ ForumPost::ForumPost(clsByteQueue* buffer) : ClientPacket(ClientPacketID_ForumPo
 
 }
 
-void ForumPost::serialize(clsByteQueue* buffer) {
+void ForumPost::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ForumPost); /* PacketID: 44 */
     buffer->WriteByte(MsgType);
     buffer->WriteUnicodeString(Title);
@@ -2352,7 +2354,7 @@ MoveSpell::MoveSpell(clsByteQueue* buffer) : ClientPacket(ClientPacketID_MoveSpe
 
 }
 
-void MoveSpell::serialize(clsByteQueue* buffer) {
+void MoveSpell::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_MoveSpell); /* PacketID: 45 */
     buffer->WriteBoolean(Direction);
     buffer->WriteByte(Slot);
@@ -2373,7 +2375,7 @@ MoveBank::MoveBank(clsByteQueue* buffer) : ClientPacket(ClientPacketID_MoveBank 
 
 }
 
-void MoveBank::serialize(clsByteQueue* buffer) {
+void MoveBank::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_MoveBank); /* PacketID: 46 */
     buffer->WriteBoolean(Direction);
     buffer->WriteByte(Slot);
@@ -2394,7 +2396,7 @@ ClanCodexUpdate::ClanCodexUpdate(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void ClanCodexUpdate::serialize(clsByteQueue* buffer) {
+void ClanCodexUpdate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ClanCodexUpdate); /* PacketID: 47 */
     buffer->WriteUnicodeString(Desc);
     buffer->WriteUnicodeString(Codex);
@@ -2416,7 +2418,7 @@ UserCommerceOffer::UserCommerceOffer(clsByteQueue* buffer) : ClientPacket(Client
 
 }
 
-void UserCommerceOffer::serialize(clsByteQueue* buffer) {
+void UserCommerceOffer::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_UserCommerceOffer); /* PacketID: 48 */
     buffer->WriteByte(Slot);
     buffer->WriteLong(Amount);
@@ -2437,7 +2439,7 @@ GuildAcceptPeace::GuildAcceptPeace(clsByteQueue* buffer) : ClientPacket(ClientPa
 
 }
 
-void GuildAcceptPeace::serialize(clsByteQueue* buffer) {
+void GuildAcceptPeace::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildAcceptPeace); /* PacketID: 49 */
     buffer->WriteUnicodeString(Guild);
 
@@ -2456,7 +2458,7 @@ GuildRejectAlliance::GuildRejectAlliance(clsByteQueue* buffer) : ClientPacket(Cl
 
 }
 
-void GuildRejectAlliance::serialize(clsByteQueue* buffer) {
+void GuildRejectAlliance::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildRejectAlliance); /* PacketID: 50 */
     buffer->WriteUnicodeString(Guild);
 
@@ -2475,7 +2477,7 @@ GuildRejectPeace::GuildRejectPeace(clsByteQueue* buffer) : ClientPacket(ClientPa
 
 }
 
-void GuildRejectPeace::serialize(clsByteQueue* buffer) {
+void GuildRejectPeace::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildRejectPeace); /* PacketID: 51 */
     buffer->WriteUnicodeString(Guild);
 
@@ -2494,7 +2496,7 @@ GuildAcceptAlliance::GuildAcceptAlliance(clsByteQueue* buffer) : ClientPacket(Cl
 
 }
 
-void GuildAcceptAlliance::serialize(clsByteQueue* buffer) {
+void GuildAcceptAlliance::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildAcceptAlliance); /* PacketID: 52 */
     buffer->WriteUnicodeString(Guild);
 
@@ -2514,7 +2516,7 @@ GuildOfferPeace::GuildOfferPeace(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void GuildOfferPeace::serialize(clsByteQueue* buffer) {
+void GuildOfferPeace::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildOfferPeace); /* PacketID: 53 */
     buffer->WriteUnicodeString(Guild);
     buffer->WriteUnicodeString(Proposal);
@@ -2535,7 +2537,7 @@ GuildOfferAlliance::GuildOfferAlliance(clsByteQueue* buffer) : ClientPacket(Clie
 
 }
 
-void GuildOfferAlliance::serialize(clsByteQueue* buffer) {
+void GuildOfferAlliance::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildOfferAlliance); /* PacketID: 54 */
     buffer->WriteUnicodeString(Guild);
     buffer->WriteUnicodeString(Proposal);
@@ -2555,7 +2557,7 @@ GuildAllianceDetails::GuildAllianceDetails(clsByteQueue* buffer) : ClientPacket(
 
 }
 
-void GuildAllianceDetails::serialize(clsByteQueue* buffer) {
+void GuildAllianceDetails::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildAllianceDetails); /* PacketID: 55 */
     buffer->WriteUnicodeString(Guild);
 
@@ -2574,7 +2576,7 @@ GuildPeaceDetails::GuildPeaceDetails(clsByteQueue* buffer) : ClientPacket(Client
 
 }
 
-void GuildPeaceDetails::serialize(clsByteQueue* buffer) {
+void GuildPeaceDetails::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildPeaceDetails); /* PacketID: 56 */
     buffer->WriteUnicodeString(Guild);
 
@@ -2593,7 +2595,7 @@ GuildRequestJoinerInfo::GuildRequestJoinerInfo(clsByteQueue* buffer) : ClientPac
 
 }
 
-void GuildRequestJoinerInfo::serialize(clsByteQueue* buffer) {
+void GuildRequestJoinerInfo::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildRequestJoinerInfo); /* PacketID: 57 */
     buffer->WriteUnicodeString(User);
 
@@ -2611,7 +2613,7 @@ GuildAlliancePropList::GuildAlliancePropList(clsByteQueue* buffer) : ClientPacke
 
 }
 
-void GuildAlliancePropList::serialize(clsByteQueue* buffer) {
+void GuildAlliancePropList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildAlliancePropList); /* PacketID: 58 */
 
 }
@@ -2628,7 +2630,7 @@ GuildPeacePropList::GuildPeacePropList(clsByteQueue* buffer) : ClientPacket(Clie
 
 }
 
-void GuildPeacePropList::serialize(clsByteQueue* buffer) {
+void GuildPeacePropList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildPeacePropList); /* PacketID: 59 */
 
 }
@@ -2646,7 +2648,7 @@ GuildDeclareWar::GuildDeclareWar(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void GuildDeclareWar::serialize(clsByteQueue* buffer) {
+void GuildDeclareWar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildDeclareWar); /* PacketID: 60 */
     buffer->WriteUnicodeString(Guild);
 
@@ -2665,7 +2667,7 @@ GuildNewWebsite::GuildNewWebsite(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void GuildNewWebsite::serialize(clsByteQueue* buffer) {
+void GuildNewWebsite::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildNewWebsite); /* PacketID: 61 */
     buffer->WriteUnicodeString(Website);
 
@@ -2684,7 +2686,7 @@ GuildAcceptNewMember::GuildAcceptNewMember(clsByteQueue* buffer) : ClientPacket(
 
 }
 
-void GuildAcceptNewMember::serialize(clsByteQueue* buffer) {
+void GuildAcceptNewMember::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildAcceptNewMember); /* PacketID: 62 */
     buffer->WriteUnicodeString(UserName);
 
@@ -2704,7 +2706,7 @@ GuildRejectNewMember::GuildRejectNewMember(clsByteQueue* buffer) : ClientPacket(
 
 }
 
-void GuildRejectNewMember::serialize(clsByteQueue* buffer) {
+void GuildRejectNewMember::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildRejectNewMember); /* PacketID: 63 */
     buffer->WriteUnicodeString(UserName);
     buffer->WriteUnicodeString(Reason);
@@ -2724,7 +2726,7 @@ GuildKickMember::GuildKickMember(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void GuildKickMember::serialize(clsByteQueue* buffer) {
+void GuildKickMember::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildKickMember); /* PacketID: 64 */
     buffer->WriteUnicodeString(UserName);
 
@@ -2743,7 +2745,7 @@ GuildUpdateNews::GuildUpdateNews(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void GuildUpdateNews::serialize(clsByteQueue* buffer) {
+void GuildUpdateNews::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildUpdateNews); /* PacketID: 65 */
     buffer->WriteUnicodeString(News);
 
@@ -2762,7 +2764,7 @@ GuildMemberInfo::GuildMemberInfo(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void GuildMemberInfo::serialize(clsByteQueue* buffer) {
+void GuildMemberInfo::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildMemberInfo); /* PacketID: 66 */
     buffer->WriteUnicodeString(UserName);
 
@@ -2780,7 +2782,7 @@ GuildOpenElections::GuildOpenElections(clsByteQueue* buffer) : ClientPacket(Clie
 
 }
 
-void GuildOpenElections::serialize(clsByteQueue* buffer) {
+void GuildOpenElections::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildOpenElections); /* PacketID: 67 */
 
 }
@@ -2799,7 +2801,7 @@ GuildRequestMembership::GuildRequestMembership(clsByteQueue* buffer) : ClientPac
 
 }
 
-void GuildRequestMembership::serialize(clsByteQueue* buffer) {
+void GuildRequestMembership::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildRequestMembership); /* PacketID: 68 */
     buffer->WriteUnicodeString(Guild);
     buffer->WriteUnicodeString(Application);
@@ -2819,7 +2821,7 @@ GuildRequestDetails::GuildRequestDetails(clsByteQueue* buffer) : ClientPacket(Cl
 
 }
 
-void GuildRequestDetails::serialize(clsByteQueue* buffer) {
+void GuildRequestDetails::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildRequestDetails); /* PacketID: 69 */
     buffer->WriteUnicodeString(Guild);
 
@@ -2837,7 +2839,7 @@ Online::Online(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Online /* 70 
 
 }
 
-void Online::serialize(clsByteQueue* buffer) {
+void Online::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Online); /* PacketID: 70 */
 
 }
@@ -2854,7 +2856,7 @@ Quit::Quit(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Quit /* 71 */) {
 
 }
 
-void Quit::serialize(clsByteQueue* buffer) {
+void Quit::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Quit); /* PacketID: 71 */
 
 }
@@ -2871,7 +2873,7 @@ GuildLeave::GuildLeave(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Guild
 
 }
 
-void GuildLeave::serialize(clsByteQueue* buffer) {
+void GuildLeave::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildLeave); /* PacketID: 72 */
 
 }
@@ -2888,7 +2890,7 @@ RequestAccountState::RequestAccountState(clsByteQueue* buffer) : ClientPacket(Cl
 
 }
 
-void RequestAccountState::serialize(clsByteQueue* buffer) {
+void RequestAccountState::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_RequestAccountState); /* PacketID: 73 */
 
 }
@@ -2905,7 +2907,7 @@ PetStand::PetStand(clsByteQueue* buffer) : ClientPacket(ClientPacketID_PetStand 
 
 }
 
-void PetStand::serialize(clsByteQueue* buffer) {
+void PetStand::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_PetStand); /* PacketID: 74 */
 
 }
@@ -2922,7 +2924,7 @@ PetFollow::PetFollow(clsByteQueue* buffer) : ClientPacket(ClientPacketID_PetFoll
 
 }
 
-void PetFollow::serialize(clsByteQueue* buffer) {
+void PetFollow::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_PetFollow); /* PacketID: 75 */
 
 }
@@ -2939,7 +2941,7 @@ ReleasePet::ReleasePet(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Relea
 
 }
 
-void ReleasePet::serialize(clsByteQueue* buffer) {
+void ReleasePet::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ReleasePet); /* PacketID: 76 */
 
 }
@@ -2956,7 +2958,7 @@ TrainList::TrainList(clsByteQueue* buffer) : ClientPacket(ClientPacketID_TrainLi
 
 }
 
-void TrainList::serialize(clsByteQueue* buffer) {
+void TrainList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_TrainList); /* PacketID: 77 */
 
 }
@@ -2973,7 +2975,7 @@ Rest::Rest(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Rest /* 78 */) {
 
 }
 
-void Rest::serialize(clsByteQueue* buffer) {
+void Rest::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Rest); /* PacketID: 78 */
 
 }
@@ -2990,7 +2992,7 @@ Meditate::Meditate(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Meditate 
 
 }
 
-void Meditate::serialize(clsByteQueue* buffer) {
+void Meditate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Meditate); /* PacketID: 79 */
 
 }
@@ -3007,7 +3009,7 @@ Resucitate::Resucitate(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Resuc
 
 }
 
-void Resucitate::serialize(clsByteQueue* buffer) {
+void Resucitate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Resucitate); /* PacketID: 80 */
 
 }
@@ -3024,7 +3026,7 @@ Heal::Heal(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Heal /* 81 */) {
 
 }
 
-void Heal::serialize(clsByteQueue* buffer) {
+void Heal::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Heal); /* PacketID: 81 */
 
 }
@@ -3041,7 +3043,7 @@ Help::Help(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Help /* 82 */) {
 
 }
 
-void Help::serialize(clsByteQueue* buffer) {
+void Help::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Help); /* PacketID: 82 */
 
 }
@@ -3058,7 +3060,7 @@ RequestStats::RequestStats(clsByteQueue* buffer) : ClientPacket(ClientPacketID_R
 
 }
 
-void RequestStats::serialize(clsByteQueue* buffer) {
+void RequestStats::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_RequestStats); /* PacketID: 83 */
 
 }
@@ -3075,7 +3077,7 @@ CommerceStart::CommerceStart(clsByteQueue* buffer) : ClientPacket(ClientPacketID
 
 }
 
-void CommerceStart::serialize(clsByteQueue* buffer) {
+void CommerceStart::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_CommerceStart); /* PacketID: 84 */
 
 }
@@ -3092,7 +3094,7 @@ BankStart::BankStart(clsByteQueue* buffer) : ClientPacket(ClientPacketID_BankSta
 
 }
 
-void BankStart::serialize(clsByteQueue* buffer) {
+void BankStart::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_BankStart); /* PacketID: 85 */
 
 }
@@ -3109,7 +3111,7 @@ Enlist::Enlist(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Enlist /* 86 
 
 }
 
-void Enlist::serialize(clsByteQueue* buffer) {
+void Enlist::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Enlist); /* PacketID: 86 */
 
 }
@@ -3126,7 +3128,7 @@ Information::Information(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Inf
 
 }
 
-void Information::serialize(clsByteQueue* buffer) {
+void Information::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Information); /* PacketID: 87 */
 
 }
@@ -3143,7 +3145,7 @@ Reward::Reward(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Reward /* 88 
 
 }
 
-void Reward::serialize(clsByteQueue* buffer) {
+void Reward::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Reward); /* PacketID: 88 */
 
 }
@@ -3160,7 +3162,7 @@ RequestMOTD::RequestMOTD(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Req
 
 }
 
-void RequestMOTD::serialize(clsByteQueue* buffer) {
+void RequestMOTD::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_RequestMOTD); /* PacketID: 89 */
 
 }
@@ -3177,7 +3179,7 @@ UpTime::UpTime(clsByteQueue* buffer) : ClientPacket(ClientPacketID_UpTime /* 90 
 
 }
 
-void UpTime::serialize(clsByteQueue* buffer) {
+void UpTime::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_UpTime); /* PacketID: 90 */
 
 }
@@ -3194,7 +3196,7 @@ PartyLeave::PartyLeave(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Party
 
 }
 
-void PartyLeave::serialize(clsByteQueue* buffer) {
+void PartyLeave::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_PartyLeave); /* PacketID: 91 */
 
 }
@@ -3211,7 +3213,7 @@ PartyCreate::PartyCreate(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Par
 
 }
 
-void PartyCreate::serialize(clsByteQueue* buffer) {
+void PartyCreate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_PartyCreate); /* PacketID: 92 */
 
 }
@@ -3228,7 +3230,7 @@ PartyJoin::PartyJoin(clsByteQueue* buffer) : ClientPacket(ClientPacketID_PartyJo
 
 }
 
-void PartyJoin::serialize(clsByteQueue* buffer) {
+void PartyJoin::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_PartyJoin); /* PacketID: 93 */
 
 }
@@ -3245,7 +3247,7 @@ Inquiry::Inquiry(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Inquiry /* 
 
 }
 
-void Inquiry::serialize(clsByteQueue* buffer) {
+void Inquiry::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Inquiry); /* PacketID: 94 */
 
 }
@@ -3263,7 +3265,7 @@ GuildMessage::GuildMessage(clsByteQueue* buffer) : ClientPacket(ClientPacketID_G
 
 }
 
-void GuildMessage::serialize(clsByteQueue* buffer) {
+void GuildMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildMessage); /* PacketID: 95 */
     buffer->WriteUnicodeString(Chat);
 
@@ -3282,7 +3284,7 @@ PartyMessage::PartyMessage(clsByteQueue* buffer) : ClientPacket(ClientPacketID_P
 
 }
 
-void PartyMessage::serialize(clsByteQueue* buffer) {
+void PartyMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_PartyMessage); /* PacketID: 96 */
     buffer->WriteUnicodeString(Chat);
 
@@ -3301,7 +3303,7 @@ CentinelReport::CentinelReport(clsByteQueue* buffer) : ClientPacket(ClientPacket
 
 }
 
-void CentinelReport::serialize(clsByteQueue* buffer) {
+void CentinelReport::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_CentinelReport); /* PacketID: 97 */
     buffer->WriteInteger(Code);
 
@@ -3319,7 +3321,7 @@ GuildOnline::GuildOnline(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Gui
 
 }
 
-void GuildOnline::serialize(clsByteQueue* buffer) {
+void GuildOnline::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildOnline); /* PacketID: 98 */
 
 }
@@ -3336,7 +3338,7 @@ PartyOnline::PartyOnline(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Par
 
 }
 
-void PartyOnline::serialize(clsByteQueue* buffer) {
+void PartyOnline::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_PartyOnline); /* PacketID: 99 */
 
 }
@@ -3354,7 +3356,7 @@ CouncilMessage::CouncilMessage(clsByteQueue* buffer) : ClientPacket(ClientPacket
 
 }
 
-void CouncilMessage::serialize(clsByteQueue* buffer) {
+void CouncilMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_CouncilMessage); /* PacketID: 100 */
     buffer->WriteUnicodeString(Chat);
 
@@ -3373,7 +3375,7 @@ RoleMasterRequest::RoleMasterRequest(clsByteQueue* buffer) : ClientPacket(Client
 
 }
 
-void RoleMasterRequest::serialize(clsByteQueue* buffer) {
+void RoleMasterRequest::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_RoleMasterRequest); /* PacketID: 101 */
     buffer->WriteUnicodeString(Request);
 
@@ -3391,7 +3393,7 @@ GMRequest::GMRequest(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GMReque
 
 }
 
-void GMRequest::serialize(clsByteQueue* buffer) {
+void GMRequest::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GMRequest); /* PacketID: 102 */
 
 }
@@ -3409,7 +3411,7 @@ BugReport::BugReport(clsByteQueue* buffer) : ClientPacket(ClientPacketID_BugRepo
 
 }
 
-void BugReport::serialize(clsByteQueue* buffer) {
+void BugReport::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_BugReport); /* PacketID: 103 */
     buffer->WriteUnicodeString(Report);
 
@@ -3428,7 +3430,7 @@ ChangeDescription::ChangeDescription(clsByteQueue* buffer) : ClientPacket(Client
 
 }
 
-void ChangeDescription::serialize(clsByteQueue* buffer) {
+void ChangeDescription::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ChangeDescription); /* PacketID: 104 */
     buffer->WriteUnicodeString(Description);
 
@@ -3447,7 +3449,7 @@ GuildVote::GuildVote(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildVo
 
 }
 
-void GuildVote::serialize(clsByteQueue* buffer) {
+void GuildVote::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildVote); /* PacketID: 105 */
     buffer->WriteUnicodeString(Vote);
 
@@ -3466,7 +3468,7 @@ Punishments::Punishments(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Pun
 
 }
 
-void Punishments::serialize(clsByteQueue* buffer) {
+void Punishments::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Punishments); /* PacketID: 106 */
     buffer->WriteUnicodeString(Name);
 
@@ -3486,7 +3488,7 @@ ChangePassword::ChangePassword(clsByteQueue* buffer) : ClientPacket(ClientPacket
 
 }
 
-void ChangePassword::serialize(clsByteQueue* buffer) {
+void ChangePassword::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ChangePassword); /* PacketID: 107 */
     buffer->WriteUnicodeString(OldPass);
     buffer->WriteUnicodeString(NewPass);
@@ -3506,7 +3508,7 @@ Gamble::Gamble(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Gamble /* 108
 
 }
 
-void Gamble::serialize(clsByteQueue* buffer) {
+void Gamble::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Gamble); /* PacketID: 108 */
     buffer->WriteInteger(Amount);
 
@@ -3525,7 +3527,7 @@ InquiryVote::InquiryVote(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Inq
 
 }
 
-void InquiryVote::serialize(clsByteQueue* buffer) {
+void InquiryVote::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_InquiryVote); /* PacketID: 109 */
     buffer->WriteByte(Opt);
 
@@ -3543,7 +3545,7 @@ LeaveFaction::LeaveFaction(clsByteQueue* buffer) : ClientPacket(ClientPacketID_L
 
 }
 
-void LeaveFaction::serialize(clsByteQueue* buffer) {
+void LeaveFaction::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_LeaveFaction); /* PacketID: 110 */
 
 }
@@ -3561,7 +3563,7 @@ BankExtractGold::BankExtractGold(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void BankExtractGold::serialize(clsByteQueue* buffer) {
+void BankExtractGold::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_BankExtractGold); /* PacketID: 111 */
     buffer->WriteLong(Amount);
 
@@ -3580,7 +3582,7 @@ BankDepositGold::BankDepositGold(clsByteQueue* buffer) : ClientPacket(ClientPack
 
 }
 
-void BankDepositGold::serialize(clsByteQueue* buffer) {
+void BankDepositGold::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_BankDepositGold); /* PacketID: 112 */
     buffer->WriteLong(Amount);
 
@@ -3599,7 +3601,7 @@ Denounce::Denounce(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Denounce 
 
 }
 
-void Denounce::serialize(clsByteQueue* buffer) {
+void Denounce::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Denounce); /* PacketID: 113 */
     buffer->WriteUnicodeString(Text);
 
@@ -3617,7 +3619,7 @@ GuildFundate::GuildFundate(clsByteQueue* buffer) : ClientPacket(ClientPacketID_G
 
 }
 
-void GuildFundate::serialize(clsByteQueue* buffer) {
+void GuildFundate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildFundate); /* PacketID: 114 */
 
 }
@@ -3635,7 +3637,7 @@ GuildFundation::GuildFundation(clsByteQueue* buffer) : ClientPacket(ClientPacket
 
 }
 
-void GuildFundation::serialize(clsByteQueue* buffer) {
+void GuildFundation::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_GuildFundation); /* PacketID: 115 */
     buffer->WriteByte(ClanType);
 
@@ -3654,7 +3656,7 @@ PartyKick::PartyKick(clsByteQueue* buffer) : ClientPacket(ClientPacketID_PartyKi
 
 }
 
-void PartyKick::serialize(clsByteQueue* buffer) {
+void PartyKick::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_PartyKick); /* PacketID: 116 */
     buffer->WriteUnicodeString(UserName);
 
@@ -3673,7 +3675,7 @@ PartySetLeader::PartySetLeader(clsByteQueue* buffer) : ClientPacket(ClientPacket
 
 }
 
-void PartySetLeader::serialize(clsByteQueue* buffer) {
+void PartySetLeader::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_PartySetLeader); /* PacketID: 117 */
     buffer->WriteUnicodeString(UserName);
 
@@ -3692,7 +3694,7 @@ PartyAcceptMember::PartyAcceptMember(clsByteQueue* buffer) : ClientPacket(Client
 
 }
 
-void PartyAcceptMember::serialize(clsByteQueue* buffer) {
+void PartyAcceptMember::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_PartyAcceptMember); /* PacketID: 118 */
     buffer->WriteUnicodeString(UserName);
 
@@ -3710,7 +3712,7 @@ Ping::Ping(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Ping /* 119 */) {
 
 }
 
-void Ping::serialize(clsByteQueue* buffer) {
+void Ping::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Ping); /* PacketID: 119 */
 
 }
@@ -3727,7 +3729,7 @@ RequestPartyForm::RequestPartyForm(clsByteQueue* buffer) : ClientPacket(ClientPa
 
 }
 
-void RequestPartyForm::serialize(clsByteQueue* buffer) {
+void RequestPartyForm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_RequestPartyForm); /* PacketID: 120 */
 
 }
@@ -3745,7 +3747,7 @@ ItemUpgrade::ItemUpgrade(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Ite
 
 }
 
-void ItemUpgrade::serialize(clsByteQueue* buffer) {
+void ItemUpgrade::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ItemUpgrade); /* PacketID: 121 */
     buffer->WriteInteger(ItemIndex);
 
@@ -3766,7 +3768,7 @@ GMCommands::GMCommands(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GMCom
 
 GMCommands::~GMCommands() {}
 
-void GMCommands::serialize(clsByteQueue* buffer) {
+void GMCommands::serialize(clsByteQueue* buffer) const {
     composite->serialize(buffer);
 /*  */
 }
@@ -3785,7 +3787,7 @@ InitCrafting::InitCrafting(clsByteQueue* buffer) : ClientPacket(ClientPacketID_I
 
 }
 
-void InitCrafting::serialize(clsByteQueue* buffer) {
+void InitCrafting::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_InitCrafting); /* PacketID: 123 */
     buffer->WriteLong(TotalItems);
     buffer->WriteInteger(ItemsPorCiclo);
@@ -3804,7 +3806,7 @@ Home::Home(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Home /* 124 */) {
 
 }
 
-void Home::serialize(clsByteQueue* buffer) {
+void Home::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Home); /* PacketID: 124 */
 
 }
@@ -3821,7 +3823,7 @@ ShowGuildNews::ShowGuildNews(clsByteQueue* buffer) : ClientPacket(ClientPacketID
 
 }
 
-void ShowGuildNews::serialize(clsByteQueue* buffer) {
+void ShowGuildNews::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ShowGuildNews); /* PacketID: 125 */
 
 }
@@ -3838,7 +3840,7 @@ ShareNpc::ShareNpc(clsByteQueue* buffer) : ClientPacket(ClientPacketID_ShareNpc 
 
 }
 
-void ShareNpc::serialize(clsByteQueue* buffer) {
+void ShareNpc::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_ShareNpc); /* PacketID: 126 */
 
 }
@@ -3855,7 +3857,7 @@ StopSharingNpc::StopSharingNpc(clsByteQueue* buffer) : ClientPacket(ClientPacket
 
 }
 
-void StopSharingNpc::serialize(clsByteQueue* buffer) {
+void StopSharingNpc::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_StopSharingNpc); /* PacketID: 127 */
 
 }
@@ -3872,7 +3874,7 @@ Consultation::Consultation(clsByteQueue* buffer) : ClientPacket(ClientPacketID_C
 
 }
 
-void Consultation::serialize(clsByteQueue* buffer) {
+void Consultation::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ClientPacketID_Consultation); /* PacketID: 128 */
 
 }
@@ -3881,27 +3883,25 @@ void Consultation::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleConsultation(this);
 }
 
-moveItem::moveItem() : ClientPacket(ClientPacketID_moveItem /* 129 */) {
+MoveItem::MoveItem() : ClientPacket(ClientPacketID_MoveItem /* 129 */) {
 }
 
-moveItem::moveItem(clsByteQueue* buffer) : ClientPacket(ClientPacketID_moveItem /* 129 */) {
+MoveItem::MoveItem(clsByteQueue* buffer) : ClientPacket(ClientPacketID_MoveItem /* 129 */) {
     buffer->ReadByte(); /* PacketID */
     OldSlot = buffer->ReadByte();
     NewSlot = buffer->ReadByte();
-    Unknown = buffer->ReadByte();
 
 }
 
-void moveItem::serialize(clsByteQueue* buffer) {
-    buffer->WriteByte(ClientPacketID_moveItem); /* PacketID: 129 */
+void MoveItem::serialize(clsByteQueue* buffer) const {
+    buffer->WriteByte(ClientPacketID_MoveItem); /* PacketID: 129 */
     buffer->WriteByte(OldSlot);
     buffer->WriteByte(NewSlot);
-    buffer->WriteByte(Unknown);
 
 }
 
-void moveItem::dispatch(PacketHandler* d) {
-    d->getPacketHandlerClientPacket()->handlemoveItem(this);
+void MoveItem::dispatch(PacketHandler* d) {
+    d->getPacketHandlerClientPacket()->handleMoveItem(this);
 }
 
 ClientPacketHandler::~ClientPacketHandler() {}
@@ -4035,7 +4035,7 @@ void ClientPacketHandler::handleShowGuildNews(ShowGuildNews* p){ (void)p; }
 void ClientPacketHandler::handleShareNpc(ShareNpc* p){ (void)p; }
 void ClientPacketHandler::handleStopSharingNpc(StopSharingNpc* p){ (void)p; }
 void ClientPacketHandler::handleConsultation(Consultation* p){ (void)p; }
-void ClientPacketHandler::handlemoveItem(moveItem* p){ (void)p; }
+void ClientPacketHandler::handleMoveItem(MoveItem* p){ (void)p; }
 
 }
 
@@ -5704,7 +5704,7 @@ GMMessage::GMMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_GMM
 
 }
 
-void GMMessage::serialize(clsByteQueue* buffer) {
+void GMMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_GMMessage); /* PacketID: 1 */
     buffer->WriteUnicodeString(Chat);
@@ -5723,7 +5723,7 @@ ShowName::ShowName(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ShowN
 
 }
 
-void ShowName::serialize(clsByteQueue* buffer) {
+void ShowName::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ShowName); /* PacketID: 2 */
 
@@ -5741,7 +5741,7 @@ OnlineRoyalArmy::OnlineRoyalArmy(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void OnlineRoyalArmy::serialize(clsByteQueue* buffer) {
+void OnlineRoyalArmy::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_OnlineRoyalArmy); /* PacketID: 3 */
 
@@ -5759,7 +5759,7 @@ OnlineChaosLegion::OnlineChaosLegion(clsByteQueue* buffer) : ClientGMPacket(Clie
 
 }
 
-void OnlineChaosLegion::serialize(clsByteQueue* buffer) {
+void OnlineChaosLegion::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_OnlineChaosLegion); /* PacketID: 4 */
 
@@ -5778,7 +5778,7 @@ GoNearby::GoNearby(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_GoNea
 
 }
 
-void GoNearby::serialize(clsByteQueue* buffer) {
+void GoNearby::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_GoNearby); /* PacketID: 5 */
     buffer->WriteUnicodeString(UserName);
@@ -5798,7 +5798,7 @@ Comment::Comment(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Comment
 
 }
 
-void Comment::serialize(clsByteQueue* buffer) {
+void Comment::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Comment); /* PacketID: 6 */
     buffer->WriteUnicodeString(Data);
@@ -5817,7 +5817,7 @@ ServerTime::ServerTime(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_S
 
 }
 
-void ServerTime::serialize(clsByteQueue* buffer) {
+void ServerTime::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ServerTime); /* PacketID: 7 */
 
@@ -5836,7 +5836,7 @@ Where::Where(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Where /* 8 
 
 }
 
-void Where::serialize(clsByteQueue* buffer) {
+void Where::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Where); /* PacketID: 8 */
     buffer->WriteUnicodeString(UserName);
@@ -5856,7 +5856,7 @@ CreaturesInMap::CreaturesInMap(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
 
 }
 
-void CreaturesInMap::serialize(clsByteQueue* buffer) {
+void CreaturesInMap::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_CreaturesInMap); /* PacketID: 9 */
     buffer->WriteInteger(Map);
@@ -5875,7 +5875,7 @@ WarpMeToTarget::WarpMeToTarget(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
 
 }
 
-void WarpMeToTarget::serialize(clsByteQueue* buffer) {
+void WarpMeToTarget::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_WarpMeToTarget); /* PacketID: 10 */
 
@@ -5897,7 +5897,7 @@ WarpChar::WarpChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_WarpC
 
 }
 
-void WarpChar::serialize(clsByteQueue* buffer) {
+void WarpChar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_WarpChar); /* PacketID: 11 */
     buffer->WriteUnicodeString(UserName);
@@ -5920,7 +5920,7 @@ Silence::Silence(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Silence
 
 }
 
-void Silence::serialize(clsByteQueue* buffer) {
+void Silence::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Silence); /* PacketID: 12 */
     buffer->WriteUnicodeString(UserName);
@@ -5939,7 +5939,7 @@ SOSShowList::SOSShowList(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID
 
 }
 
-void SOSShowList::serialize(clsByteQueue* buffer) {
+void SOSShowList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SOSShowList); /* PacketID: 13 */
 
@@ -5958,7 +5958,7 @@ SOSRemove::SOSRemove(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SOS
 
 }
 
-void SOSRemove::serialize(clsByteQueue* buffer) {
+void SOSRemove::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SOSRemove); /* PacketID: 14 */
     buffer->WriteUnicodeString(UserName);
@@ -5978,7 +5978,7 @@ GoToChar::GoToChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_GoToC
 
 }
 
-void GoToChar::serialize(clsByteQueue* buffer) {
+void GoToChar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_GoToChar); /* PacketID: 15 */
     buffer->WriteUnicodeString(UserName);
@@ -5997,7 +5997,7 @@ Invisible::Invisible(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Inv
 
 }
 
-void Invisible::serialize(clsByteQueue* buffer) {
+void Invisible::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Invisible); /* PacketID: 16 */
 
@@ -6015,7 +6015,7 @@ GMPanel::GMPanel(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_GMPanel
 
 }
 
-void GMPanel::serialize(clsByteQueue* buffer) {
+void GMPanel::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_GMPanel); /* PacketID: 17 */
 
@@ -6033,7 +6033,7 @@ RequestUserList::RequestUserList(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void RequestUserList::serialize(clsByteQueue* buffer) {
+void RequestUserList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RequestUserList); /* PacketID: 18 */
 
@@ -6051,7 +6051,7 @@ Working::Working(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Working
 
 }
 
-void Working::serialize(clsByteQueue* buffer) {
+void Working::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Working); /* PacketID: 19 */
 
@@ -6069,7 +6069,7 @@ Hiding::Hiding(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Hiding /*
 
 }
 
-void Hiding::serialize(clsByteQueue* buffer) {
+void Hiding::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Hiding); /* PacketID: 20 */
 
@@ -6090,7 +6090,7 @@ Jail::Jail(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Jail /* 21 */
 
 }
 
-void Jail::serialize(clsByteQueue* buffer) {
+void Jail::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Jail); /* PacketID: 21 */
     buffer->WriteUnicodeString(UserName);
@@ -6111,7 +6111,7 @@ KillNPC::KillNPC(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_KillNPC
 
 }
 
-void KillNPC::serialize(clsByteQueue* buffer) {
+void KillNPC::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_KillNPC); /* PacketID: 22 */
 
@@ -6131,7 +6131,7 @@ WarnUser::WarnUser(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_WarnU
 
 }
 
-void WarnUser::serialize(clsByteQueue* buffer) {
+void WarnUser::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_WarnUser); /* PacketID: 23 */
     buffer->WriteUnicodeString(UserName);
@@ -6155,7 +6155,7 @@ EditChar::EditChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_EditC
 
 }
 
-void EditChar::serialize(clsByteQueue* buffer) {
+void EditChar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_EditChar); /* PacketID: 24 */
     buffer->WriteUnicodeString(UserName);
@@ -6178,7 +6178,7 @@ RequestCharInfo::RequestCharInfo(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void RequestCharInfo::serialize(clsByteQueue* buffer) {
+void RequestCharInfo::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RequestCharInfo); /* PacketID: 25 */
     buffer->WriteUnicodeString(TargetName);
@@ -6198,7 +6198,7 @@ RequestCharStats::RequestCharStats(clsByteQueue* buffer) : ClientGMPacket(Client
 
 }
 
-void RequestCharStats::serialize(clsByteQueue* buffer) {
+void RequestCharStats::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RequestCharStats); /* PacketID: 26 */
     buffer->WriteUnicodeString(UserName);
@@ -6218,7 +6218,7 @@ RequestCharGold::RequestCharGold(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void RequestCharGold::serialize(clsByteQueue* buffer) {
+void RequestCharGold::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RequestCharGold); /* PacketID: 27 */
     buffer->WriteUnicodeString(UserName);
@@ -6238,7 +6238,7 @@ RequestCharInventory::RequestCharInventory(clsByteQueue* buffer) : ClientGMPacke
 
 }
 
-void RequestCharInventory::serialize(clsByteQueue* buffer) {
+void RequestCharInventory::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RequestCharInventory); /* PacketID: 28 */
     buffer->WriteUnicodeString(UserName);
@@ -6258,7 +6258,7 @@ RequestCharBank::RequestCharBank(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void RequestCharBank::serialize(clsByteQueue* buffer) {
+void RequestCharBank::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RequestCharBank); /* PacketID: 29 */
     buffer->WriteUnicodeString(UserName);
@@ -6278,7 +6278,7 @@ RequestCharSkills::RequestCharSkills(clsByteQueue* buffer) : ClientGMPacket(Clie
 
 }
 
-void RequestCharSkills::serialize(clsByteQueue* buffer) {
+void RequestCharSkills::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RequestCharSkills); /* PacketID: 30 */
     buffer->WriteUnicodeString(UserName);
@@ -6298,7 +6298,7 @@ ReviveChar::ReviveChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_R
 
 }
 
-void ReviveChar::serialize(clsByteQueue* buffer) {
+void ReviveChar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ReviveChar); /* PacketID: 31 */
     buffer->WriteUnicodeString(UserName);
@@ -6317,7 +6317,7 @@ OnlineGM::OnlineGM(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Onlin
 
 }
 
-void OnlineGM::serialize(clsByteQueue* buffer) {
+void OnlineGM::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_OnlineGM); /* PacketID: 32 */
 
@@ -6336,7 +6336,7 @@ OnlineMap::OnlineMap(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Onl
 
 }
 
-void OnlineMap::serialize(clsByteQueue* buffer) {
+void OnlineMap::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_OnlineMap); /* PacketID: 33 */
     buffer->WriteInteger(Map);
@@ -6356,7 +6356,7 @@ Forgive::Forgive(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Forgive
 
 }
 
-void Forgive::serialize(clsByteQueue* buffer) {
+void Forgive::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Forgive); /* PacketID: 34 */
     buffer->WriteUnicodeString(UserName);
@@ -6376,7 +6376,7 @@ Kick::Kick(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Kick /* 35 */
 
 }
 
-void Kick::serialize(clsByteQueue* buffer) {
+void Kick::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Kick); /* PacketID: 35 */
     buffer->WriteUnicodeString(UserName);
@@ -6396,7 +6396,7 @@ Execute::Execute(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Execute
 
 }
 
-void Execute::serialize(clsByteQueue* buffer) {
+void Execute::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Execute); /* PacketID: 36 */
     buffer->WriteUnicodeString(UserName);
@@ -6417,7 +6417,7 @@ BanChar::BanChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_BanChar
 
 }
 
-void BanChar::serialize(clsByteQueue* buffer) {
+void BanChar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_BanChar); /* PacketID: 37 */
     buffer->WriteUnicodeString(UserName);
@@ -6438,7 +6438,7 @@ UnbanChar::UnbanChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Unb
 
 }
 
-void UnbanChar::serialize(clsByteQueue* buffer) {
+void UnbanChar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_UnbanChar); /* PacketID: 38 */
     buffer->WriteUnicodeString(UserName);
@@ -6457,7 +6457,7 @@ NPCFollow::NPCFollow(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_NPC
 
 }
 
-void NPCFollow::serialize(clsByteQueue* buffer) {
+void NPCFollow::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_NPCFollow); /* PacketID: 39 */
 
@@ -6476,7 +6476,7 @@ SummonChar::SummonChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_S
 
 }
 
-void SummonChar::serialize(clsByteQueue* buffer) {
+void SummonChar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SummonChar); /* PacketID: 40 */
     buffer->WriteUnicodeString(UserName);
@@ -6495,7 +6495,7 @@ SpawnListRequest::SpawnListRequest(clsByteQueue* buffer) : ClientGMPacket(Client
 
 }
 
-void SpawnListRequest::serialize(clsByteQueue* buffer) {
+void SpawnListRequest::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SpawnListRequest); /* PacketID: 41 */
 
@@ -6514,7 +6514,7 @@ SpawnCreature::SpawnCreature(clsByteQueue* buffer) : ClientGMPacket(ClientGMPack
 
 }
 
-void SpawnCreature::serialize(clsByteQueue* buffer) {
+void SpawnCreature::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SpawnCreature); /* PacketID: 42 */
     buffer->WriteInteger(NPC);
@@ -6533,7 +6533,7 @@ ResetNPCInventory::ResetNPCInventory(clsByteQueue* buffer) : ClientGMPacket(Clie
 
 }
 
-void ResetNPCInventory::serialize(clsByteQueue* buffer) {
+void ResetNPCInventory::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ResetNPCInventory); /* PacketID: 43 */
 
@@ -6551,7 +6551,7 @@ CleanWorld::CleanWorld(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_C
 
 }
 
-void CleanWorld::serialize(clsByteQueue* buffer) {
+void CleanWorld::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_CleanWorld); /* PacketID: 44 */
 
@@ -6570,7 +6570,7 @@ ServerMessage::ServerMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPack
 
 }
 
-void ServerMessage::serialize(clsByteQueue* buffer) {
+void ServerMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ServerMessage); /* PacketID: 45 */
     buffer->WriteUnicodeString(Message);
@@ -6590,7 +6590,7 @@ NickToIP::NickToIP(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_NickT
 
 }
 
-void NickToIP::serialize(clsByteQueue* buffer) {
+void NickToIP::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_NickToIP); /* PacketID: 46 */
     buffer->WriteUnicodeString(UserName);
@@ -6606,14 +6606,20 @@ IPToNick::IPToNick() : ClientGMPacket(ClientGMPacketID_IPToNick /* 47 */) {
 
 IPToNick::IPToNick(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_IPToNick /* 47 */) {
     buffer->ReadByte(); /* PacketID */
-    { int i; for (i=0; i<4; ++i) IP[i] = buffer->ReadUnicodeString(); }
+    A = buffer->ReadByte();
+    B = buffer->ReadByte();
+    C = buffer->ReadByte();
+    D = buffer->ReadByte();
 
 }
 
-void IPToNick::serialize(clsByteQueue* buffer) {
+void IPToNick::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_IPToNick); /* PacketID: 47 */
-    { int i; for (i=0; i<4; ++i) buffer->WriteUnicodeString(IP[i]); }
+    buffer->WriteByte(A);
+    buffer->WriteByte(B);
+    buffer->WriteByte(C);
+    buffer->WriteByte(D);
 
 }
 
@@ -6630,7 +6636,7 @@ GuildOnlineMembers::GuildOnlineMembers(clsByteQueue* buffer) : ClientGMPacket(Cl
 
 }
 
-void GuildOnlineMembers::serialize(clsByteQueue* buffer) {
+void GuildOnlineMembers::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_GuildOnlineMembers); /* PacketID: 48 */
     buffer->WriteUnicodeString(GuildName);
@@ -6653,7 +6659,7 @@ TeleportCreate::TeleportCreate(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
 
 }
 
-void TeleportCreate::serialize(clsByteQueue* buffer) {
+void TeleportCreate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_TeleportCreate); /* PacketID: 49 */
     buffer->WriteInteger(Map);
@@ -6675,7 +6681,7 @@ TeleportDestroy::TeleportDestroy(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void TeleportDestroy::serialize(clsByteQueue* buffer) {
+void TeleportDestroy::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_TeleportDestroy); /* PacketID: 50 */
 
@@ -6693,7 +6699,7 @@ RainToggle::RainToggle(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_R
 
 }
 
-void RainToggle::serialize(clsByteQueue* buffer) {
+void RainToggle::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RainToggle); /* PacketID: 51 */
 
@@ -6712,7 +6718,7 @@ SetCharDescription::SetCharDescription(clsByteQueue* buffer) : ClientGMPacket(Cl
 
 }
 
-void SetCharDescription::serialize(clsByteQueue* buffer) {
+void SetCharDescription::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SetCharDescription); /* PacketID: 52 */
     buffer->WriteUnicodeString(Description);
@@ -6728,16 +6734,16 @@ ForceMIDIToMap::ForceMIDIToMap() : ClientGMPacket(ClientGMPacketID_ForceMIDIToMa
 
 ForceMIDIToMap::ForceMIDIToMap(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ForceMIDIToMap /* 53 */) {
     buffer->ReadByte(); /* PacketID */
-    MidiID = buffer->ReadUnicodeString();
-    Map = buffer->ReadUnicodeString();
+    MidiID = buffer->ReadByte();
+    Map = buffer->ReadInteger();
 
 }
 
-void ForceMIDIToMap::serialize(clsByteQueue* buffer) {
+void ForceMIDIToMap::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ForceMIDIToMap); /* PacketID: 53 */
-    buffer->WriteUnicodeString(MidiID);
-    buffer->WriteUnicodeString(Map);
+    buffer->WriteByte(MidiID);
+    buffer->WriteInteger(Map);
 
 }
 
@@ -6757,7 +6763,7 @@ ForceWAVEToMap::ForceWAVEToMap(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
 
 }
 
-void ForceWAVEToMap::serialize(clsByteQueue* buffer) {
+void ForceWAVEToMap::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ForceWAVEToMap); /* PacketID: 54 */
     buffer->WriteByte(Wave);
@@ -6780,7 +6786,7 @@ RoyalArmyMessage::RoyalArmyMessage(clsByteQueue* buffer) : ClientGMPacket(Client
 
 }
 
-void RoyalArmyMessage::serialize(clsByteQueue* buffer) {
+void RoyalArmyMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RoyalArmyMessage); /* PacketID: 55 */
     buffer->WriteUnicodeString(Message);
@@ -6800,7 +6806,7 @@ ChaosLegionMessage::ChaosLegionMessage(clsByteQueue* buffer) : ClientGMPacket(Cl
 
 }
 
-void ChaosLegionMessage::serialize(clsByteQueue* buffer) {
+void ChaosLegionMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChaosLegionMessage); /* PacketID: 56 */
     buffer->WriteUnicodeString(Message);
@@ -6820,7 +6826,7 @@ CitizenMessage::CitizenMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
 
 }
 
-void CitizenMessage::serialize(clsByteQueue* buffer) {
+void CitizenMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_CitizenMessage); /* PacketID: 57 */
     buffer->WriteUnicodeString(Message);
@@ -6840,7 +6846,7 @@ CriminalMessage::CriminalMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void CriminalMessage::serialize(clsByteQueue* buffer) {
+void CriminalMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_CriminalMessage); /* PacketID: 58 */
     buffer->WriteUnicodeString(Message);
@@ -6860,7 +6866,7 @@ TalkAsNPC::TalkAsNPC(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Tal
 
 }
 
-void TalkAsNPC::serialize(clsByteQueue* buffer) {
+void TalkAsNPC::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_TalkAsNPC); /* PacketID: 59 */
     buffer->WriteUnicodeString(Message);
@@ -6879,7 +6885,7 @@ DestroyAllItemsInArea::DestroyAllItemsInArea(clsByteQueue* buffer) : ClientGMPac
 
 }
 
-void DestroyAllItemsInArea::serialize(clsByteQueue* buffer) {
+void DestroyAllItemsInArea::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_DestroyAllItemsInArea); /* PacketID: 60 */
 
@@ -6898,7 +6904,7 @@ AcceptRoyalCouncilMember::AcceptRoyalCouncilMember(clsByteQueue* buffer) : Clien
 
 }
 
-void AcceptRoyalCouncilMember::serialize(clsByteQueue* buffer) {
+void AcceptRoyalCouncilMember::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_AcceptRoyalCouncilMember); /* PacketID: 61 */
     buffer->WriteUnicodeString(UserName);
@@ -6918,7 +6924,7 @@ AcceptChaosCouncilMember::AcceptChaosCouncilMember(clsByteQueue* buffer) : Clien
 
 }
 
-void AcceptChaosCouncilMember::serialize(clsByteQueue* buffer) {
+void AcceptChaosCouncilMember::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_AcceptChaosCouncilMember); /* PacketID: 62 */
     buffer->WriteUnicodeString(UserName);
@@ -6937,7 +6943,7 @@ ItemsInTheFloor::ItemsInTheFloor(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void ItemsInTheFloor::serialize(clsByteQueue* buffer) {
+void ItemsInTheFloor::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ItemsInTheFloor); /* PacketID: 63 */
 
@@ -6956,7 +6962,7 @@ MakeDumb::MakeDumb(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_MakeD
 
 }
 
-void MakeDumb::serialize(clsByteQueue* buffer) {
+void MakeDumb::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_MakeDumb); /* PacketID: 64 */
     buffer->WriteUnicodeString(UserName);
@@ -6976,7 +6982,7 @@ MakeDumbNoMore::MakeDumbNoMore(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
 
 }
 
-void MakeDumbNoMore::serialize(clsByteQueue* buffer) {
+void MakeDumbNoMore::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_MakeDumbNoMore); /* PacketID: 65 */
     buffer->WriteUnicodeString(UserName);
@@ -6995,7 +7001,7 @@ DumpIPTables::DumpIPTables(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacket
 
 }
 
-void DumpIPTables::serialize(clsByteQueue* buffer) {
+void DumpIPTables::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_DumpIPTables); /* PacketID: 66 */
 
@@ -7014,7 +7020,7 @@ CouncilKick::CouncilKick(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID
 
 }
 
-void CouncilKick::serialize(clsByteQueue* buffer) {
+void CouncilKick::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_CouncilKick); /* PacketID: 67 */
     buffer->WriteUnicodeString(UserName);
@@ -7030,14 +7036,14 @@ SetTrigger::SetTrigger() : ClientGMPacket(ClientGMPacketID_SetTrigger /* 68 */) 
 
 SetTrigger::SetTrigger(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SetTrigger /* 68 */) {
     buffer->ReadByte(); /* PacketID */
-    Trigger = buffer->ReadUnicodeString();
+    Trigger = buffer->ReadByte();
 
 }
 
-void SetTrigger::serialize(clsByteQueue* buffer) {
+void SetTrigger::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SetTrigger); /* PacketID: 68 */
-    buffer->WriteUnicodeString(Trigger);
+    buffer->WriteByte(Trigger);
 
 }
 
@@ -7053,7 +7059,7 @@ AskTrigger::AskTrigger(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_A
 
 }
 
-void AskTrigger::serialize(clsByteQueue* buffer) {
+void AskTrigger::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_AskTrigger); /* PacketID: 69 */
 
@@ -7071,7 +7077,7 @@ BannedIPList::BannedIPList(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacket
 
 }
 
-void BannedIPList::serialize(clsByteQueue* buffer) {
+void BannedIPList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_BannedIPList); /* PacketID: 70 */
 
@@ -7089,7 +7095,7 @@ BannedIPReload::BannedIPReload(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
 
 }
 
-void BannedIPReload::serialize(clsByteQueue* buffer) {
+void BannedIPReload::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_BannedIPReload); /* PacketID: 71 */
 
@@ -7108,7 +7114,7 @@ GuildMemberList::GuildMemberList(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void GuildMemberList::serialize(clsByteQueue* buffer) {
+void GuildMemberList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_GuildMemberList); /* PacketID: 72 */
     buffer->WriteUnicodeString(GuildName);
@@ -7128,7 +7134,7 @@ GuildBan::GuildBan(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Guild
 
 }
 
-void GuildBan::serialize(clsByteQueue* buffer) {
+void GuildBan::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_GuildBan); /* PacketID: 73 */
     buffer->WriteUnicodeString(GuildName);
@@ -7149,7 +7155,7 @@ BanIP::BanIP(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_BanIP /* 74
 
 }
 
-void BanIP::serialize(clsByteQueue* buffer) {
+void BanIP::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_BanIP); /* PacketID: 74 */
     buffer->WriteUnicodeString(IP);
@@ -7170,7 +7176,7 @@ UnbanIP::UnbanIP(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_UnbanIP
 
 }
 
-void UnbanIP::serialize(clsByteQueue* buffer) {
+void UnbanIP::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_UnbanIP); /* PacketID: 75 */
     buffer->WriteUnicodeString(IP);
@@ -7190,7 +7196,7 @@ CreateItem::CreateItem(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_C
 
 }
 
-void CreateItem::serialize(clsByteQueue* buffer) {
+void CreateItem::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_CreateItem); /* PacketID: 76 */
     buffer->WriteInteger(Item);
@@ -7209,7 +7215,7 @@ DestroyItems::DestroyItems(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacket
 
 }
 
-void DestroyItems::serialize(clsByteQueue* buffer) {
+void DestroyItems::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_DestroyItems); /* PacketID: 77 */
 
@@ -7229,7 +7235,7 @@ ChaosLegionKick::ChaosLegionKick(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void ChaosLegionKick::serialize(clsByteQueue* buffer) {
+void ChaosLegionKick::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChaosLegionKick); /* PacketID: 78 */
     buffer->WriteUnicodeString(UserName);
@@ -7251,7 +7257,7 @@ RoyalArmyKick::RoyalArmyKick(clsByteQueue* buffer) : ClientGMPacket(ClientGMPack
 
 }
 
-void RoyalArmyKick::serialize(clsByteQueue* buffer) {
+void RoyalArmyKick::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RoyalArmyKick); /* PacketID: 79 */
     buffer->WriteUnicodeString(UserName);
@@ -7272,7 +7278,7 @@ ForceMIDIAll::ForceMIDIAll(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacket
 
 }
 
-void ForceMIDIAll::serialize(clsByteQueue* buffer) {
+void ForceMIDIAll::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ForceMIDIAll); /* PacketID: 80 */
     buffer->WriteByte(MidiID);
@@ -7292,7 +7298,7 @@ ForceWAVEAll::ForceWAVEAll(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacket
 
 }
 
-void ForceWAVEAll::serialize(clsByteQueue* buffer) {
+void ForceWAVEAll::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ForceWAVEAll); /* PacketID: 81 */
     buffer->WriteByte(WaveID);
@@ -7314,7 +7320,7 @@ RemovePunishment::RemovePunishment(clsByteQueue* buffer) : ClientGMPacket(Client
 
 }
 
-void RemovePunishment::serialize(clsByteQueue* buffer) {
+void RemovePunishment::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RemovePunishment); /* PacketID: 82 */
     buffer->WriteUnicodeString(UserName);
@@ -7335,7 +7341,7 @@ TileBlockedToggle::TileBlockedToggle(clsByteQueue* buffer) : ClientGMPacket(Clie
 
 }
 
-void TileBlockedToggle::serialize(clsByteQueue* buffer) {
+void TileBlockedToggle::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_TileBlockedToggle); /* PacketID: 83 */
 
@@ -7353,7 +7359,7 @@ KillNPCNoRespawn::KillNPCNoRespawn(clsByteQueue* buffer) : ClientGMPacket(Client
 
 }
 
-void KillNPCNoRespawn::serialize(clsByteQueue* buffer) {
+void KillNPCNoRespawn::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_KillNPCNoRespawn); /* PacketID: 84 */
 
@@ -7371,7 +7377,7 @@ KillAllNearbyNPCs::KillAllNearbyNPCs(clsByteQueue* buffer) : ClientGMPacket(Clie
 
 }
 
-void KillAllNearbyNPCs::serialize(clsByteQueue* buffer) {
+void KillAllNearbyNPCs::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_KillAllNearbyNPCs); /* PacketID: 85 */
 
@@ -7390,7 +7396,7 @@ LastIP::LastIP(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_LastIP /*
 
 }
 
-void LastIP::serialize(clsByteQueue* buffer) {
+void LastIP::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_LastIP); /* PacketID: 86 */
     buffer->WriteUnicodeString(UserName);
@@ -7409,7 +7415,7 @@ ChangeMOTD::ChangeMOTD(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_C
 
 }
 
-void ChangeMOTD::serialize(clsByteQueue* buffer) {
+void ChangeMOTD::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMOTD); /* PacketID: 87 */
 
@@ -7428,7 +7434,7 @@ SetMOTD::SetMOTD(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SetMOTD
 
 }
 
-void SetMOTD::serialize(clsByteQueue* buffer) {
+void SetMOTD::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SetMOTD); /* PacketID: 88 */
     buffer->WriteUnicodeString(Motd);
@@ -7448,7 +7454,7 @@ SystemMessage::SystemMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPack
 
 }
 
-void SystemMessage::serialize(clsByteQueue* buffer) {
+void SystemMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SystemMessage); /* PacketID: 89 */
     buffer->WriteUnicodeString(Message);
@@ -7468,7 +7474,7 @@ CreateNPC::CreateNPC(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Cre
 
 }
 
-void CreateNPC::serialize(clsByteQueue* buffer) {
+void CreateNPC::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_CreateNPC); /* PacketID: 90 */
     buffer->WriteInteger(NpcIndex);
@@ -7488,7 +7494,7 @@ CreateNPCWithRespawn::CreateNPCWithRespawn(clsByteQueue* buffer) : ClientGMPacke
 
 }
 
-void CreateNPCWithRespawn::serialize(clsByteQueue* buffer) {
+void CreateNPCWithRespawn::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_CreateNPCWithRespawn); /* PacketID: 91 */
     buffer->WriteInteger(NpcIndex);
@@ -7509,7 +7515,7 @@ ImperialArmour::ImperialArmour(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
 
 }
 
-void ImperialArmour::serialize(clsByteQueue* buffer) {
+void ImperialArmour::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ImperialArmour); /* PacketID: 92 */
     buffer->WriteByte(Index);
@@ -7531,7 +7537,7 @@ ChaosArmour::ChaosArmour(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID
 
 }
 
-void ChaosArmour::serialize(clsByteQueue* buffer) {
+void ChaosArmour::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChaosArmour); /* PacketID: 93 */
     buffer->WriteByte(Index);
@@ -7551,7 +7557,7 @@ NavigateToggle::NavigateToggle(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
 
 }
 
-void NavigateToggle::serialize(clsByteQueue* buffer) {
+void NavigateToggle::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_NavigateToggle); /* PacketID: 94 */
 
@@ -7569,7 +7575,7 @@ ServerOpenToUsersToggle::ServerOpenToUsersToggle(clsByteQueue* buffer) : ClientG
 
 }
 
-void ServerOpenToUsersToggle::serialize(clsByteQueue* buffer) {
+void ServerOpenToUsersToggle::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ServerOpenToUsersToggle); /* PacketID: 95 */
 
@@ -7587,7 +7593,7 @@ TurnOffServer::TurnOffServer(clsByteQueue* buffer) : ClientGMPacket(ClientGMPack
 
 }
 
-void TurnOffServer::serialize(clsByteQueue* buffer) {
+void TurnOffServer::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_TurnOffServer); /* PacketID: 96 */
 
@@ -7606,7 +7612,7 @@ TurnCriminal::TurnCriminal(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacket
 
 }
 
-void TurnCriminal::serialize(clsByteQueue* buffer) {
+void TurnCriminal::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_TurnCriminal); /* PacketID: 97 */
     buffer->WriteUnicodeString(UserName);
@@ -7626,7 +7632,7 @@ ResetFactions::ResetFactions(clsByteQueue* buffer) : ClientGMPacket(ClientGMPack
 
 }
 
-void ResetFactions::serialize(clsByteQueue* buffer) {
+void ResetFactions::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ResetFactions); /* PacketID: 98 */
     buffer->WriteUnicodeString(UserName);
@@ -7646,7 +7652,7 @@ RemoveCharFromGuild::RemoveCharFromGuild(clsByteQueue* buffer) : ClientGMPacket(
 
 }
 
-void RemoveCharFromGuild::serialize(clsByteQueue* buffer) {
+void RemoveCharFromGuild::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RemoveCharFromGuild); /* PacketID: 99 */
     buffer->WriteUnicodeString(UserName);
@@ -7666,7 +7672,7 @@ RequestCharMail::RequestCharMail(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void RequestCharMail::serialize(clsByteQueue* buffer) {
+void RequestCharMail::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RequestCharMail); /* PacketID: 100 */
     buffer->WriteUnicodeString(UserName);
@@ -7687,7 +7693,7 @@ AlterPassword::AlterPassword(clsByteQueue* buffer) : ClientGMPacket(ClientGMPack
 
 }
 
-void AlterPassword::serialize(clsByteQueue* buffer) {
+void AlterPassword::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_AlterPassword); /* PacketID: 101 */
     buffer->WriteUnicodeString(UserName);
@@ -7709,7 +7715,7 @@ AlterMail::AlterMail(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Alt
 
 }
 
-void AlterMail::serialize(clsByteQueue* buffer) {
+void AlterMail::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_AlterMail); /* PacketID: 102 */
     buffer->WriteUnicodeString(UserName);
@@ -7731,7 +7737,7 @@ AlterName::AlterName(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Alt
 
 }
 
-void AlterName::serialize(clsByteQueue* buffer) {
+void AlterName::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_AlterName); /* PacketID: 103 */
     buffer->WriteUnicodeString(UserName);
@@ -7751,7 +7757,7 @@ ToggleCentinelActivated::ToggleCentinelActivated(clsByteQueue* buffer) : ClientG
 
 }
 
-void ToggleCentinelActivated::serialize(clsByteQueue* buffer) {
+void ToggleCentinelActivated::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ToggleCentinelActivated); /* PacketID: 104 */
 
@@ -7769,7 +7775,7 @@ DoBackUp::DoBackUp(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_DoBac
 
 }
 
-void DoBackUp::serialize(clsByteQueue* buffer) {
+void DoBackUp::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_DoBackUp); /* PacketID: 105 */
 
@@ -7788,7 +7794,7 @@ ShowGuildMessages::ShowGuildMessages(clsByteQueue* buffer) : ClientGMPacket(Clie
 
 }
 
-void ShowGuildMessages::serialize(clsByteQueue* buffer) {
+void ShowGuildMessages::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ShowGuildMessages); /* PacketID: 106 */
     buffer->WriteUnicodeString(GuildName);
@@ -7807,7 +7813,7 @@ SaveMap::SaveMap(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SaveMap
 
 }
 
-void SaveMap::serialize(clsByteQueue* buffer) {
+void SaveMap::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SaveMap); /* PacketID: 107 */
 
@@ -7826,7 +7832,7 @@ ChangeMapInfoPK::ChangeMapInfoPK(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void ChangeMapInfoPK::serialize(clsByteQueue* buffer) {
+void ChangeMapInfoPK::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMapInfoPK); /* PacketID: 108 */
     buffer->WriteBoolean(Pk);
@@ -7846,7 +7852,7 @@ ChangeMapInfoBackup::ChangeMapInfoBackup(clsByteQueue* buffer) : ClientGMPacket(
 
 }
 
-void ChangeMapInfoBackup::serialize(clsByteQueue* buffer) {
+void ChangeMapInfoBackup::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMapInfoBackup); /* PacketID: 109 */
     buffer->WriteBoolean(Backup);
@@ -7866,7 +7872,7 @@ ChangeMapInfoRestricted::ChangeMapInfoRestricted(clsByteQueue* buffer) : ClientG
 
 }
 
-void ChangeMapInfoRestricted::serialize(clsByteQueue* buffer) {
+void ChangeMapInfoRestricted::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMapInfoRestricted); /* PacketID: 110 */
     buffer->WriteUnicodeString(RestrictedTo);
@@ -7886,7 +7892,7 @@ ChangeMapInfoNoMagic::ChangeMapInfoNoMagic(clsByteQueue* buffer) : ClientGMPacke
 
 }
 
-void ChangeMapInfoNoMagic::serialize(clsByteQueue* buffer) {
+void ChangeMapInfoNoMagic::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMapInfoNoMagic); /* PacketID: 111 */
     buffer->WriteBoolean(NoMagic);
@@ -7906,7 +7912,7 @@ ChangeMapInfoNoInvi::ChangeMapInfoNoInvi(clsByteQueue* buffer) : ClientGMPacket(
 
 }
 
-void ChangeMapInfoNoInvi::serialize(clsByteQueue* buffer) {
+void ChangeMapInfoNoInvi::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMapInfoNoInvi); /* PacketID: 112 */
     buffer->WriteBoolean(NoInvi);
@@ -7926,7 +7932,7 @@ ChangeMapInfoNoResu::ChangeMapInfoNoResu(clsByteQueue* buffer) : ClientGMPacket(
 
 }
 
-void ChangeMapInfoNoResu::serialize(clsByteQueue* buffer) {
+void ChangeMapInfoNoResu::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMapInfoNoResu); /* PacketID: 113 */
     buffer->WriteBoolean(NoResu);
@@ -7946,7 +7952,7 @@ ChangeMapInfoLand::ChangeMapInfoLand(clsByteQueue* buffer) : ClientGMPacket(Clie
 
 }
 
-void ChangeMapInfoLand::serialize(clsByteQueue* buffer) {
+void ChangeMapInfoLand::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMapInfoLand); /* PacketID: 114 */
     buffer->WriteUnicodeString(Data);
@@ -7966,7 +7972,7 @@ ChangeMapInfoZone::ChangeMapInfoZone(clsByteQueue* buffer) : ClientGMPacket(Clie
 
 }
 
-void ChangeMapInfoZone::serialize(clsByteQueue* buffer) {
+void ChangeMapInfoZone::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMapInfoZone); /* PacketID: 115 */
     buffer->WriteUnicodeString(Data);
@@ -7986,7 +7992,7 @@ ChangeMapInfoStealNpc::ChangeMapInfoStealNpc(clsByteQueue* buffer) : ClientGMPac
 
 }
 
-void ChangeMapInfoStealNpc::serialize(clsByteQueue* buffer) {
+void ChangeMapInfoStealNpc::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMapInfoStealNpc); /* PacketID: 116 */
     buffer->WriteBoolean(RoboNpc);
@@ -8006,7 +8012,7 @@ ChangeMapInfoNoOcultar::ChangeMapInfoNoOcultar(clsByteQueue* buffer) : ClientGMP
 
 }
 
-void ChangeMapInfoNoOcultar::serialize(clsByteQueue* buffer) {
+void ChangeMapInfoNoOcultar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMapInfoNoOcultar); /* PacketID: 117 */
     buffer->WriteBoolean(NoOcultar);
@@ -8026,7 +8032,7 @@ ChangeMapInfoNoInvocar::ChangeMapInfoNoInvocar(clsByteQueue* buffer) : ClientGMP
 
 }
 
-void ChangeMapInfoNoInvocar::serialize(clsByteQueue* buffer) {
+void ChangeMapInfoNoInvocar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChangeMapInfoNoInvocar); /* PacketID: 118 */
     buffer->WriteBoolean(NoInvocar);
@@ -8045,7 +8051,7 @@ SaveChars::SaveChars(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Sav
 
 }
 
-void SaveChars::serialize(clsByteQueue* buffer) {
+void SaveChars::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SaveChars); /* PacketID: 119 */
 
@@ -8063,7 +8069,7 @@ CleanSOS::CleanSOS(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Clean
 
 }
 
-void CleanSOS::serialize(clsByteQueue* buffer) {
+void CleanSOS::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_CleanSOS); /* PacketID: 120 */
 
@@ -8081,7 +8087,7 @@ ShowServerForm::ShowServerForm(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
 
 }
 
-void ShowServerForm::serialize(clsByteQueue* buffer) {
+void ShowServerForm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ShowServerForm); /* PacketID: 121 */
 
@@ -8099,7 +8105,7 @@ Night::Night(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Night /* 12
 
 }
 
-void Night::serialize(clsByteQueue* buffer) {
+void Night::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Night); /* PacketID: 122 */
 
@@ -8117,7 +8123,7 @@ KickAllChars::KickAllChars(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacket
 
 }
 
-void KickAllChars::serialize(clsByteQueue* buffer) {
+void KickAllChars::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_KickAllChars); /* PacketID: 123 */
 
@@ -8135,7 +8141,7 @@ ReloadNPCs::ReloadNPCs(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_R
 
 }
 
-void ReloadNPCs::serialize(clsByteQueue* buffer) {
+void ReloadNPCs::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ReloadNPCs); /* PacketID: 124 */
 
@@ -8153,7 +8159,7 @@ ReloadServerIni::ReloadServerIni(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void ReloadServerIni::serialize(clsByteQueue* buffer) {
+void ReloadServerIni::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ReloadServerIni); /* PacketID: 125 */
 
@@ -8171,7 +8177,7 @@ ReloadSpells::ReloadSpells(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacket
 
 }
 
-void ReloadSpells::serialize(clsByteQueue* buffer) {
+void ReloadSpells::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ReloadSpells); /* PacketID: 126 */
 
@@ -8189,7 +8195,7 @@ ReloadObjects::ReloadObjects(clsByteQueue* buffer) : ClientGMPacket(ClientGMPack
 
 }
 
-void ReloadObjects::serialize(clsByteQueue* buffer) {
+void ReloadObjects::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ReloadObjects); /* PacketID: 127 */
 
@@ -8207,7 +8213,7 @@ Restart::Restart(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Restart
 
 }
 
-void Restart::serialize(clsByteQueue* buffer) {
+void Restart::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Restart); /* PacketID: 128 */
 
@@ -8225,7 +8231,7 @@ ResetAutoUpdate::ResetAutoUpdate(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void ResetAutoUpdate::serialize(clsByteQueue* buffer) {
+void ResetAutoUpdate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ResetAutoUpdate); /* PacketID: 129 */
 
@@ -8246,7 +8252,7 @@ ChatColor::ChatColor(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Cha
 
 }
 
-void ChatColor::serialize(clsByteQueue* buffer) {
+void ChatColor::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ChatColor); /* PacketID: 130 */
     buffer->WriteByte(R);
@@ -8267,7 +8273,7 @@ Ignored::Ignored(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Ignored
 
 }
 
-void Ignored::serialize(clsByteQueue* buffer) {
+void Ignored::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Ignored); /* PacketID: 131 */
 
@@ -8287,7 +8293,7 @@ CheckSlot::CheckSlot(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Che
 
 }
 
-void CheckSlot::serialize(clsByteQueue* buffer) {
+void CheckSlot::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_CheckSlot); /* PacketID: 132 */
     buffer->WriteUnicodeString(UserName);
@@ -8310,7 +8316,7 @@ SetIniVar::SetIniVar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Set
 
 }
 
-void SetIniVar::serialize(clsByteQueue* buffer) {
+void SetIniVar::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SetIniVar); /* PacketID: 133 */
     buffer->WriteUnicodeString(Seccion);
@@ -8334,7 +8340,7 @@ CreatePretorianClan::CreatePretorianClan(clsByteQueue* buffer) : ClientGMPacket(
 
 }
 
-void CreatePretorianClan::serialize(clsByteQueue* buffer) {
+void CreatePretorianClan::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_CreatePretorianClan); /* PacketID: 134 */
     buffer->WriteInteger(Map);
@@ -8356,7 +8362,7 @@ RemovePretorianClan::RemovePretorianClan(clsByteQueue* buffer) : ClientGMPacket(
 
 }
 
-void RemovePretorianClan::serialize(clsByteQueue* buffer) {
+void RemovePretorianClan::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RemovePretorianClan); /* PacketID: 135 */
     buffer->WriteInteger(Map);
@@ -8375,7 +8381,7 @@ EnableDenounces::EnableDenounces(clsByteQueue* buffer) : ClientGMPacket(ClientGM
 
 }
 
-void EnableDenounces::serialize(clsByteQueue* buffer) {
+void EnableDenounces::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_EnableDenounces); /* PacketID: 136 */
 
@@ -8393,7 +8399,7 @@ ShowDenouncesList::ShowDenouncesList(clsByteQueue* buffer) : ClientGMPacket(Clie
 
 }
 
-void ShowDenouncesList::serialize(clsByteQueue* buffer) {
+void ShowDenouncesList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_ShowDenouncesList); /* PacketID: 137 */
 
@@ -8408,14 +8414,14 @@ MapMessage::MapMessage() : ClientGMPacket(ClientGMPacketID_MapMessage /* 138 */)
 
 MapMessage::MapMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_MapMessage /* 138 */) {
     buffer->ReadByte(); /* PacketID */
-    Map = buffer->ReadInteger();
+    Message = buffer->ReadUnicodeString();
 
 }
 
-void MapMessage::serialize(clsByteQueue* buffer) {
+void MapMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_MapMessage); /* PacketID: 138 */
-    buffer->WriteInteger(Map);
+    buffer->WriteUnicodeString(Message);
 
 }
 
@@ -8432,7 +8438,7 @@ SetDialog::SetDialog(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Set
 
 }
 
-void SetDialog::serialize(clsByteQueue* buffer) {
+void SetDialog::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_SetDialog); /* PacketID: 139 */
     buffer->WriteUnicodeString(Message);
@@ -8451,7 +8457,7 @@ Impersonate::Impersonate(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID
 
 }
 
-void Impersonate::serialize(clsByteQueue* buffer) {
+void Impersonate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Impersonate); /* PacketID: 140 */
 
@@ -8469,7 +8475,7 @@ Imitate::Imitate(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Imitate
 
 }
 
-void Imitate::serialize(clsByteQueue* buffer) {
+void Imitate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_Imitate); /* PacketID: 141 */
 
@@ -8489,7 +8495,7 @@ RecordAdd::RecordAdd(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Rec
 
 }
 
-void RecordAdd::serialize(clsByteQueue* buffer) {
+void RecordAdd::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RecordAdd); /* PacketID: 142 */
     buffer->WriteUnicodeString(UserName);
@@ -8510,7 +8516,7 @@ RecordRemove::RecordRemove(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacket
 
 }
 
-void RecordRemove::serialize(clsByteQueue* buffer) {
+void RecordRemove::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RecordRemove); /* PacketID: 143 */
     buffer->WriteByte(Index);
@@ -8531,7 +8537,7 @@ RecordAddObs::RecordAddObs(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacket
 
 }
 
-void RecordAddObs::serialize(clsByteQueue* buffer) {
+void RecordAddObs::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RecordAddObs); /* PacketID: 144 */
     buffer->WriteByte(Index);
@@ -8551,7 +8557,7 @@ RecordListRequest::RecordListRequest(clsByteQueue* buffer) : ClientGMPacket(Clie
 
 }
 
-void RecordListRequest::serialize(clsByteQueue* buffer) {
+void RecordListRequest::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RecordListRequest); /* PacketID: 145 */
 
@@ -8570,7 +8576,7 @@ RecordDetailsRequest::RecordDetailsRequest(clsByteQueue* buffer) : ClientGMPacke
 
 }
 
-void RecordDetailsRequest::serialize(clsByteQueue* buffer) {
+void RecordDetailsRequest::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_RecordDetailsRequest); /* PacketID: 146 */
     buffer->WriteByte(Index);
@@ -8591,7 +8597,7 @@ AlterGuildName::AlterGuildName(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
 
 }
 
-void AlterGuildName::serialize(clsByteQueue* buffer) {
+void AlterGuildName::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_AlterGuildName); /* PacketID: 147 */
     buffer->WriteUnicodeString(OldGuildName);
@@ -8612,7 +8618,7 @@ HigherAdminsMessage::HigherAdminsMessage(clsByteQueue* buffer) : ClientGMPacket(
 
 }
 
-void HigherAdminsMessage::serialize(clsByteQueue* buffer) {
+void HigherAdminsMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(dakara::protocol::client::ClientPacketID_GMCommands);
     buffer->WriteByte(ClientGMPacketID_HigherAdminsMessage); /* PacketID: 148 */
     buffer->WriteUnicodeString(Message);
@@ -9990,7 +9996,7 @@ Logged::Logged(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Logged /* 0 *
 
 }
 
-void Logged::serialize(clsByteQueue* buffer) {
+void Logged::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_Logged); /* PacketID: 0 */
     buffer->WriteByte(Clase);
 
@@ -10008,7 +10014,7 @@ RemoveDialogs::RemoveDialogs(clsByteQueue* buffer) : ServerPacket(ServerPacketID
 
 }
 
-void RemoveDialogs::serialize(clsByteQueue* buffer) {
+void RemoveDialogs::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_RemoveDialogs); /* PacketID: 1 */
 
 }
@@ -10026,7 +10032,7 @@ RemoveCharDialog::RemoveCharDialog(clsByteQueue* buffer) : ServerPacket(ServerPa
 
 }
 
-void RemoveCharDialog::serialize(clsByteQueue* buffer) {
+void RemoveCharDialog::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_RemoveCharDialog); /* PacketID: 2 */
     buffer->WriteInteger(CharIndex);
 
@@ -10044,7 +10050,7 @@ NavigateToggle::NavigateToggle(clsByteQueue* buffer) : ServerPacket(ServerPacket
 
 }
 
-void NavigateToggle::serialize(clsByteQueue* buffer) {
+void NavigateToggle::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_NavigateToggle); /* PacketID: 3 */
 
 }
@@ -10061,7 +10067,7 @@ Disconnect::Disconnect(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Disco
 
 }
 
-void Disconnect::serialize(clsByteQueue* buffer) {
+void Disconnect::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_Disconnect); /* PacketID: 4 */
 
 }
@@ -10078,7 +10084,7 @@ CommerceEnd::CommerceEnd(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Com
 
 }
 
-void CommerceEnd::serialize(clsByteQueue* buffer) {
+void CommerceEnd::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CommerceEnd); /* PacketID: 5 */
 
 }
@@ -10095,7 +10101,7 @@ BankEnd::BankEnd(clsByteQueue* buffer) : ServerPacket(ServerPacketID_BankEnd /* 
 
 }
 
-void BankEnd::serialize(clsByteQueue* buffer) {
+void BankEnd::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_BankEnd); /* PacketID: 6 */
 
 }
@@ -10112,7 +10118,7 @@ CommerceInit::CommerceInit(clsByteQueue* buffer) : ServerPacket(ServerPacketID_C
 
 }
 
-void CommerceInit::serialize(clsByteQueue* buffer) {
+void CommerceInit::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CommerceInit); /* PacketID: 7 */
 
 }
@@ -10130,7 +10136,7 @@ BankInit::BankInit(clsByteQueue* buffer) : ServerPacket(ServerPacketID_BankInit 
 
 }
 
-void BankInit::serialize(clsByteQueue* buffer) {
+void BankInit::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_BankInit); /* PacketID: 8 */
     buffer->WriteLong(Banco);
 
@@ -10149,7 +10155,7 @@ UserCommerceInit::UserCommerceInit(clsByteQueue* buffer) : ServerPacket(ServerPa
 
 }
 
-void UserCommerceInit::serialize(clsByteQueue* buffer) {
+void UserCommerceInit::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UserCommerceInit); /* PacketID: 9 */
     buffer->WriteUnicodeString(DestUserName);
 
@@ -10167,7 +10173,7 @@ UserCommerceEnd::UserCommerceEnd(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void UserCommerceEnd::serialize(clsByteQueue* buffer) {
+void UserCommerceEnd::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UserCommerceEnd); /* PacketID: 10 */
 
 }
@@ -10184,7 +10190,7 @@ UserOfferConfirm::UserOfferConfirm(clsByteQueue* buffer) : ServerPacket(ServerPa
 
 }
 
-void UserOfferConfirm::serialize(clsByteQueue* buffer) {
+void UserOfferConfirm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UserOfferConfirm); /* PacketID: 11 */
 
 }
@@ -10203,7 +10209,7 @@ CommerceChat::CommerceChat(clsByteQueue* buffer) : ServerPacket(ServerPacketID_C
 
 }
 
-void CommerceChat::serialize(clsByteQueue* buffer) {
+void CommerceChat::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CommerceChat); /* PacketID: 12 */
     buffer->WriteUnicodeString(Chat);
     buffer->WriteByte(FontIndex);
@@ -10222,7 +10228,7 @@ ShowBlacksmithForm::ShowBlacksmithForm(clsByteQueue* buffer) : ServerPacket(Serv
 
 }
 
-void ShowBlacksmithForm::serialize(clsByteQueue* buffer) {
+void ShowBlacksmithForm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowBlacksmithForm); /* PacketID: 13 */
 
 }
@@ -10239,7 +10245,7 @@ ShowCarpenterForm::ShowCarpenterForm(clsByteQueue* buffer) : ServerPacket(Server
 
 }
 
-void ShowCarpenterForm::serialize(clsByteQueue* buffer) {
+void ShowCarpenterForm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowCarpenterForm); /* PacketID: 14 */
 
 }
@@ -10257,7 +10263,7 @@ UpdateSta::UpdateSta(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateS
 
 }
 
-void UpdateSta::serialize(clsByteQueue* buffer) {
+void UpdateSta::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateSta); /* PacketID: 15 */
     buffer->WriteInteger(Value);
 
@@ -10276,7 +10282,7 @@ UpdateMana::UpdateMana(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Updat
 
 }
 
-void UpdateMana::serialize(clsByteQueue* buffer) {
+void UpdateMana::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateMana); /* PacketID: 16 */
     buffer->WriteInteger(Value);
 
@@ -10295,7 +10301,7 @@ UpdateHP::UpdateHP(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateHP 
 
 }
 
-void UpdateHP::serialize(clsByteQueue* buffer) {
+void UpdateHP::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateHP); /* PacketID: 17 */
     buffer->WriteInteger(Value);
 
@@ -10314,7 +10320,7 @@ UpdateGold::UpdateGold(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Updat
 
 }
 
-void UpdateGold::serialize(clsByteQueue* buffer) {
+void UpdateGold::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateGold); /* PacketID: 18 */
     buffer->WriteLong(Value);
 
@@ -10333,7 +10339,7 @@ UpdateBankGold::UpdateBankGold(clsByteQueue* buffer) : ServerPacket(ServerPacket
 
 }
 
-void UpdateBankGold::serialize(clsByteQueue* buffer) {
+void UpdateBankGold::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateBankGold); /* PacketID: 19 */
     buffer->WriteLong(Value);
 
@@ -10352,7 +10358,7 @@ UpdateExp::UpdateExp(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateE
 
 }
 
-void UpdateExp::serialize(clsByteQueue* buffer) {
+void UpdateExp::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateExp); /* PacketID: 20 */
     buffer->WriteLong(Value);
 
@@ -10372,7 +10378,7 @@ ChangeMap::ChangeMap(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ChangeM
 
 }
 
-void ChangeMap::serialize(clsByteQueue* buffer) {
+void ChangeMap::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ChangeMap); /* PacketID: 21 */
     buffer->WriteInteger(Map);
     buffer->WriteInteger(Version);
@@ -10393,7 +10399,7 @@ PosUpdate::PosUpdate(clsByteQueue* buffer) : ServerPacket(ServerPacketID_PosUpda
 
 }
 
-void PosUpdate::serialize(clsByteQueue* buffer) {
+void PosUpdate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_PosUpdate); /* PacketID: 22 */
     buffer->WriteByte(X);
     buffer->WriteByte(Y);
@@ -10417,7 +10423,7 @@ ChatOverHead::ChatOverHead(clsByteQueue* buffer) : ServerPacket(ServerPacketID_C
 
 }
 
-void ChatOverHead::serialize(clsByteQueue* buffer) {
+void ChatOverHead::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ChatOverHead); /* PacketID: 23 */
     buffer->WriteUnicodeString(Chat);
     buffer->WriteInteger(CharIndex);
@@ -10441,7 +10447,7 @@ ConsoleMsg::ConsoleMsg(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Conso
 
 }
 
-void ConsoleMsg::serialize(clsByteQueue* buffer) {
+void ConsoleMsg::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ConsoleMsg); /* PacketID: 24 */
     buffer->WriteUnicodeString(Chat);
     buffer->WriteInteger(FontIndex);
@@ -10461,7 +10467,7 @@ GuildChat::GuildChat(clsByteQueue* buffer) : ServerPacket(ServerPacketID_GuildCh
 
 }
 
-void GuildChat::serialize(clsByteQueue* buffer) {
+void GuildChat::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_GuildChat); /* PacketID: 25 */
     buffer->WriteUnicodeString(Chat);
 
@@ -10480,7 +10486,7 @@ ShowMessageBox::ShowMessageBox(clsByteQueue* buffer) : ServerPacket(ServerPacket
 
 }
 
-void ShowMessageBox::serialize(clsByteQueue* buffer) {
+void ShowMessageBox::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowMessageBox); /* PacketID: 26 */
     buffer->WriteUnicodeString(Chat);
 
@@ -10499,7 +10505,7 @@ UserIndexInServer::UserIndexInServer(clsByteQueue* buffer) : ServerPacket(Server
 
 }
 
-void UserIndexInServer::serialize(clsByteQueue* buffer) {
+void UserIndexInServer::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UserIndexInServer); /* PacketID: 27 */
     buffer->WriteInteger(UserIndex);
 
@@ -10518,7 +10524,7 @@ UserCharIndexInServer::UserCharIndexInServer(clsByteQueue* buffer) : ServerPacke
 
 }
 
-void UserCharIndexInServer::serialize(clsByteQueue* buffer) {
+void UserCharIndexInServer::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UserCharIndexInServer); /* PacketID: 28 */
     buffer->WriteInteger(CharIndex);
 
@@ -10550,7 +10556,7 @@ CharacterCreate::CharacterCreate(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void CharacterCreate::serialize(clsByteQueue* buffer) {
+void CharacterCreate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CharacterCreate); /* PacketID: 29 */
     buffer->WriteInteger(CharIndex);
     buffer->WriteInteger(Body);
@@ -10582,7 +10588,7 @@ CharacterRemove::CharacterRemove(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void CharacterRemove::serialize(clsByteQueue* buffer) {
+void CharacterRemove::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CharacterRemove); /* PacketID: 30 */
     buffer->WriteInteger(CharIndex);
 
@@ -10602,7 +10608,7 @@ CharacterChangeNick::CharacterChangeNick(clsByteQueue* buffer) : ServerPacket(Se
 
 }
 
-void CharacterChangeNick::serialize(clsByteQueue* buffer) {
+void CharacterChangeNick::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CharacterChangeNick); /* PacketID: 31 */
     buffer->WriteInteger(CharIndex);
     buffer->WriteUnicodeString(NewName);
@@ -10624,7 +10630,7 @@ CharacterMove::CharacterMove(clsByteQueue* buffer) : ServerPacket(ServerPacketID
 
 }
 
-void CharacterMove::serialize(clsByteQueue* buffer) {
+void CharacterMove::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CharacterMove); /* PacketID: 32 */
     buffer->WriteInteger(CharIndex);
     buffer->WriteByte(X);
@@ -10645,7 +10651,7 @@ ForceCharMove::ForceCharMove(clsByteQueue* buffer) : ServerPacket(ServerPacketID
 
 }
 
-void ForceCharMove::serialize(clsByteQueue* buffer) {
+void ForceCharMove::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ForceCharMove); /* PacketID: 33 */
     buffer->WriteByte(Direction);
 
@@ -10672,7 +10678,7 @@ CharacterChange::CharacterChange(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void CharacterChange::serialize(clsByteQueue* buffer) {
+void CharacterChange::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CharacterChange); /* PacketID: 34 */
     buffer->WriteInteger(CharIndex);
     buffer->WriteInteger(Body);
@@ -10701,7 +10707,7 @@ ObjectCreate::ObjectCreate(clsByteQueue* buffer) : ServerPacket(ServerPacketID_O
 
 }
 
-void ObjectCreate::serialize(clsByteQueue* buffer) {
+void ObjectCreate::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ObjectCreate); /* PacketID: 35 */
     buffer->WriteByte(X);
     buffer->WriteByte(Y);
@@ -10723,7 +10729,7 @@ ObjectDelete::ObjectDelete(clsByteQueue* buffer) : ServerPacket(ServerPacketID_O
 
 }
 
-void ObjectDelete::serialize(clsByteQueue* buffer) {
+void ObjectDelete::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ObjectDelete); /* PacketID: 36 */
     buffer->WriteByte(X);
     buffer->WriteByte(Y);
@@ -10745,7 +10751,7 @@ BlockPosition::BlockPosition(clsByteQueue* buffer) : ServerPacket(ServerPacketID
 
 }
 
-void BlockPosition::serialize(clsByteQueue* buffer) {
+void BlockPosition::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_BlockPosition); /* PacketID: 37 */
     buffer->WriteByte(X);
     buffer->WriteByte(Y);
@@ -10767,7 +10773,7 @@ PlayMidi::PlayMidi(clsByteQueue* buffer) : ServerPacket(ServerPacketID_PlayMidi 
 
 }
 
-void PlayMidi::serialize(clsByteQueue* buffer) {
+void PlayMidi::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_PlayMidi); /* PacketID: 38 */
     buffer->WriteInteger(MidiID);
     buffer->WriteInteger(Loops);
@@ -10789,7 +10795,7 @@ PlayWave::PlayWave(clsByteQueue* buffer) : ServerPacket(ServerPacketID_PlayWave 
 
 }
 
-void PlayWave::serialize(clsByteQueue* buffer) {
+void PlayWave::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_PlayWave); /* PacketID: 39 */
     buffer->WriteByte(WaveID);
     buffer->WriteByte(X);
@@ -10810,7 +10816,7 @@ GuildList::GuildList(clsByteQueue* buffer) : ServerPacket(ServerPacketID_GuildLi
 
 }
 
-void GuildList::serialize(clsByteQueue* buffer) {
+void GuildList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_GuildList); /* PacketID: 40 */
     buffer->WriteUnicodeString(Data);
 
@@ -10830,7 +10836,7 @@ AreaChanged::AreaChanged(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Are
 
 }
 
-void AreaChanged::serialize(clsByteQueue* buffer) {
+void AreaChanged::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_AreaChanged); /* PacketID: 41 */
     buffer->WriteByte(X);
     buffer->WriteByte(Y);
@@ -10849,7 +10855,7 @@ PauseToggle::PauseToggle(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Pau
 
 }
 
-void PauseToggle::serialize(clsByteQueue* buffer) {
+void PauseToggle::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_PauseToggle); /* PacketID: 42 */
 
 }
@@ -10866,7 +10872,7 @@ RainToggle::RainToggle(clsByteQueue* buffer) : ServerPacket(ServerPacketID_RainT
 
 }
 
-void RainToggle::serialize(clsByteQueue* buffer) {
+void RainToggle::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_RainToggle); /* PacketID: 43 */
 
 }
@@ -10886,7 +10892,7 @@ CreateFX::CreateFX(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CreateFX 
 
 }
 
-void CreateFX::serialize(clsByteQueue* buffer) {
+void CreateFX::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CreateFX); /* PacketID: 44 */
     buffer->WriteInteger(CharIndex);
     buffer->WriteInteger(FX);
@@ -10916,7 +10922,7 @@ UpdateUserStats::UpdateUserStats(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void UpdateUserStats::serialize(clsByteQueue* buffer) {
+void UpdateUserStats::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateUserStats); /* PacketID: 45 */
     buffer->WriteInteger(MaxHp);
     buffer->WriteInteger(MinHp);
@@ -10944,7 +10950,7 @@ WorkRequestTarget::WorkRequestTarget(clsByteQueue* buffer) : ServerPacket(Server
 
 }
 
-void WorkRequestTarget::serialize(clsByteQueue* buffer) {
+void WorkRequestTarget::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_WorkRequestTarget); /* PacketID: 46 */
     buffer->WriteByte(Skill);
 
@@ -10974,7 +10980,7 @@ ChangeInventorySlot::ChangeInventorySlot(clsByteQueue* buffer) : ServerPacket(Se
 
 }
 
-void ChangeInventorySlot::serialize(clsByteQueue* buffer) {
+void ChangeInventorySlot::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ChangeInventorySlot); /* PacketID: 47 */
     buffer->WriteByte(Slot);
     buffer->WriteInteger(ObjIndex);
@@ -11014,7 +11020,7 @@ ChangeBankSlot::ChangeBankSlot(clsByteQueue* buffer) : ServerPacket(ServerPacket
 
 }
 
-void ChangeBankSlot::serialize(clsByteQueue* buffer) {
+void ChangeBankSlot::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ChangeBankSlot); /* PacketID: 48 */
     buffer->WriteByte(Slot);
     buffer->WriteInteger(ObjIndex);
@@ -11045,7 +11051,7 @@ ChangeSpellSlot::ChangeSpellSlot(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void ChangeSpellSlot::serialize(clsByteQueue* buffer) {
+void ChangeSpellSlot::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ChangeSpellSlot); /* PacketID: 49 */
     buffer->WriteByte(Slot);
     buffer->WriteInteger(SpellID);
@@ -11070,7 +11076,7 @@ Atributes::Atributes(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Atribut
 
 }
 
-void Atributes::serialize(clsByteQueue* buffer) {
+void Atributes::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_Atributes); /* PacketID: 50 */
     buffer->WriteByte(Fuerza);
     buffer->WriteByte(Agilidad);
@@ -11106,13 +11112,13 @@ BlacksmithWeapons::BlacksmithWeapons(clsByteQueue* buffer) : ServerPacket(Server
     }
 }
 
-void BlacksmithWeapons::serialize(clsByteQueue* buffer) {
+void BlacksmithWeapons::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_BlacksmithWeapons); /* PacketID: 51 */
     std::int32_t Count = static_cast<std::int32_t>(Items.size());
     buffer->WriteInteger(Count);
     { std::int32_t i; 
         for (i=0; i<Count; ++i) {
-            Item &e = Items[i];
+            const Item &e = Items[i];
             buffer->WriteUnicodeString(e.Name);
             buffer->WriteInteger(e.GrhIndex);
             buffer->WriteInteger(e.LingH);
@@ -11151,13 +11157,13 @@ BlacksmithArmors::BlacksmithArmors(clsByteQueue* buffer) : ServerPacket(ServerPa
     }
 }
 
-void BlacksmithArmors::serialize(clsByteQueue* buffer) {
+void BlacksmithArmors::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_BlacksmithArmors); /* PacketID: 52 */
     std::int32_t Count = static_cast<std::int32_t>(Items.size());
     buffer->WriteInteger(Count);
     { std::int32_t i; 
         for (i=0; i<Count; ++i) {
-            Item &e = Items[i];
+            const Item &e = Items[i];
             buffer->WriteUnicodeString(e.Name);
             buffer->WriteInteger(e.GrhIndex);
             buffer->WriteInteger(e.LingH);
@@ -11195,13 +11201,13 @@ CarpenterObjects::CarpenterObjects(clsByteQueue* buffer) : ServerPacket(ServerPa
     }
 }
 
-void CarpenterObjects::serialize(clsByteQueue* buffer) {
+void CarpenterObjects::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CarpenterObjects); /* PacketID: 53 */
     std::int32_t Count = static_cast<std::int32_t>(Items.size());
     buffer->WriteInteger(Count);
     { std::int32_t i; 
         for (i=0; i<Count; ++i) {
-            Item &e = Items[i];
+            const Item &e = Items[i];
             buffer->WriteUnicodeString(e.Name);
             buffer->WriteInteger(e.GrhIndex);
             buffer->WriteInteger(e.Madera);
@@ -11225,7 +11231,7 @@ RestOK::RestOK(clsByteQueue* buffer) : ServerPacket(ServerPacketID_RestOK /* 54 
 
 }
 
-void RestOK::serialize(clsByteQueue* buffer) {
+void RestOK::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_RestOK); /* PacketID: 54 */
 
 }
@@ -11243,7 +11249,7 @@ ErrorMsg::ErrorMsg(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ErrorMsg 
 
 }
 
-void ErrorMsg::serialize(clsByteQueue* buffer) {
+void ErrorMsg::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ErrorMsg); /* PacketID: 55 */
     buffer->WriteUnicodeString(Message);
 
@@ -11261,7 +11267,7 @@ Blind::Blind(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Blind /* 56 */)
 
 }
 
-void Blind::serialize(clsByteQueue* buffer) {
+void Blind::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_Blind); /* PacketID: 56 */
 
 }
@@ -11278,7 +11284,7 @@ Dumb::Dumb(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Dumb /* 57 */) {
 
 }
 
-void Dumb::serialize(clsByteQueue* buffer) {
+void Dumb::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_Dumb); /* PacketID: 57 */
 
 }
@@ -11297,7 +11303,7 @@ ShowSignal::ShowSignal(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ShowS
 
 }
 
-void ShowSignal::serialize(clsByteQueue* buffer) {
+void ShowSignal::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowSignal); /* PacketID: 58 */
     buffer->WriteUnicodeString(Texto);
     buffer->WriteInteger(Grh);
@@ -11327,7 +11333,7 @@ ChangeNPCInventorySlot::ChangeNPCInventorySlot(clsByteQueue* buffer) : ServerPac
 
 }
 
-void ChangeNPCInventorySlot::serialize(clsByteQueue* buffer) {
+void ChangeNPCInventorySlot::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ChangeNPCInventorySlot); /* PacketID: 59 */
     buffer->WriteByte(Slot);
     buffer->WriteUnicodeString(ObjName);
@@ -11359,7 +11365,7 @@ UpdateHungerAndThirst::UpdateHungerAndThirst(clsByteQueue* buffer) : ServerPacke
 
 }
 
-void UpdateHungerAndThirst::serialize(clsByteQueue* buffer) {
+void UpdateHungerAndThirst::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateHungerAndThirst); /* PacketID: 60 */
     buffer->WriteByte(MaxAgu);
     buffer->WriteByte(MinAgu);
@@ -11387,7 +11393,7 @@ Fame::Fame(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Fame /* 61 */) {
 
 }
 
-void Fame::serialize(clsByteQueue* buffer) {
+void Fame::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_Fame); /* PacketID: 61 */
     buffer->WriteLong(Asesino);
     buffer->WriteLong(Bandido);
@@ -11417,7 +11423,7 @@ MiniStats::MiniStats(clsByteQueue* buffer) : ServerPacket(ServerPacketID_MiniSta
 
 }
 
-void MiniStats::serialize(clsByteQueue* buffer) {
+void MiniStats::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_MiniStats); /* PacketID: 62 */
     buffer->WriteLong(CiudadanosMatados);
     buffer->WriteLong(CriminalesMatados);
@@ -11441,7 +11447,7 @@ LevelUp::LevelUp(clsByteQueue* buffer) : ServerPacket(ServerPacketID_LevelUp /* 
 
 }
 
-void LevelUp::serialize(clsByteQueue* buffer) {
+void LevelUp::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_LevelUp); /* PacketID: 63 */
     buffer->WriteInteger(SkillPoints);
 
@@ -11463,7 +11469,7 @@ AddForumMsg::AddForumMsg(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Add
 
 }
 
-void AddForumMsg::serialize(clsByteQueue* buffer) {
+void AddForumMsg::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_AddForumMsg); /* PacketID: 64 */
     buffer->WriteLong(ForumType);
     buffer->WriteUnicodeString(Title);
@@ -11486,7 +11492,7 @@ ShowForumForm::ShowForumForm(clsByteQueue* buffer) : ServerPacket(ServerPacketID
 
 }
 
-void ShowForumForm::serialize(clsByteQueue* buffer) {
+void ShowForumForm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowForumForm); /* PacketID: 65 */
     buffer->WriteByte(Visibilidad);
     buffer->WriteByte(CanMakeSticky);
@@ -11507,7 +11513,7 @@ SetInvisible::SetInvisible(clsByteQueue* buffer) : ServerPacket(ServerPacketID_S
 
 }
 
-void SetInvisible::serialize(clsByteQueue* buffer) {
+void SetInvisible::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_SetInvisible); /* PacketID: 66 */
     buffer->WriteInteger(charIndex);
     buffer->WriteBoolean(invisible);
@@ -11531,7 +11537,7 @@ DiceRoll::DiceRoll(clsByteQueue* buffer) : ServerPacket(ServerPacketID_DiceRoll 
 
 }
 
-void DiceRoll::serialize(clsByteQueue* buffer) {
+void DiceRoll::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_DiceRoll); /* PacketID: 67 */
     buffer->WriteByte(Fuerza);
     buffer->WriteByte(Agilidad);
@@ -11553,7 +11559,7 @@ MeditateToggle::MeditateToggle(clsByteQueue* buffer) : ServerPacket(ServerPacket
 
 }
 
-void MeditateToggle::serialize(clsByteQueue* buffer) {
+void MeditateToggle::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_MeditateToggle); /* PacketID: 68 */
 
 }
@@ -11570,7 +11576,7 @@ BlindNoMore::BlindNoMore(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Bli
 
 }
 
-void BlindNoMore::serialize(clsByteQueue* buffer) {
+void BlindNoMore::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_BlindNoMore); /* PacketID: 69 */
 
 }
@@ -11587,7 +11593,7 @@ DumbNoMore::DumbNoMore(clsByteQueue* buffer) : ServerPacket(ServerPacketID_DumbN
 
 }
 
-void DumbNoMore::serialize(clsByteQueue* buffer) {
+void DumbNoMore::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_DumbNoMore); /* PacketID: 70 */
 
 }
@@ -11601,11 +11607,11 @@ SendSkills::SendSkills() : ServerPacket(ServerPacketID_SendSkills /* 71 */) {
 
 SendSkills::SendSkills(clsByteQueue* buffer) : ServerPacket(ServerPacketID_SendSkills /* 71 */) {
     buffer->ReadByte(); /* PacketID */
-    { int i; for (i=0; i<40; ++i) Skills[i] = buffer->ReadByte(); }
+    { int i; Skills.resize(40); for (i=0; i<40; ++i) Skills[i] = buffer->ReadByte(); }
 
 }
 
-void SendSkills::serialize(clsByteQueue* buffer) {
+void SendSkills::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_SendSkills); /* PacketID: 71 */
     { int i; for (i=0; i<40; ++i) buffer->WriteByte(Skills[i]); }
 
@@ -11624,7 +11630,7 @@ TrainerCreatureList::TrainerCreatureList(clsByteQueue* buffer) : ServerPacket(Se
 
 }
 
-void TrainerCreatureList::serialize(clsByteQueue* buffer) {
+void TrainerCreatureList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_TrainerCreatureList); /* PacketID: 72 */
     buffer->WriteUnicodeString(Data);
 
@@ -11645,7 +11651,7 @@ GuildNews::GuildNews(clsByteQueue* buffer) : ServerPacket(ServerPacketID_GuildNe
 
 }
 
-void GuildNews::serialize(clsByteQueue* buffer) {
+void GuildNews::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_GuildNews); /* PacketID: 73 */
     buffer->WriteUnicodeString(News);
     buffer->WriteUnicodeString(EnemiesList);
@@ -11666,7 +11672,7 @@ OfferDetails::OfferDetails(clsByteQueue* buffer) : ServerPacket(ServerPacketID_O
 
 }
 
-void OfferDetails::serialize(clsByteQueue* buffer) {
+void OfferDetails::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_OfferDetails); /* PacketID: 74 */
     buffer->WriteUnicodeString(Details);
 
@@ -11685,7 +11691,7 @@ AlianceProposalsList::AlianceProposalsList(clsByteQueue* buffer) : ServerPacket(
 
 }
 
-void AlianceProposalsList::serialize(clsByteQueue* buffer) {
+void AlianceProposalsList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_AlianceProposalsList); /* PacketID: 75 */
     buffer->WriteUnicodeString(Data);
 
@@ -11704,7 +11710,7 @@ PeaceProposalsList::PeaceProposalsList(clsByteQueue* buffer) : ServerPacket(Serv
 
 }
 
-void PeaceProposalsList::serialize(clsByteQueue* buffer) {
+void PeaceProposalsList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_PeaceProposalsList); /* PacketID: 76 */
     buffer->WriteUnicodeString(Data);
 
@@ -11737,7 +11743,7 @@ CharacterInfo::CharacterInfo(clsByteQueue* buffer) : ServerPacket(ServerPacketID
 
 }
 
-void CharacterInfo::serialize(clsByteQueue* buffer) {
+void CharacterInfo::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CharacterInfo); /* PacketID: 77 */
     buffer->WriteUnicodeString(CharName);
     buffer->WriteByte(Race);
@@ -11773,7 +11779,7 @@ GuildLeaderInfo::GuildLeaderInfo(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void GuildLeaderInfo::serialize(clsByteQueue* buffer) {
+void GuildLeaderInfo::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_GuildLeaderInfo); /* PacketID: 78 */
     buffer->WriteUnicodeString(GuildList);
     buffer->WriteUnicodeString(MemberList);
@@ -11796,7 +11802,7 @@ GuildMemberInfo::GuildMemberInfo(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void GuildMemberInfo::serialize(clsByteQueue* buffer) {
+void GuildMemberInfo::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_GuildMemberInfo); /* PacketID: 79 */
     buffer->WriteUnicodeString(GuildList);
     buffer->WriteUnicodeString(MemberList);
@@ -11828,7 +11834,7 @@ GuildDetails::GuildDetails(clsByteQueue* buffer) : ServerPacket(ServerPacketID_G
 
 }
 
-void GuildDetails::serialize(clsByteQueue* buffer) {
+void GuildDetails::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_GuildDetails); /* PacketID: 80 */
     buffer->WriteUnicodeString(GuildName);
     buffer->WriteUnicodeString(Founder);
@@ -11858,7 +11864,7 @@ ShowGuildFundationForm::ShowGuildFundationForm(clsByteQueue* buffer) : ServerPac
 
 }
 
-void ShowGuildFundationForm::serialize(clsByteQueue* buffer) {
+void ShowGuildFundationForm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowGuildFundationForm); /* PacketID: 81 */
 
 }
@@ -11875,7 +11881,7 @@ ParalizeOK::ParalizeOK(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Paral
 
 }
 
-void ParalizeOK::serialize(clsByteQueue* buffer) {
+void ParalizeOK::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ParalizeOK); /* PacketID: 82 */
 
 }
@@ -11893,7 +11899,7 @@ ShowUserRequest::ShowUserRequest(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void ShowUserRequest::serialize(clsByteQueue* buffer) {
+void ShowUserRequest::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowUserRequest); /* PacketID: 83 */
     buffer->WriteUnicodeString(Details);
 
@@ -11911,7 +11917,7 @@ TradeOK::TradeOK(clsByteQueue* buffer) : ServerPacket(ServerPacketID_TradeOK /* 
 
 }
 
-void TradeOK::serialize(clsByteQueue* buffer) {
+void TradeOK::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_TradeOK); /* PacketID: 84 */
 
 }
@@ -11928,7 +11934,7 @@ BankOK::BankOK(clsByteQueue* buffer) : ServerPacket(ServerPacketID_BankOK /* 85 
 
 }
 
-void BankOK::serialize(clsByteQueue* buffer) {
+void BankOK::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_BankOK); /* PacketID: 85 */
 
 }
@@ -11956,7 +11962,7 @@ ChangeUserTradeSlot::ChangeUserTradeSlot(clsByteQueue* buffer) : ServerPacket(Se
 
 }
 
-void ChangeUserTradeSlot::serialize(clsByteQueue* buffer) {
+void ChangeUserTradeSlot::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ChangeUserTradeSlot); /* PacketID: 86 */
     buffer->WriteByte(OfferSlot);
     buffer->WriteInteger(ObjIndex);
@@ -11985,7 +11991,7 @@ SendNight::SendNight(clsByteQueue* buffer) : ServerPacket(ServerPacketID_SendNig
 
 }
 
-void SendNight::serialize(clsByteQueue* buffer) {
+void SendNight::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_SendNight); /* PacketID: 87 */
     buffer->WriteBoolean(Night);
 
@@ -12003,7 +12009,7 @@ Pong::Pong(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Pong /* 88 */) {
 
 }
 
-void Pong::serialize(clsByteQueue* buffer) {
+void Pong::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_Pong); /* PacketID: 88 */
 
 }
@@ -12023,7 +12029,7 @@ UpdateTagAndStatus::UpdateTagAndStatus(clsByteQueue* buffer) : ServerPacket(Serv
 
 }
 
-void UpdateTagAndStatus::serialize(clsByteQueue* buffer) {
+void UpdateTagAndStatus::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateTagAndStatus); /* PacketID: 89 */
     buffer->WriteInteger(CharIndex);
     buffer->WriteByte(NickColor);
@@ -12044,7 +12050,7 @@ SpawnList::SpawnList(clsByteQueue* buffer) : ServerPacket(ServerPacketID_SpawnLi
 
 }
 
-void SpawnList::serialize(clsByteQueue* buffer) {
+void SpawnList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_SpawnList); /* PacketID: 90 */
     buffer->WriteUnicodeString(Data);
 
@@ -12063,7 +12069,7 @@ ShowSOSForm::ShowSOSForm(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Sho
 
 }
 
-void ShowSOSForm::serialize(clsByteQueue* buffer) {
+void ShowSOSForm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowSOSForm); /* PacketID: 91 */
     buffer->WriteUnicodeString(Data);
 
@@ -12082,7 +12088,7 @@ ShowMOTDEditionForm::ShowMOTDEditionForm(clsByteQueue* buffer) : ServerPacket(Se
 
 }
 
-void ShowMOTDEditionForm::serialize(clsByteQueue* buffer) {
+void ShowMOTDEditionForm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowMOTDEditionForm); /* PacketID: 92 */
     buffer->WriteUnicodeString(Data);
 
@@ -12100,7 +12106,7 @@ ShowGMPanelForm::ShowGMPanelForm(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void ShowGMPanelForm::serialize(clsByteQueue* buffer) {
+void ShowGMPanelForm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowGMPanelForm); /* PacketID: 93 */
 
 }
@@ -12118,7 +12124,7 @@ UserNameList::UserNameList(clsByteQueue* buffer) : ServerPacket(ServerPacketID_U
 
 }
 
-void UserNameList::serialize(clsByteQueue* buffer) {
+void UserNameList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UserNameList); /* PacketID: 94 */
     buffer->WriteUnicodeString(Data);
 
@@ -12137,7 +12143,7 @@ ShowDenounces::ShowDenounces(clsByteQueue* buffer) : ServerPacket(ServerPacketID
 
 }
 
-void ShowDenounces::serialize(clsByteQueue* buffer) {
+void ShowDenounces::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowDenounces); /* PacketID: 95 */
     buffer->WriteUnicodeString(Data);
 
@@ -12163,13 +12169,13 @@ RecordList::RecordList(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Recor
     }
 }
 
-void RecordList::serialize(clsByteQueue* buffer) {
+void RecordList::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_RecordList); /* PacketID: 96 */
     std::int32_t Count = static_cast<std::int32_t>(Items.size());
     buffer->WriteByte(Count);
     { std::int32_t i; 
         for (i=0; i<Count; ++i) {
-            Item &e = Items[i];
+            const Item &e = Items[i];
             buffer->WriteUnicodeString(e.Usuario);
 
         }
@@ -12194,7 +12200,7 @@ RecordDetails::RecordDetails(clsByteQueue* buffer) : ServerPacket(ServerPacketID
 
 }
 
-void RecordDetails::serialize(clsByteQueue* buffer) {
+void RecordDetails::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_RecordDetails); /* PacketID: 97 */
     buffer->WriteUnicodeString(Creador);
     buffer->WriteUnicodeString(Motivo);
@@ -12217,7 +12223,7 @@ ShowGuildAlign::ShowGuildAlign(clsByteQueue* buffer) : ServerPacket(ServerPacket
 
 }
 
-void ShowGuildAlign::serialize(clsByteQueue* buffer) {
+void ShowGuildAlign::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowGuildAlign); /* PacketID: 98 */
 
 }
@@ -12237,7 +12243,7 @@ ShowPartyForm::ShowPartyForm(clsByteQueue* buffer) : ServerPacket(ServerPacketID
 
 }
 
-void ShowPartyForm::serialize(clsByteQueue* buffer) {
+void ShowPartyForm::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ShowPartyForm); /* PacketID: 99 */
     buffer->WriteByte(EsLider);
     buffer->WriteUnicodeString(Data);
@@ -12259,7 +12265,7 @@ UpdateStrenghtAndDexterity::UpdateStrenghtAndDexterity(clsByteQueue* buffer) : S
 
 }
 
-void UpdateStrenghtAndDexterity::serialize(clsByteQueue* buffer) {
+void UpdateStrenghtAndDexterity::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateStrenghtAndDexterity); /* PacketID: 100 */
     buffer->WriteByte(Fuerza);
     buffer->WriteByte(Agilidad);
@@ -12279,7 +12285,7 @@ UpdateStrenght::UpdateStrenght(clsByteQueue* buffer) : ServerPacket(ServerPacket
 
 }
 
-void UpdateStrenght::serialize(clsByteQueue* buffer) {
+void UpdateStrenght::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateStrenght); /* PacketID: 101 */
     buffer->WriteByte(Fuerza);
 
@@ -12298,7 +12304,7 @@ UpdateDexterity::UpdateDexterity(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void UpdateDexterity::serialize(clsByteQueue* buffer) {
+void UpdateDexterity::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_UpdateDexterity); /* PacketID: 102 */
     buffer->WriteByte(Agilidad);
 
@@ -12317,7 +12323,7 @@ AddSlots::AddSlots(clsByteQueue* buffer) : ServerPacket(ServerPacketID_AddSlots 
 
 }
 
-void AddSlots::serialize(clsByteQueue* buffer) {
+void AddSlots::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_AddSlots); /* PacketID: 103 */
     buffer->WriteByte(Mochila);
 
@@ -12335,7 +12341,7 @@ MultiMessage::MultiMessage(clsByteQueue* buffer) : ServerPacket(ServerPacketID_M
 
 }
 
-void MultiMessage::serialize(clsByteQueue* buffer) {
+void MultiMessage::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_MultiMessage); /* PacketID: 104 */
 
 }
@@ -12352,7 +12358,7 @@ StopWorking::StopWorking(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Sto
 
 }
 
-void StopWorking::serialize(clsByteQueue* buffer) {
+void StopWorking::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_StopWorking); /* PacketID: 105 */
 
 }
@@ -12370,7 +12376,7 @@ CancelOfferItem::CancelOfferItem(clsByteQueue* buffer) : ServerPacket(ServerPack
 
 }
 
-void CancelOfferItem::serialize(clsByteQueue* buffer) {
+void CancelOfferItem::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_CancelOfferItem); /* PacketID: 106 */
     buffer->WriteByte(Slot);
 

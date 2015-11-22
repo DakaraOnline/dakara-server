@@ -81,12 +81,12 @@ void SoundMapInfo::ReproducirSonidosDeMapas() {
 				if (Lloviendo) {
 					if (p_Mapas[i].flags[SonidoMapa] ^ p_eSoundFlags_Lluvia) {
 						SendData(SendTarget_toMap, i,
-								PrepareMessagePlayWave(p_Mapas[i].SoundIndex[SonidoMapa], posX, posY));
+								dakara::protocol::server::BuildPlayWave(p_Mapas[i].SoundIndex[SonidoMapa], posX, posY));
 					}
 				} else {
 					if (p_Mapas[i].flags[SonidoMapa] ^ p_eSoundFlags_ninguna) {
 						SendData(SendTarget_toMap, i,
-								PrepareMessagePlayWave(p_Mapas[i].SoundIndex[SonidoMapa], posX, posY));
+								dakara::protocol::server::BuildPlayWave(p_Mapas[i].SoundIndex[SonidoMapa], posX, posY));
 					}
 				}
 			}
@@ -96,5 +96,5 @@ void SoundMapInfo::ReproducirSonidosDeMapas() {
 
 void SoundMapInfo::ReproducirSonido(SendTarget Destino, int index, int SoundIndex) {
 	SendData(Destino, index,
-			PrepareMessagePlayWave(SoundIndex, UserList[index].Pos.X, UserList[index].Pos.Y));
+			dakara::protocol::server::BuildPlayWave(SoundIndex, UserList[index].Pos.X, UserList[index].Pos.Y));
 }

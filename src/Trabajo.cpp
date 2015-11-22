@@ -737,10 +737,15 @@ void HerreroConstruirItem(int UserIndex, int ItemIndex) {
 		}
 
 		SubirSkill(UserIndex, eSkill_Herreria, true);
+
+		SendData(SendTarget_ToPCArea, UserIndex,
+				dakara::protocol::server::BuildPlayWave(MARTILLOHERRERO, UserList[UserIndex].Pos.X, UserList[UserIndex].Pos.Y));
+
+		/*
 		SendData(SendTarget_ToPCArea, UserIndex,
 				PrepareMessagePlayWave(MARTILLOHERRERO, UserList[UserIndex].Pos.X,
 						UserList[UserIndex].Pos.Y));
-
+*/
 		if (!criminal(UserIndex)) {
 			UserList[UserIndex].Reputacion.PlebeRep = UserList[UserIndex].Reputacion.PlebeRep + vlProleta;
 			if (UserList[UserIndex].Reputacion.PlebeRep > MAXREP) {
@@ -890,9 +895,15 @@ void CarpinteroConstruirItem(int UserIndex, int ItemIndex) {
 		}
 
 		SubirSkill(UserIndex, eSkill_Carpinteria, true);
+
+		SendData(SendTarget_ToPCArea, UserIndex,
+				dakara::protocol::server::BuildPlayWave(LABUROCARPINTERO, UserList[UserIndex].Pos.X, UserList[UserIndex].Pos.Y));
+
+		/*
 		SendData(SendTarget_ToPCArea, UserIndex,
 				PrepareMessagePlayWave(LABUROCARPINTERO, UserList[UserIndex].Pos.X,
 						UserList[UserIndex].Pos.Y));
+						*/
 
 		if (!criminal(UserIndex)) {
 			UserList[UserIndex].Reputacion.PlebeRep = UserList[UserIndex].Reputacion.PlebeRep + vlProleta;
@@ -1176,9 +1187,15 @@ void DoUpgrade(int UserIndex, int ItemIndex) {
 		}
 
 		SubirSkill(UserIndex, eSkill_Herreria, true);
+
+		SendData(SendTarget_ToPCArea, UserIndex,
+				dakara::protocol::server::BuildPlayWave(MARTILLOHERRERO, UserList[UserIndex].Pos.X, UserList[UserIndex].Pos.Y));
+
+		/*
 		SendData(SendTarget_ToPCArea, UserIndex,
 				PrepareMessagePlayWave(MARTILLOHERRERO, UserList[UserIndex].Pos.X,
 						UserList[UserIndex].Pos.Y));
+						*/
 
 	} else if (PuedeConstruirCarpintero(ItemUpgrade)) {
 
@@ -1216,9 +1233,15 @@ void DoUpgrade(int UserIndex, int ItemIndex) {
 		}
 
 		SubirSkill(UserIndex, eSkill_Carpinteria, true);
+
+		SendData(SendTarget_ToPCArea, UserIndex,
+				dakara::protocol::server::BuildPlayWave(LABUROCARPINTERO, UserList[UserIndex].Pos.X, UserList[UserIndex].Pos.Y));
+
+		/*
 		SendData(SendTarget_ToPCArea, UserIndex,
 				PrepareMessagePlayWave(LABUROCARPINTERO, UserList[UserIndex].Pos.X,
 						UserList[UserIndex].Pos.Y));
+						*/
 	} else {
 		return;
 	}
@@ -1539,10 +1562,24 @@ void DoAdminInvisible(int UserIndex) {
 		UserList[UserIndex].Char.Head = 0;
 
 		/* ' Solo el admin sabe que se hace invi */
+
+		/*
 		EnviarDatosASlot(UserIndex, PrepareMessageSetInvisible(UserList[UserIndex].Char.CharIndex, true));
+		*/
+		WriteSetInvisible(UserIndex, UserList[UserIndex].Char.CharIndex, true);
+
 		/* 'Le mandamos el mensaje para que borre el personaje a los clientes que estén cerca */
+
+		{
+			dakara::protocol::server::CharacterRemove p;
+			p.CharIndex = UserList[UserIndex].Char.CharIndex;
+			SendData(SendTarget_ToPCAreaButIndex, UserIndex, p);
+		}
+
+		/*
 		SendData(SendTarget_ToPCAreaButIndex, UserIndex,
 				PrepareMessageCharacterRemove(UserList[UserIndex].Char.CharIndex));
+				*/
 	} else {
 		UserList[UserIndex].flags.AdminInvisible = 0;
 		UserList[UserIndex].flags.invisible = 0;
@@ -1552,13 +1589,24 @@ void DoAdminInvisible(int UserIndex) {
 		UserList[UserIndex].Char.Head = UserList[UserIndex].flags.OldHead;
 
 		/* ' Solo el admin sabe que se hace visible */
+		/*
 		EnviarDatosASlot(UserIndex,
 				PrepareMessageCharacterChange(UserList[UserIndex].Char.body, UserList[UserIndex].Char.Head,
 						UserList[UserIndex].Char.heading, UserList[UserIndex].Char.CharIndex,
 						UserList[UserIndex].Char.WeaponAnim, UserList[UserIndex].Char.ShieldAnim,
 						UserList[UserIndex].Char.FX, UserList[UserIndex].Char.loops,
 						UserList[UserIndex].Char.CascoAnim));
+		 */
+		WriteCharacterChange(UserIndex, UserList[UserIndex].Char.body, UserList[UserIndex].Char.Head,
+				UserList[UserIndex].Char.heading, UserList[UserIndex].Char.CharIndex,
+				UserList[UserIndex].Char.WeaponAnim, UserList[UserIndex].Char.ShieldAnim,
+				UserList[UserIndex].Char.FX, UserList[UserIndex].Char.loops,
+				UserList[UserIndex].Char.CascoAnim);
+
+		/*
 		EnviarDatosASlot(UserIndex, PrepareMessageSetInvisible(UserList[UserIndex].Char.CharIndex, false));
+		*/
+		WriteSetInvisible(UserIndex, UserList[UserIndex].Char.CharIndex, false);
 
 		/* 'Le mandamos el mensaje para crear el personaje a los clientes que estén cerca */
 		MakeUserChar(true, UserList[UserIndex].Pos.Map, UserIndex, UserList[UserIndex].Pos.Map,
@@ -2444,8 +2492,14 @@ void DoMeditar(int UserIndex) {
 		UserList[UserIndex].flags.Meditando = false;
 		UserList[UserIndex].Char.FX = 0;
 		UserList[UserIndex].Char.loops = 0;
+
+		/*
 		SendData(SendTarget_ToPCArea, UserIndex,
 				PrepareMessageCreateFX(UserList[UserIndex].Char.CharIndex, 0, 0));
+				*/
+		SendData(SendTarget_ToPCArea, UserIndex,
+				dakara::protocol::server::BuildCreateFX(UserList[UserIndex].Char.CharIndex, 0, 0));
+
 		return;
 	}
 

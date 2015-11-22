@@ -257,9 +257,9 @@ void AccionParaPuerta(int Map, int X, int Y, int UserIndex) {
 							ObjData[MapData[Map][X][Y].ObjInfo.ObjIndex].IndexAbierta;
 
 					SendToAreaByPos(Map, X, Y,
-							PrepareMessageObjectCreate(
+							PacketToString(dakara::protocol::server::BuildObjectCreate(
 									ObjData[MapData[Map][X][Y].ObjInfo.ObjIndex].GrhIndex,
-									X, Y));
+									X, Y)));
 
 					/* 'Desbloquea */
 					MapData[Map][X][Y].Blocked = 0;
@@ -270,7 +270,7 @@ void AccionParaPuerta(int Map, int X, int Y, int UserIndex) {
 					Bloquear(true, Map, X - 1, Y, 0);
 
 					/* 'Sonido */
-					auto msg = PrepareMessagePlayWave(SND_PUERTA, X, Y);
+					auto msg = dakara::protocol::server::BuildPlayWave(SND_PUERTA, X, Y);
 					SendData(SendTarget_ToPCArea, UserIndex, msg);
 
 				} else {
@@ -284,9 +284,9 @@ void AccionParaPuerta(int Map, int X, int Y, int UserIndex) {
 						ObjData[MapData[Map][X][Y].ObjInfo.ObjIndex].IndexCerrada;
 
 				SendToAreaByPos(Map, X, Y,
-						PrepareMessageObjectCreate(
+						PacketToString(dakara::protocol::server::BuildObjectCreate(
 								ObjData[MapData[Map][X][Y].ObjInfo.ObjIndex].GrhIndex,
-								X, Y));
+								X, Y)));
 
 				MapData[Map][X][Y].Blocked = 1;
 				MapData[Map][X - 1][Y].Blocked = 1;
@@ -294,7 +294,7 @@ void AccionParaPuerta(int Map, int X, int Y, int UserIndex) {
 				Bloquear(true, Map, X - 1, Y, 1);
 				Bloquear(true, Map, X, Y, 1);
 
-				auto msg = PrepareMessagePlayWave(SND_PUERTA, X, Y);
+				auto msg = dakara::protocol::server::BuildPlayWave(SND_PUERTA, X, Y);
 				SendData(SendTarget_ToPCArea, UserIndex, msg);
 			}
 

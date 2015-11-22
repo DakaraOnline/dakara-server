@@ -77,7 +77,7 @@ void MuereNpc(int NpcIndex, int UserIndex) {
 
 		if (MiNPC.flags.Snd3 > 0) {
 			SendData(SendTarget_ToPCArea, UserIndex,
-					PrepareMessagePlayWave(MiNPC.flags.Snd3, MiNPC.Pos.X, MiNPC.Pos.Y));
+					dakara::protocol::server::BuildPlayWave(MiNPC.flags.Snd3, MiNPC.Pos.X, MiNPC.Pos.Y));
 		}
 		UserList[UserIndex].flags.TargetNPC = 0;
 		UserList[UserIndex].flags.TargetNpcTipo = eNPCType_Comun;
@@ -612,7 +612,7 @@ void ChangeNPCChar(int NpcIndex, int body, int Head, eHeading heading) {
 		Npclist[NpcIndex].Char.heading = heading;
 
 		SendData(SendTarget_ToNPCArea, NpcIndex,
-				PrepareMessageCharacterChange(body, Head, heading, Npclist[NpcIndex].Char.CharIndex, 0, 0, 0,
+				dakara::protocol::server::BuildCharacterChange(body, Head, heading, Npclist[NpcIndex].Char.CharIndex, 0, 0, 0,
 						0, 0));
 	}
 }
@@ -641,7 +641,8 @@ void EraseNPCChar(int NpcIndex) {
 	MapData[Npclist[NpcIndex].Pos.Map][Npclist[NpcIndex].Pos.X][Npclist[NpcIndex].Pos.Y].NpcIndex = 0;
 
 	/* 'Actualizamos los clientes */
-	SendData(SendTarget_ToNPCArea, NpcIndex, PrepareMessageCharacterRemove(Npclist[NpcIndex].Char.CharIndex));
+	SendData(SendTarget_ToNPCArea, NpcIndex,
+			dakara::protocol::server::BuildCharacterRemove(Npclist[NpcIndex].Char.CharIndex));
 
 	/* 'Update la lista npc */
 	Npclist[NpcIndex].Char.CharIndex = 0;
@@ -707,13 +708,13 @@ bool MoveNPCChar(int NpcIndex, int nHeading) {
 
 			/* ' Avisamos a los usuarios del area, y al propio usuario lo forzamos a moverse */
 			SendData(SendTarget_ToPCAreaButIndex, UserIndex,
-					PrepareMessageCharacterMove(UserList[UserIndex].Char.CharIndex, UserList[UserIndex].Pos.X,
+					dakara::protocol::server::BuildCharacterMove(UserList[UserIndex].Char.CharIndex, UserList[UserIndex].Pos.X,
 							UserList[UserIndex].Pos.Y));
 			WriteForceCharMove(UserIndex, InvertHeading(static_cast<eHeading>(nHeading)));
 		}
 
 		SendData(SendTarget_ToNPCArea, NpcIndex,
-				PrepareMessageCharacterMove(Npclist[NpcIndex].Char.CharIndex, nPos.X, nPos.Y));
+				dakara::protocol::server::BuildCharacterMove(Npclist[NpcIndex].Char.CharIndex, nPos.X, nPos.Y));
 
 		/* 'Update map and user pos */
 		MapData[Npclist[NpcIndex].Pos.Map][Npclist[NpcIndex].Pos.X][Npclist[NpcIndex].Pos.Y].NpcIndex = 0;
@@ -850,9 +851,10 @@ int SpawnNpc(int NpcIndex, struct WorldPos Pos, bool FX, bool Respawn) {
 	MakeNPCChar(true, Map, nIndex, Map, X, Y);
 
 	if (FX) {
-		SendData(SendTarget_ToNPCArea, nIndex, PrepareMessagePlayWave(SND_WARP, X, Y));
 		SendData(SendTarget_ToNPCArea, nIndex,
-				PrepareMessageCreateFX(Npclist[nIndex].Char.CharIndex, FXIDs_FXWARP, 0));
+				dakara::protocol::server::BuildPlayWave(SND_WARP, X, Y));
+		SendData(SendTarget_ToNPCArea, nIndex,
+				dakara::protocol::server::BuildCreateFX(Npclist[nIndex].Char.CharIndex, FXIDs_FXWARP, 0));
 	}
 
 	retval = nIndex;

@@ -17,6 +17,22 @@
 
 #include "SendData.h"
 #include "allheaders.h"
+#include "ProtocolNew.h"
+
+
+std::string PacketToString(const dakara::protocol::Packet& p) {
+	clsByteQueue q;
+	p.serialize(&q);
+	return q.PeekBinaryFixed(q.length());
+}
+
+void SendData(SendTarget sndRoute, int sndIndex, const dakara::protocol::Packet& p, bool IsDenounce) {
+	clsByteQueue q;
+
+	p.serialize(&q);
+
+	SendData(sndRoute, sndIndex, q.PeekBinaryFixed(q.length()), IsDenounce);
+}
 
 /* '' */
 /* ' Contains all methods to send data to different user groups. */
@@ -403,6 +419,10 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToGM:
 		throw std::runtime_error("SendData unhandled target: SendTarget_ToGM");
+		break;
+
+	case SendTarget_ToUserIndex:
+		EnviarDatosASlot(sndIndex, sndData);
 		break;
 	}
 }
@@ -899,13 +919,11 @@ void AlertarFaccionarios(int UserIndex) {
 			if (tempIndex != UserIndex) {
 				/* ' Solo se envia a los de la misma faccion */
 				if (SameFaccion(UserIndex, tempIndex)) {
-					EnviarDatosASlot(tempIndex,
-							PrepareMessageConsoleMsg(
-									"Escuchas el llamado de un companero que proviene del "
-											+ GetDireccion(UserIndex, tempIndex), Font));
+					WriteConsoleMsg(tempIndex,
+							"Escuchas el llamado de un companero que proviene del "
+									+ GetDireccion(UserIndex, tempIndex), Font);
 				}
 			}
 		}
 	}
-
 }

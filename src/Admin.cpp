@@ -126,7 +126,7 @@ void WorldSave() {
 	int loopX;
 
 	SendData(SendTarget_ToAll, 0,
-			PrepareMessageConsoleMsg("Servidor> Iniciando WorldSave",
+			dakara::protocol::server::BuildConsoleMsg("Servidor> Iniciando WorldSave",
 					FontTypeNames_FONTTYPE_SERVER));
 
 	/* 'respawn de los guardias en las pos originales */
@@ -163,7 +163,7 @@ void WorldSave() {
 	SaveForums();
 
 	SendData(SendTarget_ToAll, 0,
-			PrepareMessageConsoleMsg("Servidor> WorldSave ha concluído.",
+			dakara::protocol::server::BuildConsoleMsg("Servidor> WorldSave ha concluído.",
 					FontTypeNames_FONTTYPE_SERVER));
 
 	Logger::getInstance().flushAll();
@@ -502,7 +502,7 @@ void BanCharacter(int bannerUserIndex, std::string UserName,
 				} else {
 					LogBanFromName(UserName, bannerUserIndex, Reason);
 					SendData(SendTarget_ToAdminsButCounselorsAndRms, 0,
-							PrepareMessageConsoleMsg(
+							dakara::protocol::server::BuildConsoleMsg(
 									"Servidor> "
 											+ UserList[bannerUserIndex].Name
 											+ " ha baneado a " + UserName + ".",
@@ -525,7 +525,7 @@ void BanCharacter(int bannerUserIndex, std::string UserName,
 					if (UserTieneIgualPrivilegiosQue(UserName, bannerUserIndex)) {
 						UserList[bannerUserIndex].flags.Ban = 1;
 						SendData(SendTarget_ToAdmins, 0,
-								PrepareMessageConsoleMsg(
+								dakara::protocol::server::BuildConsoleMsg(
 										UserList[bannerUserIndex].Name
 												+ " banned by the server por bannear un Administrador.",
 										FontTypeNames_FONTTYPE_FIGHT));
@@ -550,7 +550,7 @@ void BanCharacter(int bannerUserIndex, std::string UserName,
 
 			LogBan(tUser, bannerUserIndex, Reason);
 			SendData(SendTarget_ToAdminsButCounselorsAndRms, 0,
-					PrepareMessageConsoleMsg(
+					dakara::protocol::server::BuildConsoleMsg(
 							"Servidor> " + UserList[bannerUserIndex].Name
 									+ " ha baneado a " + UserList[tUser].Name
 									+ ".", FontTypeNames_FONTTYPE_SERVER));
@@ -561,7 +561,7 @@ void BanCharacter(int bannerUserIndex, std::string UserName,
 			if (UserTieneIgualPrivilegiosQue(tUser, bannerUserIndex)) {
 				UserList[bannerUserIndex].flags.Ban = 1;
 				SendData(SendTarget_ToAdminsButCounselorsAndRms, 0,
-						PrepareMessageConsoleMsg(
+						dakara::protocol::server::BuildConsoleMsg(
 								UserList[bannerUserIndex].Name
 										+ " banned by the server por bannear un Administrador.",
 								FontTypeNames_FONTTYPE_FIGHT));

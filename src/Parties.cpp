@@ -345,7 +345,7 @@ void AprobarIngresoAParty(int leader, int NewMember) {
 						/* 'no pudo entrar */
 						/* 'ACA UNO PUEDE CODIFICAR OTRO TIPO DE ERRORES... */
 						SendData(SendTarget_ToAdmins, leader,
-								PrepareMessageConsoleMsg(
+								dakara::protocol::server::BuildConsoleMsg(
 										" Servidor> CATÁSTROFE EN PARTIES, NUEVOMIEMBRO DIO FALSE! :S ",
 										FontTypeNames_FONTTYPE_PARTY));
 					}
@@ -490,10 +490,11 @@ void ActualizaExperiencias() {
 	if (!PARTY_EXPERIENCIAPORGOLPE) {
 
 		haciendoBK = true;
-		SendData(SendTarget_ToAll, 0, PrepareMessagePauseToggle());
+		SendData(SendTarget_ToAll, 0,
+				dakara::protocol::server::BuildPauseToggle());
 
 		SendData(SendTarget_ToAll, 0,
-				PrepareMessageConsoleMsg("Servidor> Distribuyendo experiencia en parties.",
+				dakara::protocol::server::BuildConsoleMsg("Servidor> Distribuyendo experiencia en parties.",
 						FontTypeNames_FONTTYPE_SERVER));
 		for (i = (1); i <= (MAX_PARTIES); i++) {
 			if (Parties[i] != nullptr) {
@@ -501,9 +502,10 @@ void ActualizaExperiencias() {
 			}
 		}
 		SendData(SendTarget_ToAll, 0,
-				PrepareMessageConsoleMsg("Servidor> Experiencia distribuida.",
+				dakara::protocol::server::BuildConsoleMsg("Servidor> Experiencia distribuida.",
 						FontTypeNames_FONTTYPE_SERVER));
-		SendData(SendTarget_ToAll, 0, PrepareMessagePauseToggle());
+		SendData(SendTarget_ToAll, 0,
+				dakara::protocol::server::BuildPauseToggle());
 		haciendoBK = false;
 
 	}
