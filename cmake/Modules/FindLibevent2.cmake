@@ -2,8 +2,11 @@
 # https://github.com/sipwise/sems/blob/master/cmake/FindLibevent2.cmake
 #
 
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	FIND_PATH(LIBEVENT2_INCLUDE_DIR event2/event.h)
+
+	list(INSERT CMAKE_FIND_LIBRARY_SUFFIXES 0 .imp)
+	list(INSERT CMAKE_FIND_LIBRARY_SUFFIXES 0 .imp.lib)
 
 	if(CMAKE_CL_64)
 		FIND_LIBRARY(LIBEVENT2_LIBRARIES NAMES libevent-x64-v120-mt-2_1_4_0 event libevent )
