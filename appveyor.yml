@@ -1,13 +1,17 @@
 version: "{branch}-ci-{build}"
 clone_depth: 5 
 
+os: Visual Studio 2015
+
 platform:
-  - Win32
   - x64
+
+configuration:
+  - Release
 
 environment:
   global:
-    BOOST_ROOT: c:\Libraries\boost
+    BOOST_ROOT: C:\Libraries\boost_1_59_0
     BOOST_LIBRARYDIR: c:\Libraries\boost\stage\lib
     BUILD_TYPE: Release
     CMAKE_INCLUDE_PATH: C:\projects\dakara-server\deps\libevent_vc120\build\native\include
@@ -18,27 +22,27 @@ init:
   - cmd: msbuild /version
   - cmd: echo %platform%
 
-install:
+before_build:
   - mkdir deps
   - mkdir deps\include
   - mkdir deps\lib
   - nuget install libevent_vc120 -OutputDirectory deps -ExcludeVersion 
 
-before_build:
-  - cmd: md build
-  - cmd: cd build
-  - cmd: dir %BOOST_ROOT% 
-  - cmd: dir %BOOST_LIBRARYDIR% 
-  - cmd: dir /s ..\deps
-  - cmd: if "%platform%"=="Win32" cmake -G "Visual Studio 12" -DLIBEVENT2_LIB_PREFIX="lib" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBoost_USE_STATIC_LIBS="ON" ..
-  - cmd: if "%platform%"=="x64" cmake -G "Visual Studio 12 Win64" -DLIBEVENT2_LIB_PREFIX="lib" -DCMAKE_BUILD_TYPE=%configuration% -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBOOST_TEST_HEADER_ONLY="ON" -DBoost_USE_STATIC_LIBS="ON" ..
+build_script:
+  - dir /s /p %BOOST_ROOT%
+  - dir /s /p deps
+  - echo %configuration%
+  - mkdir build
+  - pushd .
+  - cd build
+  - cmake --version
+  - cmake ..
+  - cmake --build .
 
 build:
-  project: C:\projects\dakara-server\build\dakaraserver.sln
   parallel: true
   verbosity: detailed
 
 branches:
   only:
     - master
-
