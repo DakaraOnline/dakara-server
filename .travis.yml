@@ -26,6 +26,7 @@ script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then cmake .. && cmake --build . 
 branches:
   only:
     - master
+    - coverityscan
 
 os:
   - linux
@@ -44,4 +45,4 @@ addons:
     notification_email: alejolp@gmail.com
     build_command_prepend: cmake ..
     build_command: cmake --build .
-    branch_pattern: master
+    branch_pattern: coverityscan
