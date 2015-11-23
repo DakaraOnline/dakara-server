@@ -989,12 +989,11 @@ void WriteChangeBankSlot(int UserIndex, int Slot) {
 
 	ObjIndex = UserList[UserIndex].BancoInvent.Object[Slot].ObjIndex;
 
-	UserList[UserIndex].outgoingData->WriteInteger(ObjIndex);
-
 	if (ObjIndex > 0) {
 		obData = ObjData[ObjIndex];
 	}
 
+	p.ObjIndex = ObjIndex;
 	p.ObjName = obData.Name;
 	p.Amount = UserList[UserIndex].BancoInvent.Object[Slot].Amount;
 	p.GrhIndex = obData.GrhIndex;
@@ -1582,8 +1581,8 @@ void WriteSendSkills(int UserIndex) {
 
 	dakara::protocol::server::SendSkills p;
 	for (i = (1); i <= (NUMSKILLS); i++) {
-		UserList[UserIndex].outgoingData->WriteByte(UserList[UserIndex].Stats.UserSkills[i]);
 		if (UserList[UserIndex].Stats.UserSkills[i] < MAXSKILLPOINTS) {
+			p.Skills.resize(NUMSKILLS); // FIXME: The protocol generator should do this.
 			p.Skills[i-1]=vb6::Int(
 							UserList[UserIndex].Stats.ExpSkills[i] * 100
 									/ UserList[UserIndex].Stats.EluSkills[i]);
@@ -2485,7 +2484,6 @@ void WriteRecordList(int UserIndex) {
 	int i;
 
 	dakara::protocol::server::RecordList p;
-	UserList[UserIndex].outgoingData->WriteByte(NumRecords);
 	for (i = (1); i <= (NumRecords); i++) {
 		p.addItem(Records[i].Usuario);
 	}
