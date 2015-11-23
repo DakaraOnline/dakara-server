@@ -6,7 +6,7 @@ if(MSVC)
 	FIND_PATH(LIBEVENT2_INCLUDE_DIR event2/event.h)
 
 	if(CMAKE_CL_64)
-		FIND_LIBRARY(LIBEVENT2_LIBRARIES NAMES libevent-x64-v120-mt-gd-2_1_4_0 event libevent )
+		FIND_LIBRARY(LIBEVENT2_LIBRARIES NAMES libevent-x64-v120-mt-2_1_4_0 event libevent )
 	else()
 		FIND_LIBRARY(LIBEVENT2_LIBRARIES NAMES libevent-x86-v120-mt-2_1_4_0 event libevent )
 	endif()
