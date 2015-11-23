@@ -36,7 +36,7 @@ build_script:
   - pushd .
   - cd build
   - cmake --version
-  - cmake ..
+  - cmake --trace ..
   - cmake --build .
 
 build:

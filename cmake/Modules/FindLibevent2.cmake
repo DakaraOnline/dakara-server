@@ -2,7 +2,7 @@
 # https://github.com/sipwise/sems/blob/master/cmake/FindLibevent2.cmake
 #
 
-if(MSVC)
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 	FIND_PATH(LIBEVENT2_INCLUDE_DIR event2/event.h)
 
 	if(CMAKE_CL_64)
