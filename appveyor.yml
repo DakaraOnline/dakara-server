@@ -11,8 +11,8 @@ configuration:
 
 environment:
   global:
-    BOOST_ROOT: C:\Libraries\boost_1_59_0
-    BOOST_LIBRARYDIR: c:\Libraries\boost\stage\lib
+    BOOST_INCLUDEDIR: C:\Libraries\boost_1_59_0
+    BOOST_LIBRARYDIR: C:\Libraries\boost_1_59_0\lib32-msvc-14.0
     BUILD_TYPE: Release
     CMAKE_INCLUDE_PATH: C:\projects\dakara-server\deps\libevent_vc120\build\native\include
     CMAKE_LIBRARY_PATH: C:\projects\dakara-server\deps\libevent_vc120\build\native\bin
@@ -29,7 +29,7 @@ before_build:
   - nuget install libevent_vc120 -OutputDirectory deps -ExcludeVersion 
 
 build_script:
-  - dir /s /p %BOOST_ROOT%
+#  - dir /s /p %BOOST_ROOT%
   - dir /s /p deps
   - echo %configuration%
   - mkdir build
