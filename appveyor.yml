@@ -24,8 +24,8 @@ init:
 
 before_build:
   - mkdir deps
-  - mkdir deps/include
-  - mkdir deps/lib
+  - mkdir deps\include
+  - mkdir deps\lib
   - nuget install libevent_vc120 -OutputDirectory deps -ExcludeVersion 
 
 build_script:
