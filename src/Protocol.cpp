@@ -563,7 +563,7 @@ void WriteUserIndexInServer(int UserIndex) {
 void WriteUserCharIndexInServer(int UserIndex) {
 	dakara::protocol::server::UserCharIndexInServer p;
 
-	p.CharIndex = UserIndex;
+	p.CharIndex = UserList[UserIndex].Char.CharIndex;
 
 	p.serialize(UserList[UserIndex].outgoingData.get());
 }
