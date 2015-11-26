@@ -1578,16 +1578,16 @@ void WriteSendSkills(int UserIndex) {
 	/* '*************************************************** */
 
 	int i;
-
 	dakara::protocol::server::SendSkills p;
 	for (i = (1); i <= (NUMSKILLS); i++) {
+		// Skills contiene pares de numero de skill y su porcentaje
+		p.Skills.emplace_back(UserList[UserIndex].Stats.UserSkills[i]);
 		if (UserList[UserIndex].Stats.UserSkills[i] < MAXSKILLPOINTS) {
-			p.Skills.resize(NUMSKILLS); // FIXME: The protocol generator should do this.
-			p.Skills[i-1]=vb6::Int(
+			p.Skills.emplace_back(vb6::Int(
 							UserList[UserIndex].Stats.ExpSkills[i] * 100
-									/ UserList[UserIndex].Stats.EluSkills[i]);
+									/ UserList[UserIndex].Stats.EluSkills[i]));
 		} else {
-			p.Skills[i-1] = 0;
+			p.Skills.emplace_back(0);
 		}
 	}
 	p.serialize(UserList[UserIndex].outgoingData.get());
