@@ -2018,8 +2018,8 @@ void WriteParalizeOK(int UserIndex) {
 	/* '*************************************************** */
 
 	dakara::protocol::server::ParalizeOK p;
-	WritePosUpdate(UserIndex);
 	p.serialize(UserList[UserIndex].outgoingData.get());
+	WritePosUpdate(UserIndex);
 }
 
 /* '' */
