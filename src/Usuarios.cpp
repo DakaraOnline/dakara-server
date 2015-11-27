@@ -231,8 +231,8 @@ void ChangeUserChar(int UserIndex, int body, int Head, int heading, int Arma, in
 	UserList[UserIndex].Char.CascoAnim = casco;
 
 	SendData(SendTarget_ToPCArea, UserIndex,
-			dakara::protocol::server::BuildCharacterChange(body, Head, static_cast<eHeading>(heading), UserList[UserIndex].Char.CharIndex, Arma,
-					Escudo, UserList[UserIndex].Char.FX, UserList[UserIndex].Char.loops, casco));
+			dakara::protocol::server::BuildCharacterChange(UserList[UserIndex].Char.CharIndex,body, Head, static_cast<eHeading>(heading),Arma,
+					Escudo, casco, UserList[UserIndex].Char.FX, UserList[UserIndex].Char.loops));
 }
 
 int GetWeaponAnim(int UserIndex, int ObjIndex) {
