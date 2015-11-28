@@ -257,10 +257,10 @@ void AccionParaPuerta(int Map, int X, int Y, int UserIndex) {
 							ObjData[MapData[Map][X][Y].ObjInfo.ObjIndex].IndexAbierta;
 
 					SendToAreaByPos(Map, X, Y,
-							PacketToString(dakara::protocol::server::BuildObjectCreate(
-									ObjData[MapData[Map][X][Y].ObjInfo.ObjIndex].GrhIndex,
-									X, Y)));
-
+							PacketToString(
+									dakara::protocol::server::BuildObjectCreate(
+											X, Y,
+											ObjData[MapData[Map][X][Y].ObjInfo.ObjIndex].GrhIndex)));
 					/* 'Desbloquea */
 					MapData[Map][X][Y].Blocked = 0;
 					MapData[Map][X - 1][Y].Blocked = 0;
@@ -284,10 +284,10 @@ void AccionParaPuerta(int Map, int X, int Y, int UserIndex) {
 						ObjData[MapData[Map][X][Y].ObjInfo.ObjIndex].IndexCerrada;
 
 				SendToAreaByPos(Map, X, Y,
-						PacketToString(dakara::protocol::server::BuildObjectCreate(
-								ObjData[MapData[Map][X][Y].ObjInfo.ObjIndex].GrhIndex,
-								X, Y)));
-
+						PacketToString(
+								dakara::protocol::server::BuildObjectCreate(X,
+										Y,
+										ObjData[MapData[Map][X][Y].ObjInfo.ObjIndex].GrhIndex)));
 				MapData[Map][X][Y].Blocked = 1;
 				MapData[Map][X - 1][Y].Blocked = 1;
 

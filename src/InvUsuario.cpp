@@ -458,7 +458,7 @@ void MakeObj(struct Obj & Obj, int Map, int X, int Y) {
 		} else {
 			MapData[Map][X][Y].ObjInfo = Obj;
 
-			SendToAreaByPos(Map, X, Y, PacketToString(dakara::protocol::server::BuildObjectCreate(ObjData[Obj.ObjIndex].GrhIndex, X, Y)));
+			SendToAreaByPos(Map, X, Y, PacketToString(dakara::protocol::server::BuildObjectCreate(X, Y,ObjData[Obj.ObjIndex].GrhIndex)));
 		}
 	}
 
