@@ -6098,10 +6098,10 @@ public:
     virtual void dispatch(PacketHandler* d);
 
     std::string Chat; 
-    std::int16_t FontIndex; 
+    std::uint8_t FontIndex; 
 };
 
-inline ConsoleMsg BuildConsoleMsg(const std::string& Chat, std::int16_t FontIndex) {
+inline ConsoleMsg BuildConsoleMsg(const std::string& Chat, std::uint8_t FontIndex) {
     ConsoleMsg e;
         e.Chat = Chat;
         e.FontIndex = FontIndex;

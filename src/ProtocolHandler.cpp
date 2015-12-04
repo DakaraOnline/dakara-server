@@ -23,12 +23,6 @@
 
 std::vector<DakaraPacketHandler> UserProtocolHandler;
 
-void InitProtocolHandler() {
-	for (size_t i = 0; i < UserList.ubound(); ++i) {
-		UserProtocolHandler.emplace_back(i);
-	}
-}
-
 void HandleIncomingData(int UserIndex) {
 
 	int k = 0;
@@ -105,9 +99,10 @@ void HandleIncomingDataOnePacket(int UserIndex) {
 	UserList[UserIndex].flags.NoPuedeSerAtacado = false;
 
 	try {
+		DakaraPacketHandler packet(UserIndex);
 		dakara::protocol::client::ClientPacketDecodeAndDispatch(
 				UserList[UserIndex].incomingData.get(),
-				&(UserProtocolHandler[UserIndex]));
+				&(packet));
 	} catch (const dakara::protocol::PacketDecodingError& e) {
 		CerrarUserIndex(UserIndex);
 	}
@@ -126,7 +121,8 @@ dakara::protocol::server::ServerPacketHandler* DakaraPacketHandler::getPacketHan
 }
 
 void DakaraClientPacketHandler::handleGMCommands(dakara::protocol::client::GMCommands* p) {
-	p->composite->dispatch(&(UserProtocolHandler[UserIndex]));
+	DakaraPacketHandler packet(UserIndex);
+	p->composite->dispatch(&packet);
 }
 
 using namespace dakara::protocol::client;

@@ -612,7 +612,7 @@ void ChangeNPCChar(int NpcIndex, int body, int Head, eHeading heading) {
 		Npclist[NpcIndex].Char.heading = heading;
 
 		SendData(SendTarget_ToNPCArea, NpcIndex,
-				dakara::protocol::server::BuildCharacterChange(body, Head, heading, Npclist[NpcIndex].Char.CharIndex, 0, 0, 0,
+				dakara::protocol::server::BuildCharacterChange(Npclist[NpcIndex].Char.CharIndex, body, Head, heading, 0, 0, 0,
 						0, 0));
 	}
 }
