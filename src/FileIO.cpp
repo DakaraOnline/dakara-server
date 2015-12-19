@@ -2478,7 +2478,7 @@ void CargarNpcBackUp(int NpcIndex, int NpcNumber) {
 	Npclist[NpcIndex].Char.body = vb6::val(GetVar(npcfile, npcNumberStr, "Body"));
 	Npclist[NpcIndex].Char.Head = vb6::val(GetVar(npcfile, npcNumberStr, "Head"));
 	Npclist[NpcIndex].Char.heading =
-			static_cast<eHeading>(vb6::val(GetVar(npcfile, npcNumberStr, "Heading")));
+			static_cast<eHeading>(vb6::CInt(GetVar(npcfile, npcNumberStr, "Heading")));
 
 	Npclist[NpcIndex].Attackable = vb6::val(GetVar(npcfile, npcNumberStr, "Attackable"));
 	Npclist[NpcIndex].Comercia = vb6::val(GetVar(npcfile, npcNumberStr, "Comercia"));

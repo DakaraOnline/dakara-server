@@ -136,8 +136,10 @@ void clsIniManager::DumpFile(std::string File, bool sync_fs) {
 
 	if (fd) {
 		if (sync_fs) {
+#ifndef WIN32
 			int n = fileno(fd);
 			fsync(n);
+#endif
 		}
 
 		fclose(fd);
