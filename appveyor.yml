@@ -12,7 +12,7 @@ configuration:
 environment:
   global:
     BOOST_INCLUDEDIR: C:/Libraries/boost_1_59_0
-    BOOST_LIBRARYDIR: C:/Libraries/boost_1_59_0/lib32-msvc-14.0
+    BOOST_LIBRARYDIR: C:/Libraries/boost_1_59_0/lib64-msvc-14.0
     BUILD_TYPE: Release
     CMAKE_INCLUDE_PATH: C:/projects/dakara-server/deps/libevent_vc120/build/native/include
     CMAKE_LIBRARY_PATH: C:/projects/dakara-server/deps/libevent_vc120/build/native/bin
