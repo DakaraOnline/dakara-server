@@ -21,7 +21,9 @@
 #include <fstream>
 #include <boost/algorithm/string.hpp>
 
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 
 void clsIniManager::Initialize(std::string FileName) {

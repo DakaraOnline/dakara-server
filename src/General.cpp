@@ -24,13 +24,14 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
-
-std::shared_ptr<clsIniManager> LeerNPCs;
 
 #ifndef WIN32
+#include <unistd.h>
 #include <execinfo.h>
 #endif
+
+
+std::shared_ptr<clsIniManager> LeerNPCs;
 
 void dakara_print_backtrace() {
 #ifndef WIN32

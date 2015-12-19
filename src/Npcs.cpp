@@ -936,7 +936,7 @@ int OpenNPC(int NpcNumber, bool Respawn) {
 	Npclist[NpcIndex].Name = Leer->GetValue(npcSect, "Name");
 	Npclist[NpcIndex].desc = Leer->GetValue(npcSect, "Desc");
 
-	Npclist[NpcIndex].Movement = static_cast<TipoAI>(vb6::val(Leer->GetValue(npcSect, "Movement")));
+	Npclist[NpcIndex].Movement = static_cast<TipoAI>(vb6::CInt(Leer->GetValue(npcSect, "Movement")));
 	Npclist[NpcIndex].flags.OldMovement = Npclist[NpcIndex].Movement;
 
 	Npclist[NpcIndex].flags.AguaValida = vb6::val(Leer->GetValue(npcSect, "AguaValida"));
@@ -944,11 +944,11 @@ int OpenNPC(int NpcNumber, bool Respawn) {
 	Npclist[NpcIndex].flags.Faccion = vb6::val(Leer->GetValue(npcSect, "Faccion"));
 	Npclist[NpcIndex].flags.AtacaDoble = vb6::val(Leer->GetValue(npcSect, "AtacaDoble"));
 
-	Npclist[NpcIndex].NPCtype = static_cast<eNPCType>(vb6::val(Leer->GetValue(npcSect, "NpcType")));
+	Npclist[NpcIndex].NPCtype = static_cast<eNPCType>(vb6::CInt(Leer->GetValue(npcSect, "NpcType")));
 
 	Npclist[NpcIndex].Char.body = vb6::val(Leer->GetValue(npcSect, "Body"));
 	Npclist[NpcIndex].Char.Head = vb6::val(Leer->GetValue(npcSect, "Head"));
-	Npclist[NpcIndex].Char.heading = static_cast<eHeading>(vb6::val(Leer->GetValue(npcSect, "Heading")));
+	Npclist[NpcIndex].Char.heading = static_cast<eHeading>(vb6::CInt(Leer->GetValue(npcSect, "Heading")));
 
 	Npclist[NpcIndex].Attackable = vb6::val(Leer->GetValue(npcSect, "Attackable"));
 	Npclist[NpcIndex].Comercia = vb6::val(Leer->GetValue(npcSect, "Comercia"));

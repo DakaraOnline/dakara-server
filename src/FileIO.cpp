@@ -504,7 +504,7 @@ void CargarHechizos() {
 		Hechizos[Hechizo].TargetMsg = Leer->GetValue(hechizostr, "TargetMsg");
 		Hechizos[Hechizo].PropioMsg = Leer->GetValue(hechizostr, "PropioMsg");
 
-		Hechizos[Hechizo].Tipo = static_cast<enum TipoHechizo>(vb6::val(Leer->GetValue(hechizostr, "Tipo")));
+		Hechizos[Hechizo].Tipo = static_cast<enum TipoHechizo>(vb6::CInt(Leer->GetValue(hechizostr, "Tipo")));
 		Hechizos[Hechizo].WAV = vb6::val(Leer->GetValue(hechizostr, "WAV"));
 		Hechizos[Hechizo].FXgrh = vb6::val(Leer->GetValue(hechizostr, "Fxgrh"));
 
@@ -579,7 +579,7 @@ void CargarHechizos() {
 		Hechizos[Hechizo].StaRequerido = vb6::val(Leer->GetValue(hechizostr, "StaRequerido"));
 
 		Hechizos[Hechizo].Target =
-				static_cast<enum TargetType>(vb6::val(Leer->GetValue(hechizostr, "Target")));
+				static_cast<enum TargetType>(vb6::CInt(Leer->GetValue(hechizostr, "Target")));
 
 		Hechizos[Hechizo].NeedStaff = vb6::val(Leer->GetValue(hechizostr, "NeedStaff"));
 		Hechizos[Hechizo].StaffAffected = vb6::CBool(vb6::val(Leer->GetValue(hechizostr, "StaffAffected")));
@@ -1005,7 +1005,7 @@ void LoadOBJData() {
 //    ObjData[Object].GrhIndex = ObjData[Object].GrhIndex;
 //   }
 
-		ObjData[Object].OBJType = static_cast<eOBJType>(vb6::val(Leer->GetValue(objidxstr, "ObjType")));
+		ObjData[Object].OBJType = static_cast<eOBJType>(vb6::CInt(Leer->GetValue(objidxstr, "ObjType")));
 
 		ObjData[Object].Newbie = vb6::val(Leer->GetValue(objidxstr, "Newbie"));
 
@@ -2472,8 +2472,8 @@ void CargarNpcBackUp(int NpcIndex, int NpcNumber) {
 	Npclist[NpcIndex].Numero = NpcNumber;
 	Npclist[NpcIndex].Name = GetVar(npcfile, npcNumberStr, "Name");
 	Npclist[NpcIndex].desc = GetVar(npcfile, npcNumberStr, "Desc");
-	Npclist[NpcIndex].Movement = static_cast<TipoAI>(vb6::val(GetVar(npcfile, npcNumberStr, "Movement")));
-	Npclist[NpcIndex].NPCtype = static_cast<eNPCType>(vb6::val(GetVar(npcfile, npcNumberStr, "NpcType")));
+	Npclist[NpcIndex].Movement = static_cast<TipoAI>(vb6::CInt(GetVar(npcfile, npcNumberStr, "Movement")));
+	Npclist[NpcIndex].NPCtype = static_cast<eNPCType>(vb6::CInt(GetVar(npcfile, npcNumberStr, "NpcType")));
 
 	Npclist[NpcIndex].Char.body = vb6::val(GetVar(npcfile, npcNumberStr, "Body"));
 	Npclist[NpcIndex].Char.Head = vb6::val(GetVar(npcfile, npcNumberStr, "Head"));
