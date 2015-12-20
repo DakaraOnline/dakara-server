@@ -54,14 +54,14 @@ artifacts:
 
 deploy:
   - provider: FTP
+    protocol: ftps
     server:
       secure: C6tkq+q/3l6LiQ4CGNgMhLWvzaajInbUEeruKHhC2lo=
     username:
-      secure: 4j+6jfu8uhGJvd/WBx0RYw==
+      secure: rV1YaUrUXNT47IZB1YVFO/D29cj5pGxga5fox8pEy9s=
     password:
       secure: b0B/dtBHOEaFQAqiyT4Ysg==
     folder: /dakara-server
-    enable_ssl: true
     artifact: 
 
 branches:
