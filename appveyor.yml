@@ -43,6 +43,24 @@ build:
   parallel: true
   verbosity: detailed
 
+after_build:
+  - 7z a dakara-server-%APPVEYOR_REPO_BRANCH%-%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_JOB_ID%.7z %APPVEYOR_BUILD_FOLDER%
+
+artifacts:
+  - path: '*.7z'
+
+deploy:
+  provider: FTP
+  server:
+    secure: C6tkq+q/3l6LiQ4CGNgMhLWvzaajInbUEeruKHhC2lo=
+  username:
+    secure: 4j+6jfu8uhGJvd/WBx0RYw==
+  password:
+    secure: b0B/dtBHOEaFQAqiyT4Ysg==
+  folder: /dakara-server
+  enable_ssl: true
+  active_mode: false
+
 branches:
   only:
     - master
