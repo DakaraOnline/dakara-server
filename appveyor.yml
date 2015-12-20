@@ -49,7 +49,7 @@ after_build:
   - appveyor PushArtifact %DAKARA_ARTIFACT%
 
 artifacts:
-  - path: %DAKARA_ARTIFACT%
+  - path: '*.zip'
     name: dakaraserver
 
 deploy:
