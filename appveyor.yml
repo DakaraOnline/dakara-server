@@ -45,7 +45,7 @@ build:
   verbosity: detailed
 
 after_build:
-  - 7z a -xr!.git -xr!dakaraserver.dir %DAKARA_ARTIFACT% %APPVEYOR_BUILD_FOLDER%
+  - 7z a -xr!.git -xr!dakaraserver.dir -xr!dakaraserver.ilk -xr!dakaraserver.pdb %DAKARA_ARTIFACT% %APPVEYOR_BUILD_FOLDER%
   - appveyor PushArtifact %DAKARA_ARTIFACT%
 
 artifacts:
