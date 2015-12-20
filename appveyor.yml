@@ -16,6 +16,7 @@ environment:
     BUILD_TYPE: Release
     CMAKE_INCLUDE_PATH: C:/projects/dakara-server/deps/libevent_vc120/build/native/include
     CMAKE_LIBRARY_PATH: C:/projects/dakara-server/deps/libevent_vc120/build/native/bin
+    DAKARA_ARTIFACT: dakara-server-%APPVEYOR_REPO_BRANCH%-%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_JOB_ID%.7z
 
 init:
   - cmd: cmake --version
@@ -44,10 +45,12 @@ build:
   verbosity: detailed
 
 after_build:
-  - 7z a -xr!.git -xr!dakaraserver.dir dakara-server-%APPVEYOR_REPO_BRANCH%-%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_JOB_ID%.7z %APPVEYOR_BUILD_FOLDER%
+  - 7z a -xr!.git -xr!dakaraserver.dir %DAKARA_ARTIFACT% %APPVEYOR_BUILD_FOLDER%
+  - appveyor PushArtifact %DAKARA_ARTIFACT%
 
 artifacts:
   - path: '*.7z'
+    name: dakaraserver
 
 deploy:
   - provider: FTP
@@ -60,7 +63,7 @@ deploy:
     folder: /dakara-server
     enable_ssl: true
     active_mode: false
-    artifact:
+    artifact: dakaraserver
 
 branches:
   only:
