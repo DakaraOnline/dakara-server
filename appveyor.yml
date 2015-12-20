@@ -44,7 +44,7 @@ build:
   verbosity: detailed
 
 after_build:
-  - 7z a -xr!dakaraserver.dir dakara-server-%APPVEYOR_REPO_BRANCH%-%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_JOB_ID%.7z %APPVEYOR_BUILD_FOLDER%
+  - 7z a -xr!.git -xr!dakaraserver.dir dakara-server-%APPVEYOR_REPO_BRANCH%-%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_JOB_ID%.7z %APPVEYOR_BUILD_FOLDER%
 
 artifacts:
   - path: '*.7z'
