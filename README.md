@@ -21,6 +21,10 @@ You need CMake, Libevent2, and boost >= 1.49.
     cmake ..
     make
 
+## Windows EXE 64 Bits
+
+You can find a Debug EXE build here: http://files.dakaraonline.org/dakara-server/
+
 ## Contributing
 
 Join the mailing list at: https://groups.google.com/d/forum/dakara-online-dev
