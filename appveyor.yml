@@ -62,7 +62,6 @@ deploy:
       secure: b0B/dtBHOEaFQAqiyT4Ysg==
     folder: /dakara-server
     enable_ssl: true
-    active_mode: false
     artifact: 
 
 branches:
