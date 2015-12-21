@@ -1033,13 +1033,13 @@ bool ConnectUser(int UserIndex, const std::string & Name, const std::string & Pa
 	WritePlayMidi(UserIndex, MapInfo[UserList[UserIndex].Pos.Map].Music);
 
 	if (UserTienePrivilegio(UserIndex, PlayerType_Dios)) {
-		UserList[UserIndex].flags.ChatColor = vb6::RGB(250, 250, 150);
+		UserList[UserIndex].flags.ChatColor = vb6::RGBtoInt(250, 250, 150);
 	} else if (!UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_ChaosCouncil, PlayerType_RoyalCouncil)) {
-		UserList[UserIndex].flags.ChatColor = vb6::RGB(0, 255, 0);
+		UserList[UserIndex].flags.ChatColor = vb6::RGBtoInt(0, 255, 0);
 	} else if (UserTienePrivilegio(UserIndex, PlayerType_RoyalCouncil)) {
-		UserList[UserIndex].flags.ChatColor = vb6::RGB(0, 255, 255);
+		UserList[UserIndex].flags.ChatColor = vb6::RGBtoInt(0, 255, 255);
 	} else if (UserTienePrivilegio(UserIndex, PlayerType_ChaosCouncil)) {
-		UserList[UserIndex].flags.ChatColor = vb6::RGB(255, 128, 64);
+		UserList[UserIndex].flags.ChatColor = vb6::RGBtoInt(255, 128, 64);
 	} else {
 		UserList[UserIndex].flags.ChatColor = 0x00ffffff;
 	}

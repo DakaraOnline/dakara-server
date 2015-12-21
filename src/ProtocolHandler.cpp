@@ -9594,7 +9594,7 @@ void DakaraClientPacketHandler::handleChatColor(ChatColor* p) { (void)p;
 
 	int color;
 
-	color = vb6::RGB(p->R, p->G, p->B);
+	color = vb6::RGBtoInt(p->R, p->G, p->B);
 
 	if (UserTieneAlgunPrivilegios(UserIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_RoleMaster)) {
 		UserList[UserIndex].flags.ChatColor = color;

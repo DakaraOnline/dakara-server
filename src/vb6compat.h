@@ -261,7 +261,7 @@ inline int Round(T n, int decimal_places) {
 	return std::round(n * std::pow(10, decimal_places)) / std::pow(10, decimal_places);
 }
 
-inline int RGB(int r, int g, int b) {
+inline int RGBtoInt(int r, int g, int b) {
 	return (r & 0xff) << 16 | (g & 0xff) << 8 | (b & 0xff); 
 }
 

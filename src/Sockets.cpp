@@ -18,14 +18,15 @@
 #include <iostream>
 #include <signal.h>
 
+#include "Sockets.h"
+#include "allheaders.h"
+
 #ifdef WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
 #endif
 
-#include "Sockets.h"
-#include "allheaders.h"
 
 #define DAKARA_MAX_INPUT_BUFFER_SIZE 75000
 

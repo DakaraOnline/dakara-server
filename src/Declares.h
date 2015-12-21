@@ -1491,7 +1491,7 @@ extern vb6::array<struct MapInfo> MapInfo;
 extern vb6::array<struct tHechizo> Hechizos;
 extern vb6::array<int> CharList;
 extern vb6::array<struct ObjData> ObjData;
-extern vb6::array<struct FXdata> FX;
+//extern vb6::array<struct FXdata> FX;
 extern vb6::array<struct tCriaturasEntrenador> SpawnList;
 extern vb6::array<struct LevelSkill> LevelSkill;
 extern vb6::array<std::string> ForbidenNames;
