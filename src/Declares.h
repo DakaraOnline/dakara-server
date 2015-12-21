@@ -37,7 +37,10 @@
 #include "vb6compat.h"
 #include "ComercioUsuario.h"
 
-class socket_ctx;
+
+namespace dakara {
+	class Socket;
+}
 
 extern std::shared_ptr<clsAntiMassClon> aClon;
 extern std::set<WorldPos> TrashCollector;
@@ -1107,9 +1110,6 @@ struct tCrafting {
 	int PorCiclo = 0;
 };
 
-/* FIXME: Fwd */
-struct bufferevent;
-
 /* 'Tipo de los Usuarios */
 struct User {
 	User() {
@@ -1142,10 +1142,12 @@ struct User {
 	struct WorldPos Pos{};
 
 	bool ConnIDValida = false;
+	bool ConnIgnoreIncomingData = false;
+	bool IncomingDataAvailable = false;
 
 	/* 'ID */
 	int ConnID = -1;
-	class socket_ctx* sockctx = 0;
+	class dakara::Socket* sockctx = 0;
 	std::shared_ptr<clsByteQueue> outgoingData;
 	std::shared_ptr<clsByteQueue> incomingData;
 

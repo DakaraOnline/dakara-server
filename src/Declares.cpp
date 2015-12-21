@@ -538,7 +538,7 @@ vb6::array<struct MapInfo> MapInfo;
 vb6::array<struct tHechizo> Hechizos;
 vb6::array<int> CharList;
 vb6::array<struct ObjData> ObjData;
-vb6::array<struct FXdata> FX;
+//vb6::array<struct FXdata> FX;
 vb6::array<struct tCriaturasEntrenador> SpawnList;
 vb6::array<struct LevelSkill> LevelSkill;
 vb6::array<std::string> ForbidenNames;

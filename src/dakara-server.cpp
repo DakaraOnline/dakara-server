@@ -60,7 +60,7 @@ void redimGlobalArrays() {
 	Hechizos.redim(0); /* XXX */
 	CharList.redim(1, MAXCHARS); /* XXX */
 	ObjData.redim(0); /* XXX */
-	FX.redim(0); /* XXX */
+	//FX.redim(0); /* XXX */
 	SpawnList.redim(0); /* XXX */
 	LevelSkill.redim(1, 50); /* XXX */
 	ForbidenNames.redim(0); /* XXX */

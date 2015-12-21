@@ -26,11 +26,11 @@ std::vector<DakaraPacketHandler> UserProtocolHandler;
 void HandleIncomingData(int UserIndex) {
 
 	int k = 0;
-	int lastvalidpos = UserList[UserIndex].sockctx->incomingData->getReadPos();
+	int lastvalidpos = UserList[UserIndex].incomingData->getReadPos();
 
-	UserList[UserIndex].sockctx->incomingDataAvailable = false;
+	UserList[UserIndex].IncomingDataAvailable = false;
 
-	while (UserList[UserIndex].sockctx->incomingData->length() > 0 && k < MAX_PACKETS_PER_ITER) {
+	while (UserList[UserIndex].incomingData->length() > 0 && k < MAX_PACKETS_PER_ITER) {
 		// int startpos = UserList[UserIndex].sockctx->incomingData->getReadPos();
 		try {
 			HandleIncomingDataOnePacket(UserIndex);
@@ -38,24 +38,24 @@ void HandleIncomingData(int UserIndex) {
 			if (!UserList[UserIndex].ConnIDValida) {
 				break;
 			}
-			lastvalidpos = UserList[UserIndex].sockctx->incomingData->getReadPos();
+			lastvalidpos = UserList[UserIndex].incomingData->getReadPos();
 		} catch (bytequeue_data_error& ex) {
 			std::cerr << "bytequeue_data_error: " << ex.what() << std::endl;
 			CloseSocket(UserIndex);
 			break;
 		} catch (insufficient_data_error& ex) {
 			// Ignored.
-			UserList[UserIndex].sockctx->incomingData->commitRead(lastvalidpos);
+			UserList[UserIndex].incomingData->commitRead(lastvalidpos);
 			lastvalidpos = 0;
 			break;
 		}
 	}
 
 	if (UserList[UserIndex].ConnIDValida) {
-		UserList[UserIndex].sockctx->ConnIgnoreIncomingData = (UserList[UserIndex].sockctx->incomingData->length() > 0 && k == MAX_PACKETS_PER_ITER);
+		UserList[UserIndex].ConnIgnoreIncomingData = (UserList[UserIndex].incomingData->length() > 0 && k == MAX_PACKETS_PER_ITER);
 
 		if (lastvalidpos > 0) {
-			UserList[UserIndex].sockctx->incomingData->commitRead(lastvalidpos);
+			UserList[UserIndex].incomingData->commitRead(lastvalidpos);
 		}
 
 		FlushBuffer(UserIndex);
@@ -70,7 +70,7 @@ void HandleIncomingDataOnePacket(int UserIndex) {
 	/* '*************************************************** */
 	int packetID;
 
-	packetID = UserList[UserIndex].sockctx->incomingData->PeekByte();
+	packetID = UserList[UserIndex].incomingData->PeekByte();
 
 	/* 'Does the packet requires a logged user?? */
 	if (!(packetID == dakara::protocol::client::ClientPacketID_ThrowDices || packetID == dakara::protocol::client::ClientPacketID_LoginExistingChar

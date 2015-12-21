@@ -18,6 +18,7 @@
 
 #include "Timers.h"
 #include "allheaders.h"
+#include "SocketsLib.h"
 
 #include <iostream>
 
@@ -33,130 +34,57 @@ const int NIF_TIP = 4;
 
 namespace {
 
-class TimerAuditoria : public Timer {
-public:
-	virtual void callback() {
-		Auditoria_Timer();
-	}
-};
+std::unique_ptr<dakara::Timer> timerAuditoria;
+std::unique_ptr<dakara::Timer> timerPiquete;
+std::unique_ptr<dakara::Timer> timerFX;
+std::unique_ptr<dakara::Timer> timerGameTimer;
+std::unique_ptr<dakara::Timer> timerLluviaEvent;
+std::unique_ptr<dakara::Timer> timerLluvia;
+std::unique_ptr<dakara::Timer> timerAutoSave;
+std::unique_ptr<dakara::Timer> timerNpcAtaca;
+std::unique_ptr<dakara::Timer> timerAI;
+std::unique_ptr<dakara::Timer> timerKillLog;
+std::unique_ptr<dakara::Timer> timerHandleData;
 
-class TimerPiquete : public Timer {
-public:
-	virtual void callback() {
-		tPiqueteC_Timer();
-	}
-};
-
-class TimerFX : public Timer {
-public:
-	virtual void callback() {
-		FX_Timer();
-	}
-};
-
-class TimerGameTimer : public Timer {
-public:
-	virtual void callback() {
-		GameTimer_Timer();
-	}
-};
-
-class TimerLluviaEvent : public Timer {
-public:
-	virtual void callback() {
-		tLluviaEvent_Timer();
-	}
-};
-
-class TimerLluvia : public Timer {
-public:
-	virtual void callback() {
-		tLluvia_Timer();
-	}
-};
-
-class TimerAutoSave : public Timer {
-public:
-	virtual void callback() {
-		AutoSave_Timer();
-	}
-};
-
-class TimerNpcAtaca : public Timer {
-public:
-	virtual void callback() {
-		npcataca_Timer();
-	}
-};
-
-class TimerAI : public Timer {
-public:
-	virtual void callback() {
-		TIMER_AI_Timer();
-	}
-};
-
-class TimerKillLog : public Timer {
-public:
-	virtual void callback() {
-		KillLog_Timer();
-	}
-};
-
-class TimerHandleData : public Timer {
-public:
-	TimerHandleData() : Timer(false) {}
-
-	virtual void callback() {
-		int UserIndex;
-		for (UserIndex = (1); UserIndex <= (LastUser); UserIndex++) {
-			if (UserList[UserIndex].ConnIDValida && UserList[UserIndex].sockctx->incomingData->length()) {
-				if (UserList[UserIndex].sockctx->ConnIgnoreIncomingData && UserList[UserIndex].sockctx->incomingDataAvailable) {
-					try {
-						HandleIncomingData(UserIndex);
-					} catch (std::exception& ex) {
-						std::cerr << "Unhandled error on TimerHandleData::callback: " << ex.what() << std::endl;
-						LogApiSock("Unhandled error on TimerHandleData::callback, " + std::string(ex.what()));
-						CloseSocket(UserIndex);
-					} catch (...) {
-						std::cerr << "UNKNOWN error on TimerHandleData::callback!" << std::endl;
-						LogApiSock("UNKNOWN error on TimerHandleData::callback!");
-						CloseSocket(UserIndex);
-					}
+void TimerHandleData_Timer() {
+	int UserIndex;
+	for (UserIndex = (1); UserIndex <= (LastUser); UserIndex++) {
+		if (UserList[UserIndex].ConnIDValida && UserList[UserIndex].incomingData->length()) {
+			if (UserList[UserIndex].ConnIgnoreIncomingData && UserList[UserIndex].IncomingDataAvailable) {
+				try {
+					HandleIncomingData(UserIndex);
+				} catch (std::exception& ex) {
+					std::cerr << "Unhandled error on TimerHandleData::callback: " << ex.what() << std::endl;
+					LogApiSock("Unhandled error on TimerHandleData::callback, " + std::string(ex.what()));
+					CloseSocket(UserIndex);
+				} catch (...) {
+					std::cerr << "UNKNOWN error on TimerHandleData::callback!" << std::endl;
+					LogApiSock("UNKNOWN error on TimerHandleData::callback!");
+					CloseSocket(UserIndex);
 				}
 			}
 		}
-		// Allow the timer to drift in time.
-		register_timer(0.05);
 	}
-};
-
-TimerAuditoria timerAuditoria;
-TimerPiquete timerPiquete;
-TimerFX timerFX;
-TimerGameTimer timerGameTimer;
-TimerLluviaEvent timerLluviaEvent;
-TimerLluvia timerLluvia;
-TimerAutoSave timerAutoSave;
-TimerNpcAtaca timerNpcAtaca;
-TimerAI timerAI;
-TimerKillLog timerKillLog;
-TimerHandleData timerHandleData;
+	// Allow the timer to drift in time.
+	timerHandleData->registerTimer(50);
+}
 
 }
 
 void TimersRegisterAll() {
-	timerAuditoria.register_timer(1.0);
-	timerPiquete.register_timer(6.0);
-	timerFX.register_timer(4.0);
-	timerGameTimer.register_timer(0.04);
-	timerLluviaEvent.register_timer(60);
-	timerLluvia.register_timer(0.5);
-	timerAutoSave.register_timer(60);
-	timerNpcAtaca.register_timer(static_cast<double>(IntervaloNPCPuedeAtacar)/1000.0);
-	timerAI.register_timer(static_cast<double>(IntervaloNPCAI)/1000.0);
-	timerKillLog.register_timer(60);
-	timerHandleData.register_timer(0.05);
+	dakara::SocketServer& ss = (*DakaraSocketServer.get());
+
+	timerAuditoria = ss.addTimer(1000, Auditoria_Timer, true);
+	timerPiquete = ss.addTimer(6000, tPiqueteC_Timer, true);
+	timerFX = ss.addTimer(4000, FX_Timer, true);
+	timerGameTimer = ss.addTimer(40, GameTimer_Timer, true);
+	timerLluviaEvent = ss.addTimer(6000, tLluviaEvent_Timer, true);
+	timerLluvia = ss.addTimer(500, tLluvia_Timer, true);
+	timerAutoSave = ss.addTimer(60000, AutoSave_Timer, true);
+	timerNpcAtaca = ss.addTimer(IntervaloNPCPuedeAtacar, npcataca_Timer, true);
+	timerAI = ss.addTimer(IntervaloNPCAI, TIMER_AI_Timer, true);
+	timerKillLog = ss.addTimer(60000, KillLog_Timer, true);
+	timerHandleData = ss.addTimer(50, TimerHandleData_Timer, false);
 }
 
 void CheckIdleUser() {
@@ -207,7 +135,6 @@ void Auditoria_Timer() {
 	/* Sockets */
 	socketsClean++;
 	if (socketsClean >= 10) {
-		WSApiGarbageCollectSockets();
 		socketsClean = 0;
 	}
 

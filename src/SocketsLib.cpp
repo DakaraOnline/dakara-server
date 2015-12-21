@@ -86,9 +86,10 @@ SocketServer::~SocketServer() { }
 
 class SocketServerBase : public SocketServer {
 public:
+	SocketServerBase();
+
 	typedef std::pair<SignalHandler, void*> SignalInfo;
 
-protected:
 	size_t getNextSocketIndex();
 	void freeSocketIndex(size_t idx);
 
@@ -116,15 +117,22 @@ size_t SocketBase::getId() {
 	return idx_;
 }
 
+SocketServerBase::SocketServerBase() {
+	/* the ID starts in 1 */
+	sockets.resize(1);
+}
+
 size_t SocketServerBase::getNextSocketIndex() {
 	size_t e;
+
 	if (sockets_free_idx_.size()) {
 		e = sockets_free_idx_.front();
 		sockets_free_idx_.pop_front();
 	} else {
 		e = sockets.size();
-		sockets.push_back(nullptr);
+		sockets.resize(e + 1);
 	}
+
 	return e;
 }
 
@@ -139,14 +147,22 @@ Timer::~Timer() {}
 /*****************************************************************************/
 /* LIBEVENT */
 
+class SocketLibEvent;
+class SocketServerLibEvent;
+class SocketListenerLibEvent;
+class TimerLibEvent;
+
 class SocketLibEvent : public SocketBase {
 public:
-	SocketLibEvent(size_t idx, SocketServerBase* sp);
+	SocketLibEvent(size_t idx, SocketListenerLibEvent* sl);
 	virtual ~SocketLibEvent();
 
 	virtual void write(const char* data, size_t data_len);
 	virtual size_t getOutputLength();
-	virtual void close(bool force = false);
+	virtual void close(bool force);
+	virtual std::string getIP() {
+		return ip_;
+	}
 
 	void closeReal();
 
@@ -159,6 +175,17 @@ public:
 	struct event *evclose_{nullptr};
 	bool evclosefired_{false};
 	bool closing_{false};
+	SocketListenerLibEvent* sl_{nullptr};
+	std::string ip_;
+};
+
+class SocketListenerLibEvent {
+public:
+	evutil_socket_t listener;
+	std::string addr;
+	int port;
+	SocketEvents* sev;
+	SocketServerLibEvent* ssle;
 };
 
 class SocketServerLibEvent : public SocketServerBase {
@@ -166,15 +193,16 @@ public:
 	SocketServerLibEvent();
 	virtual ~SocketServerLibEvent();
 
-	virtual void addListener(std::string addr, int port) override;
+	virtual void addListener(std::string addr, int port, SocketEvents* sev) override;
 	virtual void addSignalHandler(int signal, SignalHandler f, void* arg) override;
-	virtual std::unique_ptr<Timer> addTimer(size_t milliseconds, TimerHandler f) override;
+	virtual std::unique_ptr<Timer> addTimer(size_t milliseconds, TimerHandler f, bool persist) override;
 	virtual void loop() override;
+	virtual void stop() override;
 
-	void doAccept(evutil_socket_t listener, short event);
+	void doAccept(evutil_socket_t listener, short event, SocketListenerLibEvent* sl);
 
 public:
-	evutil_socket_t listener{0};
+	std::vector<std::unique_ptr<SocketListenerLibEvent> > listeners;
 	struct sockaddr_in sockin;
 	struct event_base *base{nullptr};
 	struct event *listener_event{nullptr};
@@ -182,9 +210,10 @@ public:
 
 class TimerLibEvent : public Timer {
 public:
-	TimerLibEvent(struct event_base *base, size_t milliseconds, TimerHandler h);
+	TimerLibEvent(struct event_base *base, size_t milliseconds, TimerHandler h, bool persist);
 	virtual ~TimerLibEvent();
 	void timerEvent();
+	virtual void registerTimer(size_t milliseconds) override;
 
 public:
 	TimerHandler handler;
@@ -198,18 +227,22 @@ static void ssle_timer_callback(evutil_socket_t fd, short what, void * arg) {
 	t->timerEvent();
 }
 
-TimerLibEvent::TimerLibEvent(struct event_base *base, size_t milliseconds, TimerHandler h) : handler(h) {
+TimerLibEvent::TimerLibEvent(struct event_base *base, size_t milliseconds, TimerHandler h, bool persist) : handler(h) {
+	ev = event_new(base, -1, persist ? EV_PERSIST : 0, ssle_timer_callback, this);
+	registerTimer(milliseconds);
+}
+
+TimerLibEvent::~TimerLibEvent() {
+	event_del(ev);
+}
+
+void TimerLibEvent::registerTimer(size_t milliseconds) {
 	struct timeval tv;
 
 	tv.tv_sec = milliseconds / 1000;
 	tv.tv_usec = (milliseconds % 1000) * 1000;
 
-	ev = event_new(base, -1, EV_PERSIST, ssle_timer_callback, this);
 	event_add(ev, &tv);
-}
-
-TimerLibEvent::~TimerLibEvent() {
-	event_del(ev);
 }
 
 void TimerLibEvent::timerEvent() {
@@ -221,7 +254,7 @@ static void ssle_close_event(evutil_socket_t fd, short what, void *arg) {
 	(void)what;
 
 	SocketLibEvent* s = reinterpret_cast<SocketLibEvent*>(arg);
-	auto sel = s->sp_->getSocketEventsListener();
+	auto sel = s->sl_->sev;
 
 	s->evclosefired_ = true;
 
@@ -231,16 +264,20 @@ static void ssle_close_event(evutil_socket_t fd, short what, void *arg) {
 
 	event_del(s->evclose_);
 	s->evclose_ = nullptr;
+
+	s->closeReal();
+
+	s->sp_->freeSocketIndex(s->getId());
 }
 
-SocketLibEvent::SocketLibEvent(size_t idx, SocketServerBase* sp) : SocketBase(idx, sp) {
-	auto p = reinterpret_cast<SocketServerLibEvent*>(sp);
-	evclose_ = event_new(p->base, -1, 0, ssle_close_event, reinterpret_cast<void*>(this));
+SocketLibEvent::SocketLibEvent(size_t idx, SocketListenerLibEvent* sl) : SocketBase(idx, sl->ssle), sl_(sl)
+{
 }
 
 SocketLibEvent::~SocketLibEvent() {
 	if (evclose_) {
 		event_del(evclose_);
+		evclose_ = nullptr;
 	}
 	closeReal();
 }
@@ -264,12 +301,18 @@ void SocketLibEvent::write(const char* data, size_t data_len) {
 }
 
 size_t SocketLibEvent::getOutputLength() {
-	auto output = bufferevent_get_output(bev_);
-	return evbuffer_get_length(output);
+	if (bev_) {
+		auto output = bufferevent_get_output(bev_);
+		return evbuffer_get_length(output);
+	}
+
+	return 0;
 }
 
 void SocketLibEvent::closeReal() {
 	if (bev_) {
+		/* FIXME: Gracefully shutdown(fd, SHUT_WR) the socket, unless forced or destroyed. */
+		evutil_closesocket(fd_);
 		bufferevent_free(bev_);
 		bev_ = nullptr;
 	}
@@ -280,7 +323,19 @@ void SocketLibEvent::onSocketClose(bool error) {
 }
 
 void SocketLibEvent::fireCloseEvent() {
-	if (evclose_ && !evclosefired_) {
+	if (!evclosefired_) {
+		evclosefired_ = true;
+
+		/*
+		 * Postpone the closing event until the calling stack is clear.
+		 */
+
+		size_t outputLength = getOutputLength();
+		struct timeval close_timeout = { (outputLength ? 10 : 0), 0 };
+		auto p = (sl_->ssle);
+		evclose_ = event_new(p->base, -1, 0, ssle_close_event, reinterpret_cast<void*>(this));
+		event_add(evclose_, &close_timeout);
+
 		event_active(evclose_, 0, 0);
 	}
 }
@@ -293,8 +348,7 @@ void SocketLibEvent::close(bool force) {
 		closeReal();
 		fireCloseEvent();
 	} else {
-		struct timeval close_timeout = { 10, 0 };
-		event_add(evclose_, &close_timeout);
+		fireCloseEvent();
 	}
 }
 
@@ -330,15 +384,15 @@ static void ssle_my_signal_handler(evutil_socket_t fd, short event, void *arg) {
 
 static void ssle_do_accept(evutil_socket_t listener, short event, void *arg) {
 	(void)event;
-	auto p = reinterpret_cast<SocketServerLibEvent*>(arg);
-	p->doAccept(listener, event);
+	auto sl = reinterpret_cast<SocketListenerLibEvent*>(arg);
+	sl->ssle->doAccept(listener, event, sl);
 }
 
 static void ssle_readcb(struct bufferevent *bev, void *ctx) {
 	SocketLibEvent* s = reinterpret_cast<SocketLibEvent*>(ctx);
 	struct evbuffer *input = bufferevent_get_input(bev);
 
-	SocketEvents* sev = s->sp_->getSocketEventsListener();
+	SocketEvents* sev = s->sl_->sev;
 
 	if (sev) {
 		const int num_of_vecs = 16;
@@ -362,7 +416,8 @@ static void ssle_writecb(struct bufferevent *bev, void *ctx) {
 	(void)bev;
 	SocketLibEvent* s = reinterpret_cast<SocketLibEvent*>(ctx);
 
-	SocketEvents* sev = s->sp_->getSocketEventsListener();
+	SocketEvents* sev = s->sl_->sev;
+
 	if (sev) {
 		sev->onSocketWrite(s);
 	}
@@ -382,28 +437,34 @@ static void ssle_errorcb(struct bufferevent *bev, short events, void *ctx) {
 	}
 }
 
-void SocketServerLibEvent::doAccept(evutil_socket_t listener, short event) {
+void SocketServerLibEvent::doAccept(evutil_socket_t listener, short event, SocketListenerLibEvent* sl) {
 	(void)event;
 
 	struct sockaddr_storage ss;
 	socklen_t slen = sizeof(ss);
+
 	evutil_socket_t fd = accept(listener, (struct sockaddr*) &ss, &slen);
+
 	if (fd < 0) {
 		perror("accept");
 		return;
 	}
 
+	evutil_make_socket_nonblocking(fd);
+
+	/* FIXME: <<< IP FILTERING HERE >>> */
+
 	size_t idx = getNextSocketIndex();
-	sockets[idx].reset( new SocketLibEvent(idx, this) );
+	sockets[idx].reset( new SocketLibEvent(idx, sl) );
 	SocketLibEvent* s = reinterpret_cast<SocketLibEvent*>( sockets[idx].get() );
 
 	struct sockaddr_in *sin = (struct sockaddr_in *)&ss;
-	std::string ip(inet_ntoa(sin->sin_addr));
+	s->ip_ = (inet_ntoa(sin->sin_addr));
+
 	struct bufferevent *bev;
 	void *cbarg = reinterpret_cast<void*>( s );
 
-	evutil_make_socket_nonblocking(fd);
-	bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
+	bev = bufferevent_socket_new(base, fd, 0); /* BEV_OPT_CLOSE_ON_FREE */
 	bufferevent_setcb(bev, ssle_readcb, ssle_writecb, ssle_errorcb, cbarg);
 	// bufferevent_setwatermark(bev, EV_READ, 0, MAX_LINE);
 	bufferevent_enable(bev, EV_READ | EV_WRITE);
@@ -411,43 +472,55 @@ void SocketServerLibEvent::doAccept(evutil_socket_t listener, short event) {
 	s->fd_ = fd;
 	s->idx_ = idx;
 	s->bev_ = bev;
+
+	sl->sev->onSocketNew(s);
 }
 
-void SocketServerLibEvent::addListener(std::string addr, int port) {
+void SocketServerLibEvent::addListener(std::string addr, int port, SocketEvents* sev) {
 
 	sockin.sin_family = AF_INET;
 	sockin.sin_addr.s_addr = inet_addr(addr.c_str());
 	sockin.sin_port = htons(port);
 
-	listener = socket(AF_INET, SOCK_STREAM, 0);
-	if (listener < 0) {
+	listeners.push_back(std::unique_ptr<SocketListenerLibEvent>( new SocketListenerLibEvent() ));
+
+	SocketListenerLibEvent* listener = listeners.back().get();
+
+	listener->addr = addr;
+	listener->port = port;
+	listener->sev = sev;
+	listener->ssle = this;
+
+	listener->listener = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (listener->listener < 0) {
 		perror("socket");
 		throw std::runtime_error("socket del listener");
 	}
 
-	evutil_make_socket_nonblocking(listener);
-
-#ifndef WIN32
-	{
-		int one = 1;
-		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)) == -1 )
-			throw std::runtime_error("setsockopt del listener");
-
-	}
-#endif
-
-	if (bind(listener, (struct sockaddr*) &sockin, sizeof(struct sockaddr_in)) < 0) {
-		perror("bind");
-		return;
+	if (evutil_make_socket_nonblocking(listener->listener) != 0) {
+		throw std::runtime_error("evutil_make_socket_nonblocking del listener");
 	}
 
-	if (listen(listener, 250) < 0) {
-		perror("listen");
-		return;
+	if (evutil_make_listen_socket_reuseable(listener->listener) != 0) {
+		throw std::runtime_error("evutil_make_listen_socket_reuseable del listener");
 	}
 
-	listener_event = event_new(base, listener, EV_READ | EV_PERSIST, ssle_do_accept, (void*) base);
-	/*XXX check it */
+	if (bind(listener->listener, (struct sockaddr*) &sockin, sizeof(struct sockaddr_in)) < 0) {
+		throw std::runtime_error("bind del listener");
+	}
+
+	if (listen(listener->listener, 250) < 0) {
+		throw std::runtime_error("listen del listener");
+	}
+
+	listener_event = event_new(
+			base,
+			listener->listener,
+			EV_READ | EV_PERSIST,
+			ssle_do_accept,
+			(void*) listener);
+
 	event_add(listener_event, NULL);
 }
 
@@ -459,12 +532,16 @@ void SocketServerLibEvent::addSignalHandler(int signal, SignalHandler f, void* a
 	event_add(sig, 0);
 }
 
-std::unique_ptr<Timer> SocketServerLibEvent::addTimer(size_t milliseconds, TimerHandler f) {
-	return std::unique_ptr<Timer>(new TimerLibEvent(base, milliseconds, f));
+std::unique_ptr<Timer> SocketServerLibEvent::addTimer(size_t milliseconds, TimerHandler f, bool persist) {
+	return std::unique_ptr<Timer>(new TimerLibEvent(base, milliseconds, f, persist));
 }
 
 void SocketServerLibEvent::loop() {
 	event_base_dispatch(base);
+}
+
+void SocketServerLibEvent::stop() {
+	event_base_loopbreak(base);
 }
 
 
@@ -473,6 +550,10 @@ void SocketServerLibEvent::loop() {
 std::unique_ptr<SocketServer> BuildSocketServer(std::string backend) {
 	if (backend == "libevent")
 		return std::unique_ptr<SocketServer>(new SocketServerLibEvent());
+
+	/* FIXME: ADD DUMMY BACKEND FOR TESTING */
+	if (backend == "dummy")
+		return nullptr;
 
 	return nullptr;
 }

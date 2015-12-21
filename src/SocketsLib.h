@@ -51,15 +51,20 @@ public:
 	Socket& operator=(const Socket&) = delete;
 
 	virtual void write(const char* data, size_t data_len) = 0;
-	virtual size_t getOutputLength() = 0;
-	virtual void close(bool force = false) = 0;
+	virtual void close(bool force) = 0;
 	virtual size_t getId() = 0;
+	virtual std::string getIP() = 0;
+	virtual size_t getOutputLength() = 0;
+
+	size_t userData{};
 };
 
 class Timer {
 public:
 	Timer();
 	virtual ~Timer();
+
+	virtual void registerTimer(size_t milliseconds) = 0;
 
 	// Noncopyable
 	Timer(const Timer&) = delete;
@@ -78,21 +83,11 @@ public:
 	SocketServer(const SocketServer&) = delete;
 	SocketServer& operator=(const SocketServer&) = delete;
 
-	virtual void addListener(std::string addr, int port) = 0;
-	virtual std::unique_ptr<Timer> addTimer(size_t milliseconds, TimerHandler f) = 0;
+	virtual void addListener(std::string addr, int port, SocketEvents* sev) = 0;
+	virtual std::unique_ptr<Timer> addTimer(size_t milliseconds, TimerHandler f, bool persist) = 0;
 	virtual void addSignalHandler(int signal, SignalHandler f, void* arg) = 0;
 	virtual void loop() = 0;
-
-	void setSocketEventsListener(SocketEvents* sev) {
-		sev_= sev;
-	}
-
-	SocketEvents* getSocketEventsListener() {
-		return sev_;
-	}
-
-private:
-	SocketEvents* sev_{nullptr};
+	virtual void stop() = 0;
 };
 
 

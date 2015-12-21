@@ -619,19 +619,12 @@ int EnviarDatosASlot(int UserIndex, const char* datos, std::size_t datos_len) {
 	/* '********************************************** */
 	/* # IF UsarQueSocket = 1 THEN */
 
-	int ret;
-
 	if (!UserList[UserIndex].ConnIDValida) {
 		return 0;
 	}
 
-	ret = WsApiEnviar(UserIndex, datos, datos_len);
+	WsApiEnviar(UserIndex, datos, datos_len);
 
-	if (ret != 0 /* && ret != WSAEWOULDBLOCK */ ) {
-		/* ' Close the socket avoiding any critical error */
-		CloseSocketSL(UserIndex);
-		CerrarUserIndexIniciar(UserIndex);
-	}
 	return retval;
 }
 
