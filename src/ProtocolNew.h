@@ -206,6 +206,7 @@ class LoginExistingChar : public ClientPacket {
 public:
     LoginExistingChar();
     LoginExistingChar(clsByteQueue* buffer);
+    LoginExistingChar(const std::string& UserName, const std::string& Password, std::uint8_t VerA, std::uint8_t VerB, std::uint8_t VerC);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -218,13 +219,7 @@ public:
 };
 
 inline LoginExistingChar BuildLoginExistingChar(const std::string& UserName, const std::string& Password, std::uint8_t VerA, std::uint8_t VerB, std::uint8_t VerC) {
-    LoginExistingChar e;
-        e.UserName = UserName;
-        e.Password = Password;
-        e.VerA = VerA;
-        e.VerB = VerB;
-        e.VerC = VerC;
-    return e;
+    return LoginExistingChar(UserName, Password, VerA, VerB, VerC);
 }
 
 class ThrowDices : public ClientPacket {
@@ -239,15 +234,14 @@ public:
 };
 
 inline ThrowDices BuildThrowDices() {
-    ThrowDices e;
-
-    return e;
+    return ThrowDices();
 }
 
 class LoginNewChar : public ClientPacket {
 public:
     LoginNewChar();
     LoginNewChar(clsByteQueue* buffer);
+    LoginNewChar(const std::string& UserName, const std::string& Password, std::uint8_t VerA, std::uint8_t VerB, std::uint8_t VerC, std::uint8_t Race, std::uint8_t Gender, std::uint8_t Class, std::int16_t Head, const std::string& Mail, std::uint8_t Homeland);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -266,25 +260,14 @@ public:
 };
 
 inline LoginNewChar BuildLoginNewChar(const std::string& UserName, const std::string& Password, std::uint8_t VerA, std::uint8_t VerB, std::uint8_t VerC, std::uint8_t Race, std::uint8_t Gender, std::uint8_t Class, std::int16_t Head, const std::string& Mail, std::uint8_t Homeland) {
-    LoginNewChar e;
-        e.UserName = UserName;
-        e.Password = Password;
-        e.VerA = VerA;
-        e.VerB = VerB;
-        e.VerC = VerC;
-        e.Race = Race;
-        e.Gender = Gender;
-        e.Class = Class;
-        e.Head = Head;
-        e.Mail = Mail;
-        e.Homeland = Homeland;
-    return e;
+    return LoginNewChar(UserName, Password, VerA, VerB, VerC, Race, Gender, Class, Head, Mail, Homeland);
 }
 
 class Talk : public ClientPacket {
 public:
     Talk();
     Talk(clsByteQueue* buffer);
+    Talk(const std::string& Chat);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -293,15 +276,14 @@ public:
 };
 
 inline Talk BuildTalk(const std::string& Chat) {
-    Talk e;
-        e.Chat = Chat;
-    return e;
+    return Talk(Chat);
 }
 
 class Yell : public ClientPacket {
 public:
     Yell();
     Yell(clsByteQueue* buffer);
+    Yell(const std::string& Chat);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -310,15 +292,14 @@ public:
 };
 
 inline Yell BuildYell(const std::string& Chat) {
-    Yell e;
-        e.Chat = Chat;
-    return e;
+    return Yell(Chat);
 }
 
 class Whisper : public ClientPacket {
 public:
     Whisper();
     Whisper(clsByteQueue* buffer);
+    Whisper(const std::string& TargetName, const std::string& Chat);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -328,16 +309,14 @@ public:
 };
 
 inline Whisper BuildWhisper(const std::string& TargetName, const std::string& Chat) {
-    Whisper e;
-        e.TargetName = TargetName;
-        e.Chat = Chat;
-    return e;
+    return Whisper(TargetName, Chat);
 }
 
 class Walk : public ClientPacket {
 public:
     Walk();
     Walk(clsByteQueue* buffer);
+    Walk(std::uint8_t Heading);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -346,9 +325,7 @@ public:
 };
 
 inline Walk BuildWalk(std::uint8_t Heading) {
-    Walk e;
-        e.Heading = Heading;
-    return e;
+    return Walk(Heading);
 }
 
 class RequestPositionUpdate : public ClientPacket {
@@ -363,9 +340,7 @@ public:
 };
 
 inline RequestPositionUpdate BuildRequestPositionUpdate() {
-    RequestPositionUpdate e;
-
-    return e;
+    return RequestPositionUpdate();
 }
 
 class Attack : public ClientPacket {
@@ -380,9 +355,7 @@ public:
 };
 
 inline Attack BuildAttack() {
-    Attack e;
-
-    return e;
+    return Attack();
 }
 
 class PickUp : public ClientPacket {
@@ -397,9 +370,7 @@ public:
 };
 
 inline PickUp BuildPickUp() {
-    PickUp e;
-
-    return e;
+    return PickUp();
 }
 
 class SafeToggle : public ClientPacket {
@@ -414,9 +385,7 @@ public:
 };
 
 inline SafeToggle BuildSafeToggle() {
-    SafeToggle e;
-
-    return e;
+    return SafeToggle();
 }
 
 class ResuscitationSafeToggle : public ClientPacket {
@@ -431,9 +400,7 @@ public:
 };
 
 inline ResuscitationSafeToggle BuildResuscitationSafeToggle() {
-    ResuscitationSafeToggle e;
-
-    return e;
+    return ResuscitationSafeToggle();
 }
 
 class RequestGuildLeaderInfo : public ClientPacket {
@@ -448,9 +415,7 @@ public:
 };
 
 inline RequestGuildLeaderInfo BuildRequestGuildLeaderInfo() {
-    RequestGuildLeaderInfo e;
-
-    return e;
+    return RequestGuildLeaderInfo();
 }
 
 class RequestAtributes : public ClientPacket {
@@ -465,9 +430,7 @@ public:
 };
 
 inline RequestAtributes BuildRequestAtributes() {
-    RequestAtributes e;
-
-    return e;
+    return RequestAtributes();
 }
 
 class RequestFame : public ClientPacket {
@@ -482,9 +445,7 @@ public:
 };
 
 inline RequestFame BuildRequestFame() {
-    RequestFame e;
-
-    return e;
+    return RequestFame();
 }
 
 class RequestSkills : public ClientPacket {
@@ -499,9 +460,7 @@ public:
 };
 
 inline RequestSkills BuildRequestSkills() {
-    RequestSkills e;
-
-    return e;
+    return RequestSkills();
 }
 
 class RequestMiniStats : public ClientPacket {
@@ -516,9 +475,7 @@ public:
 };
 
 inline RequestMiniStats BuildRequestMiniStats() {
-    RequestMiniStats e;
-
-    return e;
+    return RequestMiniStats();
 }
 
 class CommerceEnd : public ClientPacket {
@@ -533,9 +490,7 @@ public:
 };
 
 inline CommerceEnd BuildCommerceEnd() {
-    CommerceEnd e;
-
-    return e;
+    return CommerceEnd();
 }
 
 class UserCommerceEnd : public ClientPacket {
@@ -550,9 +505,7 @@ public:
 };
 
 inline UserCommerceEnd BuildUserCommerceEnd() {
-    UserCommerceEnd e;
-
-    return e;
+    return UserCommerceEnd();
 }
 
 class UserCommerceConfirm : public ClientPacket {
@@ -567,15 +520,14 @@ public:
 };
 
 inline UserCommerceConfirm BuildUserCommerceConfirm() {
-    UserCommerceConfirm e;
-
-    return e;
+    return UserCommerceConfirm();
 }
 
 class CommerceChat : public ClientPacket {
 public:
     CommerceChat();
     CommerceChat(clsByteQueue* buffer);
+    CommerceChat(const std::string& Chat);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -584,9 +536,7 @@ public:
 };
 
 inline CommerceChat BuildCommerceChat(const std::string& Chat) {
-    CommerceChat e;
-        e.Chat = Chat;
-    return e;
+    return CommerceChat(Chat);
 }
 
 class BankEnd : public ClientPacket {
@@ -601,9 +551,7 @@ public:
 };
 
 inline BankEnd BuildBankEnd() {
-    BankEnd e;
-
-    return e;
+    return BankEnd();
 }
 
 class UserCommerceOk : public ClientPacket {
@@ -618,9 +566,7 @@ public:
 };
 
 inline UserCommerceOk BuildUserCommerceOk() {
-    UserCommerceOk e;
-
-    return e;
+    return UserCommerceOk();
 }
 
 class UserCommerceReject : public ClientPacket {
@@ -635,15 +581,14 @@ public:
 };
 
 inline UserCommerceReject BuildUserCommerceReject() {
-    UserCommerceReject e;
-
-    return e;
+    return UserCommerceReject();
 }
 
 class Drop : public ClientPacket {
 public:
     Drop();
     Drop(clsByteQueue* buffer);
+    Drop(std::uint8_t Slot, std::int16_t Amount);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -653,16 +598,14 @@ public:
 };
 
 inline Drop BuildDrop(std::uint8_t Slot, std::int16_t Amount) {
-    Drop e;
-        e.Slot = Slot;
-        e.Amount = Amount;
-    return e;
+    return Drop(Slot, Amount);
 }
 
 class CastSpell : public ClientPacket {
 public:
     CastSpell();
     CastSpell(clsByteQueue* buffer);
+    CastSpell(std::uint8_t Spell);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -671,15 +614,14 @@ public:
 };
 
 inline CastSpell BuildCastSpell(std::uint8_t Spell) {
-    CastSpell e;
-        e.Spell = Spell;
-    return e;
+    return CastSpell(Spell);
 }
 
 class LeftClick : public ClientPacket {
 public:
     LeftClick();
     LeftClick(clsByteQueue* buffer);
+    LeftClick(std::uint8_t X, std::uint8_t Y);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -689,16 +631,14 @@ public:
 };
 
 inline LeftClick BuildLeftClick(std::uint8_t X, std::uint8_t Y) {
-    LeftClick e;
-        e.X = X;
-        e.Y = Y;
-    return e;
+    return LeftClick(X, Y);
 }
 
 class DoubleClick : public ClientPacket {
 public:
     DoubleClick();
     DoubleClick(clsByteQueue* buffer);
+    DoubleClick(std::uint8_t X, std::uint8_t Y);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -708,16 +648,14 @@ public:
 };
 
 inline DoubleClick BuildDoubleClick(std::uint8_t X, std::uint8_t Y) {
-    DoubleClick e;
-        e.X = X;
-        e.Y = Y;
-    return e;
+    return DoubleClick(X, Y);
 }
 
 class Work : public ClientPacket {
 public:
     Work();
     Work(clsByteQueue* buffer);
+    Work(std::uint8_t Skill);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -726,9 +664,7 @@ public:
 };
 
 inline Work BuildWork(std::uint8_t Skill) {
-    Work e;
-        e.Skill = Skill;
-    return e;
+    return Work(Skill);
 }
 
 class UseSpellMacro : public ClientPacket {
@@ -743,15 +679,14 @@ public:
 };
 
 inline UseSpellMacro BuildUseSpellMacro() {
-    UseSpellMacro e;
-
-    return e;
+    return UseSpellMacro();
 }
 
 class UseItem : public ClientPacket {
 public:
     UseItem();
     UseItem(clsByteQueue* buffer);
+    UseItem(std::uint8_t Slot);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -760,15 +695,14 @@ public:
 };
 
 inline UseItem BuildUseItem(std::uint8_t Slot) {
-    UseItem e;
-        e.Slot = Slot;
-    return e;
+    return UseItem(Slot);
 }
 
 class CraftBlacksmith : public ClientPacket {
 public:
     CraftBlacksmith();
     CraftBlacksmith(clsByteQueue* buffer);
+    CraftBlacksmith(std::int16_t Item);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -777,15 +711,14 @@ public:
 };
 
 inline CraftBlacksmith BuildCraftBlacksmith(std::int16_t Item) {
-    CraftBlacksmith e;
-        e.Item = Item;
-    return e;
+    return CraftBlacksmith(Item);
 }
 
 class CraftCarpenter : public ClientPacket {
 public:
     CraftCarpenter();
     CraftCarpenter(clsByteQueue* buffer);
+    CraftCarpenter(std::int16_t Item);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -794,15 +727,14 @@ public:
 };
 
 inline CraftCarpenter BuildCraftCarpenter(std::int16_t Item) {
-    CraftCarpenter e;
-        e.Item = Item;
-    return e;
+    return CraftCarpenter(Item);
 }
 
 class WorkLeftClick : public ClientPacket {
 public:
     WorkLeftClick();
     WorkLeftClick(clsByteQueue* buffer);
+    WorkLeftClick(std::uint8_t X, std::uint8_t Y, std::uint8_t Skill);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -813,17 +745,14 @@ public:
 };
 
 inline WorkLeftClick BuildWorkLeftClick(std::uint8_t X, std::uint8_t Y, std::uint8_t Skill) {
-    WorkLeftClick e;
-        e.X = X;
-        e.Y = Y;
-        e.Skill = Skill;
-    return e;
+    return WorkLeftClick(X, Y, Skill);
 }
 
 class CreateNewGuild : public ClientPacket {
 public:
     CreateNewGuild();
     CreateNewGuild(clsByteQueue* buffer);
+    CreateNewGuild(const std::string& Desc, const std::string& GuildName, const std::string& Site, const std::string& Codex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -835,18 +764,14 @@ public:
 };
 
 inline CreateNewGuild BuildCreateNewGuild(const std::string& Desc, const std::string& GuildName, const std::string& Site, const std::string& Codex) {
-    CreateNewGuild e;
-        e.Desc = Desc;
-        e.GuildName = GuildName;
-        e.Site = Site;
-        e.Codex = Codex;
-    return e;
+    return CreateNewGuild(Desc, GuildName, Site, Codex);
 }
 
 class SpellInfo : public ClientPacket {
 public:
     SpellInfo();
     SpellInfo(clsByteQueue* buffer);
+    SpellInfo(std::uint8_t Slot);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -855,15 +780,14 @@ public:
 };
 
 inline SpellInfo BuildSpellInfo(std::uint8_t Slot) {
-    SpellInfo e;
-        e.Slot = Slot;
-    return e;
+    return SpellInfo(Slot);
 }
 
 class EquipItem : public ClientPacket {
 public:
     EquipItem();
     EquipItem(clsByteQueue* buffer);
+    EquipItem(std::uint8_t Slot);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -872,15 +796,14 @@ public:
 };
 
 inline EquipItem BuildEquipItem(std::uint8_t Slot) {
-    EquipItem e;
-        e.Slot = Slot;
-    return e;
+    return EquipItem(Slot);
 }
 
 class ChangeHeading : public ClientPacket {
 public:
     ChangeHeading();
     ChangeHeading(clsByteQueue* buffer);
+    ChangeHeading(std::uint8_t Heading);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -889,15 +812,14 @@ public:
 };
 
 inline ChangeHeading BuildChangeHeading(std::uint8_t Heading) {
-    ChangeHeading e;
-        e.Heading = Heading;
-    return e;
+    return ChangeHeading(Heading);
 }
 
 class ModifySkills : public ClientPacket {
 public:
     ModifySkills();
     ModifySkills(clsByteQueue* buffer);
+    ModifySkills(std::vector<std::uint8_t> Skills );
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -906,15 +828,14 @@ public:
 };
 
 inline ModifySkills BuildModifySkills(std::vector<std::uint8_t> Skills ) {
-    ModifySkills e;
-        e.Skills = Skills;
-    return e;
+    return ModifySkills(Skills);
 }
 
 class Train : public ClientPacket {
 public:
     Train();
     Train(clsByteQueue* buffer);
+    Train(std::uint8_t PetIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -923,15 +844,14 @@ public:
 };
 
 inline Train BuildTrain(std::uint8_t PetIndex) {
-    Train e;
-        e.PetIndex = PetIndex;
-    return e;
+    return Train(PetIndex);
 }
 
 class CommerceBuy : public ClientPacket {
 public:
     CommerceBuy();
     CommerceBuy(clsByteQueue* buffer);
+    CommerceBuy(std::uint8_t Slot, std::int16_t Amount);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -941,16 +861,14 @@ public:
 };
 
 inline CommerceBuy BuildCommerceBuy(std::uint8_t Slot, std::int16_t Amount) {
-    CommerceBuy e;
-        e.Slot = Slot;
-        e.Amount = Amount;
-    return e;
+    return CommerceBuy(Slot, Amount);
 }
 
 class BankExtractItem : public ClientPacket {
 public:
     BankExtractItem();
     BankExtractItem(clsByteQueue* buffer);
+    BankExtractItem(std::uint8_t Slot, std::int16_t Amount);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -960,16 +878,14 @@ public:
 };
 
 inline BankExtractItem BuildBankExtractItem(std::uint8_t Slot, std::int16_t Amount) {
-    BankExtractItem e;
-        e.Slot = Slot;
-        e.Amount = Amount;
-    return e;
+    return BankExtractItem(Slot, Amount);
 }
 
 class CommerceSell : public ClientPacket {
 public:
     CommerceSell();
     CommerceSell(clsByteQueue* buffer);
+    CommerceSell(std::uint8_t Slot, std::int16_t Amount);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -979,16 +895,14 @@ public:
 };
 
 inline CommerceSell BuildCommerceSell(std::uint8_t Slot, std::int16_t Amount) {
-    CommerceSell e;
-        e.Slot = Slot;
-        e.Amount = Amount;
-    return e;
+    return CommerceSell(Slot, Amount);
 }
 
 class BankDeposit : public ClientPacket {
 public:
     BankDeposit();
     BankDeposit(clsByteQueue* buffer);
+    BankDeposit(std::uint8_t Slot, std::int16_t Amount);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -998,16 +912,14 @@ public:
 };
 
 inline BankDeposit BuildBankDeposit(std::uint8_t Slot, std::int16_t Amount) {
-    BankDeposit e;
-        e.Slot = Slot;
-        e.Amount = Amount;
-    return e;
+    return BankDeposit(Slot, Amount);
 }
 
 class ForumPost : public ClientPacket {
 public:
     ForumPost();
     ForumPost(clsByteQueue* buffer);
+    ForumPost(std::uint8_t MsgType, const std::string& Title, const std::string& Post);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1018,17 +930,14 @@ public:
 };
 
 inline ForumPost BuildForumPost(std::uint8_t MsgType, const std::string& Title, const std::string& Post) {
-    ForumPost e;
-        e.MsgType = MsgType;
-        e.Title = Title;
-        e.Post = Post;
-    return e;
+    return ForumPost(MsgType, Title, Post);
 }
 
 class MoveSpell : public ClientPacket {
 public:
     MoveSpell();
     MoveSpell(clsByteQueue* buffer);
+    MoveSpell(bool Direction, std::uint8_t Slot);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1038,16 +947,14 @@ public:
 };
 
 inline MoveSpell BuildMoveSpell(bool Direction, std::uint8_t Slot) {
-    MoveSpell e;
-        e.Direction = Direction;
-        e.Slot = Slot;
-    return e;
+    return MoveSpell(Direction, Slot);
 }
 
 class MoveBank : public ClientPacket {
 public:
     MoveBank();
     MoveBank(clsByteQueue* buffer);
+    MoveBank(bool Direction, std::uint8_t Slot);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1057,16 +964,14 @@ public:
 };
 
 inline MoveBank BuildMoveBank(bool Direction, std::uint8_t Slot) {
-    MoveBank e;
-        e.Direction = Direction;
-        e.Slot = Slot;
-    return e;
+    return MoveBank(Direction, Slot);
 }
 
 class ClanCodexUpdate : public ClientPacket {
 public:
     ClanCodexUpdate();
     ClanCodexUpdate(clsByteQueue* buffer);
+    ClanCodexUpdate(const std::string& Desc, const std::string& Codex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1076,16 +981,14 @@ public:
 };
 
 inline ClanCodexUpdate BuildClanCodexUpdate(const std::string& Desc, const std::string& Codex) {
-    ClanCodexUpdate e;
-        e.Desc = Desc;
-        e.Codex = Codex;
-    return e;
+    return ClanCodexUpdate(Desc, Codex);
 }
 
 class UserCommerceOffer : public ClientPacket {
 public:
     UserCommerceOffer();
     UserCommerceOffer(clsByteQueue* buffer);
+    UserCommerceOffer(std::uint8_t Slot, std::int32_t Amount, std::uint8_t OfferSlot);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1096,17 +999,14 @@ public:
 };
 
 inline UserCommerceOffer BuildUserCommerceOffer(std::uint8_t Slot, std::int32_t Amount, std::uint8_t OfferSlot) {
-    UserCommerceOffer e;
-        e.Slot = Slot;
-        e.Amount = Amount;
-        e.OfferSlot = OfferSlot;
-    return e;
+    return UserCommerceOffer(Slot, Amount, OfferSlot);
 }
 
 class GuildAcceptPeace : public ClientPacket {
 public:
     GuildAcceptPeace();
     GuildAcceptPeace(clsByteQueue* buffer);
+    GuildAcceptPeace(const std::string& Guild);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1115,15 +1015,14 @@ public:
 };
 
 inline GuildAcceptPeace BuildGuildAcceptPeace(const std::string& Guild) {
-    GuildAcceptPeace e;
-        e.Guild = Guild;
-    return e;
+    return GuildAcceptPeace(Guild);
 }
 
 class GuildRejectAlliance : public ClientPacket {
 public:
     GuildRejectAlliance();
     GuildRejectAlliance(clsByteQueue* buffer);
+    GuildRejectAlliance(const std::string& Guild);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1132,15 +1031,14 @@ public:
 };
 
 inline GuildRejectAlliance BuildGuildRejectAlliance(const std::string& Guild) {
-    GuildRejectAlliance e;
-        e.Guild = Guild;
-    return e;
+    return GuildRejectAlliance(Guild);
 }
 
 class GuildRejectPeace : public ClientPacket {
 public:
     GuildRejectPeace();
     GuildRejectPeace(clsByteQueue* buffer);
+    GuildRejectPeace(const std::string& Guild);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1149,15 +1047,14 @@ public:
 };
 
 inline GuildRejectPeace BuildGuildRejectPeace(const std::string& Guild) {
-    GuildRejectPeace e;
-        e.Guild = Guild;
-    return e;
+    return GuildRejectPeace(Guild);
 }
 
 class GuildAcceptAlliance : public ClientPacket {
 public:
     GuildAcceptAlliance();
     GuildAcceptAlliance(clsByteQueue* buffer);
+    GuildAcceptAlliance(const std::string& Guild);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1166,15 +1063,14 @@ public:
 };
 
 inline GuildAcceptAlliance BuildGuildAcceptAlliance(const std::string& Guild) {
-    GuildAcceptAlliance e;
-        e.Guild = Guild;
-    return e;
+    return GuildAcceptAlliance(Guild);
 }
 
 class GuildOfferPeace : public ClientPacket {
 public:
     GuildOfferPeace();
     GuildOfferPeace(clsByteQueue* buffer);
+    GuildOfferPeace(const std::string& Guild, const std::string& Proposal);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1184,16 +1080,14 @@ public:
 };
 
 inline GuildOfferPeace BuildGuildOfferPeace(const std::string& Guild, const std::string& Proposal) {
-    GuildOfferPeace e;
-        e.Guild = Guild;
-        e.Proposal = Proposal;
-    return e;
+    return GuildOfferPeace(Guild, Proposal);
 }
 
 class GuildOfferAlliance : public ClientPacket {
 public:
     GuildOfferAlliance();
     GuildOfferAlliance(clsByteQueue* buffer);
+    GuildOfferAlliance(const std::string& Guild, const std::string& Proposal);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1203,16 +1097,14 @@ public:
 };
 
 inline GuildOfferAlliance BuildGuildOfferAlliance(const std::string& Guild, const std::string& Proposal) {
-    GuildOfferAlliance e;
-        e.Guild = Guild;
-        e.Proposal = Proposal;
-    return e;
+    return GuildOfferAlliance(Guild, Proposal);
 }
 
 class GuildAllianceDetails : public ClientPacket {
 public:
     GuildAllianceDetails();
     GuildAllianceDetails(clsByteQueue* buffer);
+    GuildAllianceDetails(const std::string& Guild);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1221,15 +1113,14 @@ public:
 };
 
 inline GuildAllianceDetails BuildGuildAllianceDetails(const std::string& Guild) {
-    GuildAllianceDetails e;
-        e.Guild = Guild;
-    return e;
+    return GuildAllianceDetails(Guild);
 }
 
 class GuildPeaceDetails : public ClientPacket {
 public:
     GuildPeaceDetails();
     GuildPeaceDetails(clsByteQueue* buffer);
+    GuildPeaceDetails(const std::string& Guild);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1238,15 +1129,14 @@ public:
 };
 
 inline GuildPeaceDetails BuildGuildPeaceDetails(const std::string& Guild) {
-    GuildPeaceDetails e;
-        e.Guild = Guild;
-    return e;
+    return GuildPeaceDetails(Guild);
 }
 
 class GuildRequestJoinerInfo : public ClientPacket {
 public:
     GuildRequestJoinerInfo();
     GuildRequestJoinerInfo(clsByteQueue* buffer);
+    GuildRequestJoinerInfo(const std::string& User);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1255,9 +1145,7 @@ public:
 };
 
 inline GuildRequestJoinerInfo BuildGuildRequestJoinerInfo(const std::string& User) {
-    GuildRequestJoinerInfo e;
-        e.User = User;
-    return e;
+    return GuildRequestJoinerInfo(User);
 }
 
 class GuildAlliancePropList : public ClientPacket {
@@ -1272,9 +1160,7 @@ public:
 };
 
 inline GuildAlliancePropList BuildGuildAlliancePropList() {
-    GuildAlliancePropList e;
-
-    return e;
+    return GuildAlliancePropList();
 }
 
 class GuildPeacePropList : public ClientPacket {
@@ -1289,15 +1175,14 @@ public:
 };
 
 inline GuildPeacePropList BuildGuildPeacePropList() {
-    GuildPeacePropList e;
-
-    return e;
+    return GuildPeacePropList();
 }
 
 class GuildDeclareWar : public ClientPacket {
 public:
     GuildDeclareWar();
     GuildDeclareWar(clsByteQueue* buffer);
+    GuildDeclareWar(const std::string& Guild);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1306,15 +1191,14 @@ public:
 };
 
 inline GuildDeclareWar BuildGuildDeclareWar(const std::string& Guild) {
-    GuildDeclareWar e;
-        e.Guild = Guild;
-    return e;
+    return GuildDeclareWar(Guild);
 }
 
 class GuildNewWebsite : public ClientPacket {
 public:
     GuildNewWebsite();
     GuildNewWebsite(clsByteQueue* buffer);
+    GuildNewWebsite(const std::string& Website);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1323,15 +1207,14 @@ public:
 };
 
 inline GuildNewWebsite BuildGuildNewWebsite(const std::string& Website) {
-    GuildNewWebsite e;
-        e.Website = Website;
-    return e;
+    return GuildNewWebsite(Website);
 }
 
 class GuildAcceptNewMember : public ClientPacket {
 public:
     GuildAcceptNewMember();
     GuildAcceptNewMember(clsByteQueue* buffer);
+    GuildAcceptNewMember(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1340,15 +1223,14 @@ public:
 };
 
 inline GuildAcceptNewMember BuildGuildAcceptNewMember(const std::string& UserName) {
-    GuildAcceptNewMember e;
-        e.UserName = UserName;
-    return e;
+    return GuildAcceptNewMember(UserName);
 }
 
 class GuildRejectNewMember : public ClientPacket {
 public:
     GuildRejectNewMember();
     GuildRejectNewMember(clsByteQueue* buffer);
+    GuildRejectNewMember(const std::string& UserName, const std::string& Reason);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1358,16 +1240,14 @@ public:
 };
 
 inline GuildRejectNewMember BuildGuildRejectNewMember(const std::string& UserName, const std::string& Reason) {
-    GuildRejectNewMember e;
-        e.UserName = UserName;
-        e.Reason = Reason;
-    return e;
+    return GuildRejectNewMember(UserName, Reason);
 }
 
 class GuildKickMember : public ClientPacket {
 public:
     GuildKickMember();
     GuildKickMember(clsByteQueue* buffer);
+    GuildKickMember(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1376,15 +1256,14 @@ public:
 };
 
 inline GuildKickMember BuildGuildKickMember(const std::string& UserName) {
-    GuildKickMember e;
-        e.UserName = UserName;
-    return e;
+    return GuildKickMember(UserName);
 }
 
 class GuildUpdateNews : public ClientPacket {
 public:
     GuildUpdateNews();
     GuildUpdateNews(clsByteQueue* buffer);
+    GuildUpdateNews(const std::string& News);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1393,15 +1272,14 @@ public:
 };
 
 inline GuildUpdateNews BuildGuildUpdateNews(const std::string& News) {
-    GuildUpdateNews e;
-        e.News = News;
-    return e;
+    return GuildUpdateNews(News);
 }
 
 class GuildMemberInfo : public ClientPacket {
 public:
     GuildMemberInfo();
     GuildMemberInfo(clsByteQueue* buffer);
+    GuildMemberInfo(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1410,9 +1288,7 @@ public:
 };
 
 inline GuildMemberInfo BuildGuildMemberInfo(const std::string& UserName) {
-    GuildMemberInfo e;
-        e.UserName = UserName;
-    return e;
+    return GuildMemberInfo(UserName);
 }
 
 class GuildOpenElections : public ClientPacket {
@@ -1427,15 +1303,14 @@ public:
 };
 
 inline GuildOpenElections BuildGuildOpenElections() {
-    GuildOpenElections e;
-
-    return e;
+    return GuildOpenElections();
 }
 
 class GuildRequestMembership : public ClientPacket {
 public:
     GuildRequestMembership();
     GuildRequestMembership(clsByteQueue* buffer);
+    GuildRequestMembership(const std::string& Guild, const std::string& Application);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1445,16 +1320,14 @@ public:
 };
 
 inline GuildRequestMembership BuildGuildRequestMembership(const std::string& Guild, const std::string& Application) {
-    GuildRequestMembership e;
-        e.Guild = Guild;
-        e.Application = Application;
-    return e;
+    return GuildRequestMembership(Guild, Application);
 }
 
 class GuildRequestDetails : public ClientPacket {
 public:
     GuildRequestDetails();
     GuildRequestDetails(clsByteQueue* buffer);
+    GuildRequestDetails(const std::string& Guild);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1463,9 +1336,7 @@ public:
 };
 
 inline GuildRequestDetails BuildGuildRequestDetails(const std::string& Guild) {
-    GuildRequestDetails e;
-        e.Guild = Guild;
-    return e;
+    return GuildRequestDetails(Guild);
 }
 
 class Online : public ClientPacket {
@@ -1480,9 +1351,7 @@ public:
 };
 
 inline Online BuildOnline() {
-    Online e;
-
-    return e;
+    return Online();
 }
 
 class Quit : public ClientPacket {
@@ -1497,9 +1366,7 @@ public:
 };
 
 inline Quit BuildQuit() {
-    Quit e;
-
-    return e;
+    return Quit();
 }
 
 class GuildLeave : public ClientPacket {
@@ -1514,9 +1381,7 @@ public:
 };
 
 inline GuildLeave BuildGuildLeave() {
-    GuildLeave e;
-
-    return e;
+    return GuildLeave();
 }
 
 class RequestAccountState : public ClientPacket {
@@ -1531,9 +1396,7 @@ public:
 };
 
 inline RequestAccountState BuildRequestAccountState() {
-    RequestAccountState e;
-
-    return e;
+    return RequestAccountState();
 }
 
 class PetStand : public ClientPacket {
@@ -1548,9 +1411,7 @@ public:
 };
 
 inline PetStand BuildPetStand() {
-    PetStand e;
-
-    return e;
+    return PetStand();
 }
 
 class PetFollow : public ClientPacket {
@@ -1565,9 +1426,7 @@ public:
 };
 
 inline PetFollow BuildPetFollow() {
-    PetFollow e;
-
-    return e;
+    return PetFollow();
 }
 
 class ReleasePet : public ClientPacket {
@@ -1582,9 +1441,7 @@ public:
 };
 
 inline ReleasePet BuildReleasePet() {
-    ReleasePet e;
-
-    return e;
+    return ReleasePet();
 }
 
 class TrainList : public ClientPacket {
@@ -1599,9 +1456,7 @@ public:
 };
 
 inline TrainList BuildTrainList() {
-    TrainList e;
-
-    return e;
+    return TrainList();
 }
 
 class Rest : public ClientPacket {
@@ -1616,9 +1471,7 @@ public:
 };
 
 inline Rest BuildRest() {
-    Rest e;
-
-    return e;
+    return Rest();
 }
 
 class Meditate : public ClientPacket {
@@ -1633,9 +1486,7 @@ public:
 };
 
 inline Meditate BuildMeditate() {
-    Meditate e;
-
-    return e;
+    return Meditate();
 }
 
 class Resucitate : public ClientPacket {
@@ -1650,9 +1501,7 @@ public:
 };
 
 inline Resucitate BuildResucitate() {
-    Resucitate e;
-
-    return e;
+    return Resucitate();
 }
 
 class Heal : public ClientPacket {
@@ -1667,9 +1516,7 @@ public:
 };
 
 inline Heal BuildHeal() {
-    Heal e;
-
-    return e;
+    return Heal();
 }
 
 class Help : public ClientPacket {
@@ -1684,9 +1531,7 @@ public:
 };
 
 inline Help BuildHelp() {
-    Help e;
-
-    return e;
+    return Help();
 }
 
 class RequestStats : public ClientPacket {
@@ -1701,9 +1546,7 @@ public:
 };
 
 inline RequestStats BuildRequestStats() {
-    RequestStats e;
-
-    return e;
+    return RequestStats();
 }
 
 class CommerceStart : public ClientPacket {
@@ -1718,9 +1561,7 @@ public:
 };
 
 inline CommerceStart BuildCommerceStart() {
-    CommerceStart e;
-
-    return e;
+    return CommerceStart();
 }
 
 class BankStart : public ClientPacket {
@@ -1735,9 +1576,7 @@ public:
 };
 
 inline BankStart BuildBankStart() {
-    BankStart e;
-
-    return e;
+    return BankStart();
 }
 
 class Enlist : public ClientPacket {
@@ -1752,9 +1591,7 @@ public:
 };
 
 inline Enlist BuildEnlist() {
-    Enlist e;
-
-    return e;
+    return Enlist();
 }
 
 class Information : public ClientPacket {
@@ -1769,9 +1606,7 @@ public:
 };
 
 inline Information BuildInformation() {
-    Information e;
-
-    return e;
+    return Information();
 }
 
 class Reward : public ClientPacket {
@@ -1786,9 +1621,7 @@ public:
 };
 
 inline Reward BuildReward() {
-    Reward e;
-
-    return e;
+    return Reward();
 }
 
 class RequestMOTD : public ClientPacket {
@@ -1803,9 +1636,7 @@ public:
 };
 
 inline RequestMOTD BuildRequestMOTD() {
-    RequestMOTD e;
-
-    return e;
+    return RequestMOTD();
 }
 
 class UpTime : public ClientPacket {
@@ -1820,9 +1651,7 @@ public:
 };
 
 inline UpTime BuildUpTime() {
-    UpTime e;
-
-    return e;
+    return UpTime();
 }
 
 class PartyLeave : public ClientPacket {
@@ -1837,9 +1666,7 @@ public:
 };
 
 inline PartyLeave BuildPartyLeave() {
-    PartyLeave e;
-
-    return e;
+    return PartyLeave();
 }
 
 class PartyCreate : public ClientPacket {
@@ -1854,9 +1681,7 @@ public:
 };
 
 inline PartyCreate BuildPartyCreate() {
-    PartyCreate e;
-
-    return e;
+    return PartyCreate();
 }
 
 class PartyJoin : public ClientPacket {
@@ -1871,9 +1696,7 @@ public:
 };
 
 inline PartyJoin BuildPartyJoin() {
-    PartyJoin e;
-
-    return e;
+    return PartyJoin();
 }
 
 class Inquiry : public ClientPacket {
@@ -1888,15 +1711,14 @@ public:
 };
 
 inline Inquiry BuildInquiry() {
-    Inquiry e;
-
-    return e;
+    return Inquiry();
 }
 
 class GuildMessage : public ClientPacket {
 public:
     GuildMessage();
     GuildMessage(clsByteQueue* buffer);
+    GuildMessage(const std::string& Chat);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1905,15 +1727,14 @@ public:
 };
 
 inline GuildMessage BuildGuildMessage(const std::string& Chat) {
-    GuildMessage e;
-        e.Chat = Chat;
-    return e;
+    return GuildMessage(Chat);
 }
 
 class PartyMessage : public ClientPacket {
 public:
     PartyMessage();
     PartyMessage(clsByteQueue* buffer);
+    PartyMessage(const std::string& Chat);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1922,15 +1743,14 @@ public:
 };
 
 inline PartyMessage BuildPartyMessage(const std::string& Chat) {
-    PartyMessage e;
-        e.Chat = Chat;
-    return e;
+    return PartyMessage(Chat);
 }
 
 class CentinelReport : public ClientPacket {
 public:
     CentinelReport();
     CentinelReport(clsByteQueue* buffer);
+    CentinelReport(std::int16_t Code);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1939,9 +1759,7 @@ public:
 };
 
 inline CentinelReport BuildCentinelReport(std::int16_t Code) {
-    CentinelReport e;
-        e.Code = Code;
-    return e;
+    return CentinelReport(Code);
 }
 
 class GuildOnline : public ClientPacket {
@@ -1956,9 +1774,7 @@ public:
 };
 
 inline GuildOnline BuildGuildOnline() {
-    GuildOnline e;
-
-    return e;
+    return GuildOnline();
 }
 
 class PartyOnline : public ClientPacket {
@@ -1973,15 +1789,14 @@ public:
 };
 
 inline PartyOnline BuildPartyOnline() {
-    PartyOnline e;
-
-    return e;
+    return PartyOnline();
 }
 
 class CouncilMessage : public ClientPacket {
 public:
     CouncilMessage();
     CouncilMessage(clsByteQueue* buffer);
+    CouncilMessage(const std::string& Chat);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -1990,15 +1805,14 @@ public:
 };
 
 inline CouncilMessage BuildCouncilMessage(const std::string& Chat) {
-    CouncilMessage e;
-        e.Chat = Chat;
-    return e;
+    return CouncilMessage(Chat);
 }
 
 class RoleMasterRequest : public ClientPacket {
 public:
     RoleMasterRequest();
     RoleMasterRequest(clsByteQueue* buffer);
+    RoleMasterRequest(const std::string& Request);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2007,9 +1821,7 @@ public:
 };
 
 inline RoleMasterRequest BuildRoleMasterRequest(const std::string& Request) {
-    RoleMasterRequest e;
-        e.Request = Request;
-    return e;
+    return RoleMasterRequest(Request);
 }
 
 class GMRequest : public ClientPacket {
@@ -2024,15 +1836,14 @@ public:
 };
 
 inline GMRequest BuildGMRequest() {
-    GMRequest e;
-
-    return e;
+    return GMRequest();
 }
 
 class BugReport : public ClientPacket {
 public:
     BugReport();
     BugReport(clsByteQueue* buffer);
+    BugReport(const std::string& Report);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2041,15 +1852,14 @@ public:
 };
 
 inline BugReport BuildBugReport(const std::string& Report) {
-    BugReport e;
-        e.Report = Report;
-    return e;
+    return BugReport(Report);
 }
 
 class ChangeDescription : public ClientPacket {
 public:
     ChangeDescription();
     ChangeDescription(clsByteQueue* buffer);
+    ChangeDescription(const std::string& Description);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2058,15 +1868,14 @@ public:
 };
 
 inline ChangeDescription BuildChangeDescription(const std::string& Description) {
-    ChangeDescription e;
-        e.Description = Description;
-    return e;
+    return ChangeDescription(Description);
 }
 
 class GuildVote : public ClientPacket {
 public:
     GuildVote();
     GuildVote(clsByteQueue* buffer);
+    GuildVote(const std::string& Vote);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2075,15 +1884,14 @@ public:
 };
 
 inline GuildVote BuildGuildVote(const std::string& Vote) {
-    GuildVote e;
-        e.Vote = Vote;
-    return e;
+    return GuildVote(Vote);
 }
 
 class Punishments : public ClientPacket {
 public:
     Punishments();
     Punishments(clsByteQueue* buffer);
+    Punishments(const std::string& Name);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2092,15 +1900,14 @@ public:
 };
 
 inline Punishments BuildPunishments(const std::string& Name) {
-    Punishments e;
-        e.Name = Name;
-    return e;
+    return Punishments(Name);
 }
 
 class ChangePassword : public ClientPacket {
 public:
     ChangePassword();
     ChangePassword(clsByteQueue* buffer);
+    ChangePassword(const std::string& OldPass, const std::string& NewPass);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2110,16 +1917,14 @@ public:
 };
 
 inline ChangePassword BuildChangePassword(const std::string& OldPass, const std::string& NewPass) {
-    ChangePassword e;
-        e.OldPass = OldPass;
-        e.NewPass = NewPass;
-    return e;
+    return ChangePassword(OldPass, NewPass);
 }
 
 class Gamble : public ClientPacket {
 public:
     Gamble();
     Gamble(clsByteQueue* buffer);
+    Gamble(std::int16_t Amount);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2128,15 +1933,14 @@ public:
 };
 
 inline Gamble BuildGamble(std::int16_t Amount) {
-    Gamble e;
-        e.Amount = Amount;
-    return e;
+    return Gamble(Amount);
 }
 
 class InquiryVote : public ClientPacket {
 public:
     InquiryVote();
     InquiryVote(clsByteQueue* buffer);
+    InquiryVote(std::uint8_t Opt);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2145,9 +1949,7 @@ public:
 };
 
 inline InquiryVote BuildInquiryVote(std::uint8_t Opt) {
-    InquiryVote e;
-        e.Opt = Opt;
-    return e;
+    return InquiryVote(Opt);
 }
 
 class LeaveFaction : public ClientPacket {
@@ -2162,15 +1964,14 @@ public:
 };
 
 inline LeaveFaction BuildLeaveFaction() {
-    LeaveFaction e;
-
-    return e;
+    return LeaveFaction();
 }
 
 class BankExtractGold : public ClientPacket {
 public:
     BankExtractGold();
     BankExtractGold(clsByteQueue* buffer);
+    BankExtractGold(std::int32_t Amount);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2179,15 +1980,14 @@ public:
 };
 
 inline BankExtractGold BuildBankExtractGold(std::int32_t Amount) {
-    BankExtractGold e;
-        e.Amount = Amount;
-    return e;
+    return BankExtractGold(Amount);
 }
 
 class BankDepositGold : public ClientPacket {
 public:
     BankDepositGold();
     BankDepositGold(clsByteQueue* buffer);
+    BankDepositGold(std::int32_t Amount);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2196,15 +1996,14 @@ public:
 };
 
 inline BankDepositGold BuildBankDepositGold(std::int32_t Amount) {
-    BankDepositGold e;
-        e.Amount = Amount;
-    return e;
+    return BankDepositGold(Amount);
 }
 
 class Denounce : public ClientPacket {
 public:
     Denounce();
     Denounce(clsByteQueue* buffer);
+    Denounce(const std::string& Text);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2213,9 +2012,7 @@ public:
 };
 
 inline Denounce BuildDenounce(const std::string& Text) {
-    Denounce e;
-        e.Text = Text;
-    return e;
+    return Denounce(Text);
 }
 
 class GuildFundate : public ClientPacket {
@@ -2230,15 +2027,14 @@ public:
 };
 
 inline GuildFundate BuildGuildFundate() {
-    GuildFundate e;
-
-    return e;
+    return GuildFundate();
 }
 
 class GuildFundation : public ClientPacket {
 public:
     GuildFundation();
     GuildFundation(clsByteQueue* buffer);
+    GuildFundation(std::uint8_t ClanType);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2247,15 +2043,14 @@ public:
 };
 
 inline GuildFundation BuildGuildFundation(std::uint8_t ClanType) {
-    GuildFundation e;
-        e.ClanType = ClanType;
-    return e;
+    return GuildFundation(ClanType);
 }
 
 class PartyKick : public ClientPacket {
 public:
     PartyKick();
     PartyKick(clsByteQueue* buffer);
+    PartyKick(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2264,15 +2059,14 @@ public:
 };
 
 inline PartyKick BuildPartyKick(const std::string& UserName) {
-    PartyKick e;
-        e.UserName = UserName;
-    return e;
+    return PartyKick(UserName);
 }
 
 class PartySetLeader : public ClientPacket {
 public:
     PartySetLeader();
     PartySetLeader(clsByteQueue* buffer);
+    PartySetLeader(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2281,15 +2075,14 @@ public:
 };
 
 inline PartySetLeader BuildPartySetLeader(const std::string& UserName) {
-    PartySetLeader e;
-        e.UserName = UserName;
-    return e;
+    return PartySetLeader(UserName);
 }
 
 class PartyAcceptMember : public ClientPacket {
 public:
     PartyAcceptMember();
     PartyAcceptMember(clsByteQueue* buffer);
+    PartyAcceptMember(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2298,9 +2091,7 @@ public:
 };
 
 inline PartyAcceptMember BuildPartyAcceptMember(const std::string& UserName) {
-    PartyAcceptMember e;
-        e.UserName = UserName;
-    return e;
+    return PartyAcceptMember(UserName);
 }
 
 class Ping : public ClientPacket {
@@ -2315,9 +2106,7 @@ public:
 };
 
 inline Ping BuildPing() {
-    Ping e;
-
-    return e;
+    return Ping();
 }
 
 class RequestPartyForm : public ClientPacket {
@@ -2332,15 +2121,14 @@ public:
 };
 
 inline RequestPartyForm BuildRequestPartyForm() {
-    RequestPartyForm e;
-
-    return e;
+    return RequestPartyForm();
 }
 
 class ItemUpgrade : public ClientPacket {
 public:
     ItemUpgrade();
     ItemUpgrade(clsByteQueue* buffer);
+    ItemUpgrade(std::int16_t ItemIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2349,9 +2137,7 @@ public:
 };
 
 inline ItemUpgrade BuildItemUpgrade(std::int16_t ItemIndex) {
-    ItemUpgrade e;
-        e.ItemIndex = ItemIndex;
-    return e;
+    return ItemUpgrade(ItemIndex);
 }
 
 class GMCommands : public ClientPacket {
@@ -2371,6 +2157,7 @@ class InitCrafting : public ClientPacket {
 public:
     InitCrafting();
     InitCrafting(clsByteQueue* buffer);
+    InitCrafting(std::int32_t TotalItems, std::int16_t ItemsPorCiclo);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2380,10 +2167,7 @@ public:
 };
 
 inline InitCrafting BuildInitCrafting(std::int32_t TotalItems, std::int16_t ItemsPorCiclo) {
-    InitCrafting e;
-        e.TotalItems = TotalItems;
-        e.ItemsPorCiclo = ItemsPorCiclo;
-    return e;
+    return InitCrafting(TotalItems, ItemsPorCiclo);
 }
 
 class Home : public ClientPacket {
@@ -2398,9 +2182,7 @@ public:
 };
 
 inline Home BuildHome() {
-    Home e;
-
-    return e;
+    return Home();
 }
 
 class ShowGuildNews : public ClientPacket {
@@ -2415,9 +2197,7 @@ public:
 };
 
 inline ShowGuildNews BuildShowGuildNews() {
-    ShowGuildNews e;
-
-    return e;
+    return ShowGuildNews();
 }
 
 class ShareNpc : public ClientPacket {
@@ -2432,9 +2212,7 @@ public:
 };
 
 inline ShareNpc BuildShareNpc() {
-    ShareNpc e;
-
-    return e;
+    return ShareNpc();
 }
 
 class StopSharingNpc : public ClientPacket {
@@ -2449,9 +2227,7 @@ public:
 };
 
 inline StopSharingNpc BuildStopSharingNpc() {
-    StopSharingNpc e;
-
-    return e;
+    return StopSharingNpc();
 }
 
 class Consultation : public ClientPacket {
@@ -2466,15 +2242,14 @@ public:
 };
 
 inline Consultation BuildConsultation() {
-    Consultation e;
-
-    return e;
+    return Consultation();
 }
 
 class MoveItem : public ClientPacket {
 public:
     MoveItem();
     MoveItem(clsByteQueue* buffer);
+    MoveItem(std::uint8_t OldSlot, std::uint8_t NewSlot);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2484,10 +2259,7 @@ public:
 };
 
 inline MoveItem BuildMoveItem(std::uint8_t OldSlot, std::uint8_t NewSlot) {
-    MoveItem e;
-        e.OldSlot = OldSlot;
-        e.NewSlot = NewSlot;
-    return e;
+    return MoveItem(OldSlot, NewSlot);
 }
 
 class ClientPacketHandler {
@@ -2796,6 +2568,7 @@ class GMMessage : public ClientGMPacket {
 public:
     GMMessage();
     GMMessage(clsByteQueue* buffer);
+    GMMessage(const std::string& Chat);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2804,9 +2577,7 @@ public:
 };
 
 inline GMMessage BuildGMMessage(const std::string& Chat) {
-    GMMessage e;
-        e.Chat = Chat;
-    return e;
+    return GMMessage(Chat);
 }
 
 class ShowName : public ClientGMPacket {
@@ -2821,9 +2592,7 @@ public:
 };
 
 inline ShowName BuildShowName() {
-    ShowName e;
-
-    return e;
+    return ShowName();
 }
 
 class OnlineRoyalArmy : public ClientGMPacket {
@@ -2838,9 +2607,7 @@ public:
 };
 
 inline OnlineRoyalArmy BuildOnlineRoyalArmy() {
-    OnlineRoyalArmy e;
-
-    return e;
+    return OnlineRoyalArmy();
 }
 
 class OnlineChaosLegion : public ClientGMPacket {
@@ -2855,15 +2622,14 @@ public:
 };
 
 inline OnlineChaosLegion BuildOnlineChaosLegion() {
-    OnlineChaosLegion e;
-
-    return e;
+    return OnlineChaosLegion();
 }
 
 class GoNearby : public ClientGMPacket {
 public:
     GoNearby();
     GoNearby(clsByteQueue* buffer);
+    GoNearby(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2872,15 +2638,14 @@ public:
 };
 
 inline GoNearby BuildGoNearby(const std::string& UserName) {
-    GoNearby e;
-        e.UserName = UserName;
-    return e;
+    return GoNearby(UserName);
 }
 
 class Comment : public ClientGMPacket {
 public:
     Comment();
     Comment(clsByteQueue* buffer);
+    Comment(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2889,9 +2654,7 @@ public:
 };
 
 inline Comment BuildComment(const std::string& Data) {
-    Comment e;
-        e.Data = Data;
-    return e;
+    return Comment(Data);
 }
 
 class ServerTime : public ClientGMPacket {
@@ -2906,15 +2669,14 @@ public:
 };
 
 inline ServerTime BuildServerTime() {
-    ServerTime e;
-
-    return e;
+    return ServerTime();
 }
 
 class Where : public ClientGMPacket {
 public:
     Where();
     Where(clsByteQueue* buffer);
+    Where(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2923,15 +2685,14 @@ public:
 };
 
 inline Where BuildWhere(const std::string& UserName) {
-    Where e;
-        e.UserName = UserName;
-    return e;
+    return Where(UserName);
 }
 
 class CreaturesInMap : public ClientGMPacket {
 public:
     CreaturesInMap();
     CreaturesInMap(clsByteQueue* buffer);
+    CreaturesInMap(std::int16_t Map);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2940,9 +2701,7 @@ public:
 };
 
 inline CreaturesInMap BuildCreaturesInMap(std::int16_t Map) {
-    CreaturesInMap e;
-        e.Map = Map;
-    return e;
+    return CreaturesInMap(Map);
 }
 
 class WarpMeToTarget : public ClientGMPacket {
@@ -2957,15 +2716,14 @@ public:
 };
 
 inline WarpMeToTarget BuildWarpMeToTarget() {
-    WarpMeToTarget e;
-
-    return e;
+    return WarpMeToTarget();
 }
 
 class WarpChar : public ClientGMPacket {
 public:
     WarpChar();
     WarpChar(clsByteQueue* buffer);
+    WarpChar(const std::string& UserName, std::int16_t Map, std::uint8_t X, std::uint8_t Y);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2977,18 +2735,14 @@ public:
 };
 
 inline WarpChar BuildWarpChar(const std::string& UserName, std::int16_t Map, std::uint8_t X, std::uint8_t Y) {
-    WarpChar e;
-        e.UserName = UserName;
-        e.Map = Map;
-        e.X = X;
-        e.Y = Y;
-    return e;
+    return WarpChar(UserName, Map, X, Y);
 }
 
 class Silence : public ClientGMPacket {
 public:
     Silence();
     Silence(clsByteQueue* buffer);
+    Silence(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -2997,9 +2751,7 @@ public:
 };
 
 inline Silence BuildSilence(const std::string& UserName) {
-    Silence e;
-        e.UserName = UserName;
-    return e;
+    return Silence(UserName);
 }
 
 class SOSShowList : public ClientGMPacket {
@@ -3014,15 +2766,14 @@ public:
 };
 
 inline SOSShowList BuildSOSShowList() {
-    SOSShowList e;
-
-    return e;
+    return SOSShowList();
 }
 
 class SOSRemove : public ClientGMPacket {
 public:
     SOSRemove();
     SOSRemove(clsByteQueue* buffer);
+    SOSRemove(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3031,15 +2782,14 @@ public:
 };
 
 inline SOSRemove BuildSOSRemove(const std::string& UserName) {
-    SOSRemove e;
-        e.UserName = UserName;
-    return e;
+    return SOSRemove(UserName);
 }
 
 class GoToChar : public ClientGMPacket {
 public:
     GoToChar();
     GoToChar(clsByteQueue* buffer);
+    GoToChar(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3048,9 +2798,7 @@ public:
 };
 
 inline GoToChar BuildGoToChar(const std::string& UserName) {
-    GoToChar e;
-        e.UserName = UserName;
-    return e;
+    return GoToChar(UserName);
 }
 
 class Invisible : public ClientGMPacket {
@@ -3065,9 +2813,7 @@ public:
 };
 
 inline Invisible BuildInvisible() {
-    Invisible e;
-
-    return e;
+    return Invisible();
 }
 
 class GMPanel : public ClientGMPacket {
@@ -3082,9 +2828,7 @@ public:
 };
 
 inline GMPanel BuildGMPanel() {
-    GMPanel e;
-
-    return e;
+    return GMPanel();
 }
 
 class RequestUserList : public ClientGMPacket {
@@ -3099,9 +2843,7 @@ public:
 };
 
 inline RequestUserList BuildRequestUserList() {
-    RequestUserList e;
-
-    return e;
+    return RequestUserList();
 }
 
 class Working : public ClientGMPacket {
@@ -3116,9 +2858,7 @@ public:
 };
 
 inline Working BuildWorking() {
-    Working e;
-
-    return e;
+    return Working();
 }
 
 class Hiding : public ClientGMPacket {
@@ -3133,15 +2873,14 @@ public:
 };
 
 inline Hiding BuildHiding() {
-    Hiding e;
-
-    return e;
+    return Hiding();
 }
 
 class Jail : public ClientGMPacket {
 public:
     Jail();
     Jail(clsByteQueue* buffer);
+    Jail(const std::string& UserName, const std::string& Reason, std::uint8_t JailTime);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3152,11 +2891,7 @@ public:
 };
 
 inline Jail BuildJail(const std::string& UserName, const std::string& Reason, std::uint8_t JailTime) {
-    Jail e;
-        e.UserName = UserName;
-        e.Reason = Reason;
-        e.JailTime = JailTime;
-    return e;
+    return Jail(UserName, Reason, JailTime);
 }
 
 class KillNPC : public ClientGMPacket {
@@ -3171,15 +2906,14 @@ public:
 };
 
 inline KillNPC BuildKillNPC() {
-    KillNPC e;
-
-    return e;
+    return KillNPC();
 }
 
 class WarnUser : public ClientGMPacket {
 public:
     WarnUser();
     WarnUser(clsByteQueue* buffer);
+    WarnUser(const std::string& UserName, const std::string& Reason);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3189,16 +2923,14 @@ public:
 };
 
 inline WarnUser BuildWarnUser(const std::string& UserName, const std::string& Reason) {
-    WarnUser e;
-        e.UserName = UserName;
-        e.Reason = Reason;
-    return e;
+    return WarnUser(UserName, Reason);
 }
 
 class EditChar : public ClientGMPacket {
 public:
     EditChar();
     EditChar(clsByteQueue* buffer);
+    EditChar(const std::string& UserName, std::uint8_t Opcion, const std::string& Arg1, const std::string& Arg2);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3210,18 +2942,14 @@ public:
 };
 
 inline EditChar BuildEditChar(const std::string& UserName, std::uint8_t Opcion, const std::string& Arg1, const std::string& Arg2) {
-    EditChar e;
-        e.UserName = UserName;
-        e.Opcion = Opcion;
-        e.Arg1 = Arg1;
-        e.Arg2 = Arg2;
-    return e;
+    return EditChar(UserName, Opcion, Arg1, Arg2);
 }
 
 class RequestCharInfo : public ClientGMPacket {
 public:
     RequestCharInfo();
     RequestCharInfo(clsByteQueue* buffer);
+    RequestCharInfo(const std::string& TargetName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3230,15 +2958,14 @@ public:
 };
 
 inline RequestCharInfo BuildRequestCharInfo(const std::string& TargetName) {
-    RequestCharInfo e;
-        e.TargetName = TargetName;
-    return e;
+    return RequestCharInfo(TargetName);
 }
 
 class RequestCharStats : public ClientGMPacket {
 public:
     RequestCharStats();
     RequestCharStats(clsByteQueue* buffer);
+    RequestCharStats(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3247,15 +2974,14 @@ public:
 };
 
 inline RequestCharStats BuildRequestCharStats(const std::string& UserName) {
-    RequestCharStats e;
-        e.UserName = UserName;
-    return e;
+    return RequestCharStats(UserName);
 }
 
 class RequestCharGold : public ClientGMPacket {
 public:
     RequestCharGold();
     RequestCharGold(clsByteQueue* buffer);
+    RequestCharGold(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3264,15 +2990,14 @@ public:
 };
 
 inline RequestCharGold BuildRequestCharGold(const std::string& UserName) {
-    RequestCharGold e;
-        e.UserName = UserName;
-    return e;
+    return RequestCharGold(UserName);
 }
 
 class RequestCharInventory : public ClientGMPacket {
 public:
     RequestCharInventory();
     RequestCharInventory(clsByteQueue* buffer);
+    RequestCharInventory(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3281,15 +3006,14 @@ public:
 };
 
 inline RequestCharInventory BuildRequestCharInventory(const std::string& UserName) {
-    RequestCharInventory e;
-        e.UserName = UserName;
-    return e;
+    return RequestCharInventory(UserName);
 }
 
 class RequestCharBank : public ClientGMPacket {
 public:
     RequestCharBank();
     RequestCharBank(clsByteQueue* buffer);
+    RequestCharBank(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3298,15 +3022,14 @@ public:
 };
 
 inline RequestCharBank BuildRequestCharBank(const std::string& UserName) {
-    RequestCharBank e;
-        e.UserName = UserName;
-    return e;
+    return RequestCharBank(UserName);
 }
 
 class RequestCharSkills : public ClientGMPacket {
 public:
     RequestCharSkills();
     RequestCharSkills(clsByteQueue* buffer);
+    RequestCharSkills(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3315,15 +3038,14 @@ public:
 };
 
 inline RequestCharSkills BuildRequestCharSkills(const std::string& UserName) {
-    RequestCharSkills e;
-        e.UserName = UserName;
-    return e;
+    return RequestCharSkills(UserName);
 }
 
 class ReviveChar : public ClientGMPacket {
 public:
     ReviveChar();
     ReviveChar(clsByteQueue* buffer);
+    ReviveChar(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3332,9 +3054,7 @@ public:
 };
 
 inline ReviveChar BuildReviveChar(const std::string& UserName) {
-    ReviveChar e;
-        e.UserName = UserName;
-    return e;
+    return ReviveChar(UserName);
 }
 
 class OnlineGM : public ClientGMPacket {
@@ -3349,15 +3069,14 @@ public:
 };
 
 inline OnlineGM BuildOnlineGM() {
-    OnlineGM e;
-
-    return e;
+    return OnlineGM();
 }
 
 class OnlineMap : public ClientGMPacket {
 public:
     OnlineMap();
     OnlineMap(clsByteQueue* buffer);
+    OnlineMap(std::int16_t Map);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3366,15 +3085,14 @@ public:
 };
 
 inline OnlineMap BuildOnlineMap(std::int16_t Map) {
-    OnlineMap e;
-        e.Map = Map;
-    return e;
+    return OnlineMap(Map);
 }
 
 class Forgive : public ClientGMPacket {
 public:
     Forgive();
     Forgive(clsByteQueue* buffer);
+    Forgive(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3383,15 +3101,14 @@ public:
 };
 
 inline Forgive BuildForgive(const std::string& UserName) {
-    Forgive e;
-        e.UserName = UserName;
-    return e;
+    return Forgive(UserName);
 }
 
 class Kick : public ClientGMPacket {
 public:
     Kick();
     Kick(clsByteQueue* buffer);
+    Kick(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3400,15 +3117,14 @@ public:
 };
 
 inline Kick BuildKick(const std::string& UserName) {
-    Kick e;
-        e.UserName = UserName;
-    return e;
+    return Kick(UserName);
 }
 
 class Execute : public ClientGMPacket {
 public:
     Execute();
     Execute(clsByteQueue* buffer);
+    Execute(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3417,15 +3133,14 @@ public:
 };
 
 inline Execute BuildExecute(const std::string& UserName) {
-    Execute e;
-        e.UserName = UserName;
-    return e;
+    return Execute(UserName);
 }
 
 class BanChar : public ClientGMPacket {
 public:
     BanChar();
     BanChar(clsByteQueue* buffer);
+    BanChar(const std::string& UserName, const std::string& Reason);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3435,16 +3150,14 @@ public:
 };
 
 inline BanChar BuildBanChar(const std::string& UserName, const std::string& Reason) {
-    BanChar e;
-        e.UserName = UserName;
-        e.Reason = Reason;
-    return e;
+    return BanChar(UserName, Reason);
 }
 
 class UnbanChar : public ClientGMPacket {
 public:
     UnbanChar();
     UnbanChar(clsByteQueue* buffer);
+    UnbanChar(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3453,9 +3166,7 @@ public:
 };
 
 inline UnbanChar BuildUnbanChar(const std::string& UserName) {
-    UnbanChar e;
-        e.UserName = UserName;
-    return e;
+    return UnbanChar(UserName);
 }
 
 class NPCFollow : public ClientGMPacket {
@@ -3470,15 +3181,14 @@ public:
 };
 
 inline NPCFollow BuildNPCFollow() {
-    NPCFollow e;
-
-    return e;
+    return NPCFollow();
 }
 
 class SummonChar : public ClientGMPacket {
 public:
     SummonChar();
     SummonChar(clsByteQueue* buffer);
+    SummonChar(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3487,9 +3197,7 @@ public:
 };
 
 inline SummonChar BuildSummonChar(const std::string& UserName) {
-    SummonChar e;
-        e.UserName = UserName;
-    return e;
+    return SummonChar(UserName);
 }
 
 class SpawnListRequest : public ClientGMPacket {
@@ -3504,15 +3212,14 @@ public:
 };
 
 inline SpawnListRequest BuildSpawnListRequest() {
-    SpawnListRequest e;
-
-    return e;
+    return SpawnListRequest();
 }
 
 class SpawnCreature : public ClientGMPacket {
 public:
     SpawnCreature();
     SpawnCreature(clsByteQueue* buffer);
+    SpawnCreature(std::int16_t NPC);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3521,9 +3228,7 @@ public:
 };
 
 inline SpawnCreature BuildSpawnCreature(std::int16_t NPC) {
-    SpawnCreature e;
-        e.NPC = NPC;
-    return e;
+    return SpawnCreature(NPC);
 }
 
 class ResetNPCInventory : public ClientGMPacket {
@@ -3538,9 +3243,7 @@ public:
 };
 
 inline ResetNPCInventory BuildResetNPCInventory() {
-    ResetNPCInventory e;
-
-    return e;
+    return ResetNPCInventory();
 }
 
 class CleanWorld : public ClientGMPacket {
@@ -3555,15 +3258,14 @@ public:
 };
 
 inline CleanWorld BuildCleanWorld() {
-    CleanWorld e;
-
-    return e;
+    return CleanWorld();
 }
 
 class ServerMessage : public ClientGMPacket {
 public:
     ServerMessage();
     ServerMessage(clsByteQueue* buffer);
+    ServerMessage(const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3572,15 +3274,14 @@ public:
 };
 
 inline ServerMessage BuildServerMessage(const std::string& Message) {
-    ServerMessage e;
-        e.Message = Message;
-    return e;
+    return ServerMessage(Message);
 }
 
 class NickToIP : public ClientGMPacket {
 public:
     NickToIP();
     NickToIP(clsByteQueue* buffer);
+    NickToIP(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3589,15 +3290,14 @@ public:
 };
 
 inline NickToIP BuildNickToIP(const std::string& UserName) {
-    NickToIP e;
-        e.UserName = UserName;
-    return e;
+    return NickToIP(UserName);
 }
 
 class IPToNick : public ClientGMPacket {
 public:
     IPToNick();
     IPToNick(clsByteQueue* buffer);
+    IPToNick(std::uint8_t A, std::uint8_t B, std::uint8_t C, std::uint8_t D);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3609,18 +3309,14 @@ public:
 };
 
 inline IPToNick BuildIPToNick(std::uint8_t A, std::uint8_t B, std::uint8_t C, std::uint8_t D) {
-    IPToNick e;
-        e.A = A;
-        e.B = B;
-        e.C = C;
-        e.D = D;
-    return e;
+    return IPToNick(A, B, C, D);
 }
 
 class GuildOnlineMembers : public ClientGMPacket {
 public:
     GuildOnlineMembers();
     GuildOnlineMembers(clsByteQueue* buffer);
+    GuildOnlineMembers(const std::string& GuildName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3629,15 +3325,14 @@ public:
 };
 
 inline GuildOnlineMembers BuildGuildOnlineMembers(const std::string& GuildName) {
-    GuildOnlineMembers e;
-        e.GuildName = GuildName;
-    return e;
+    return GuildOnlineMembers(GuildName);
 }
 
 class TeleportCreate : public ClientGMPacket {
 public:
     TeleportCreate();
     TeleportCreate(clsByteQueue* buffer);
+    TeleportCreate(std::int16_t Map, std::uint8_t X, std::uint8_t Y, std::uint8_t Radio);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3649,12 +3344,7 @@ public:
 };
 
 inline TeleportCreate BuildTeleportCreate(std::int16_t Map, std::uint8_t X, std::uint8_t Y, std::uint8_t Radio) {
-    TeleportCreate e;
-        e.Map = Map;
-        e.X = X;
-        e.Y = Y;
-        e.Radio = Radio;
-    return e;
+    return TeleportCreate(Map, X, Y, Radio);
 }
 
 class TeleportDestroy : public ClientGMPacket {
@@ -3669,9 +3359,7 @@ public:
 };
 
 inline TeleportDestroy BuildTeleportDestroy() {
-    TeleportDestroy e;
-
-    return e;
+    return TeleportDestroy();
 }
 
 class RainToggle : public ClientGMPacket {
@@ -3686,15 +3374,14 @@ public:
 };
 
 inline RainToggle BuildRainToggle() {
-    RainToggle e;
-
-    return e;
+    return RainToggle();
 }
 
 class SetCharDescription : public ClientGMPacket {
 public:
     SetCharDescription();
     SetCharDescription(clsByteQueue* buffer);
+    SetCharDescription(const std::string& Description);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3703,15 +3390,14 @@ public:
 };
 
 inline SetCharDescription BuildSetCharDescription(const std::string& Description) {
-    SetCharDescription e;
-        e.Description = Description;
-    return e;
+    return SetCharDescription(Description);
 }
 
 class ForceMIDIToMap : public ClientGMPacket {
 public:
     ForceMIDIToMap();
     ForceMIDIToMap(clsByteQueue* buffer);
+    ForceMIDIToMap(std::uint8_t MidiID, std::int16_t Map);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3721,16 +3407,14 @@ public:
 };
 
 inline ForceMIDIToMap BuildForceMIDIToMap(std::uint8_t MidiID, std::int16_t Map) {
-    ForceMIDIToMap e;
-        e.MidiID = MidiID;
-        e.Map = Map;
-    return e;
+    return ForceMIDIToMap(MidiID, Map);
 }
 
 class ForceWAVEToMap : public ClientGMPacket {
 public:
     ForceWAVEToMap();
     ForceWAVEToMap(clsByteQueue* buffer);
+    ForceWAVEToMap(std::uint8_t Wave, std::int16_t Map, std::uint8_t X, std::uint8_t Y);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3742,18 +3426,14 @@ public:
 };
 
 inline ForceWAVEToMap BuildForceWAVEToMap(std::uint8_t Wave, std::int16_t Map, std::uint8_t X, std::uint8_t Y) {
-    ForceWAVEToMap e;
-        e.Wave = Wave;
-        e.Map = Map;
-        e.X = X;
-        e.Y = Y;
-    return e;
+    return ForceWAVEToMap(Wave, Map, X, Y);
 }
 
 class RoyalArmyMessage : public ClientGMPacket {
 public:
     RoyalArmyMessage();
     RoyalArmyMessage(clsByteQueue* buffer);
+    RoyalArmyMessage(const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3762,15 +3442,14 @@ public:
 };
 
 inline RoyalArmyMessage BuildRoyalArmyMessage(const std::string& Message) {
-    RoyalArmyMessage e;
-        e.Message = Message;
-    return e;
+    return RoyalArmyMessage(Message);
 }
 
 class ChaosLegionMessage : public ClientGMPacket {
 public:
     ChaosLegionMessage();
     ChaosLegionMessage(clsByteQueue* buffer);
+    ChaosLegionMessage(const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3779,15 +3458,14 @@ public:
 };
 
 inline ChaosLegionMessage BuildChaosLegionMessage(const std::string& Message) {
-    ChaosLegionMessage e;
-        e.Message = Message;
-    return e;
+    return ChaosLegionMessage(Message);
 }
 
 class CitizenMessage : public ClientGMPacket {
 public:
     CitizenMessage();
     CitizenMessage(clsByteQueue* buffer);
+    CitizenMessage(const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3796,15 +3474,14 @@ public:
 };
 
 inline CitizenMessage BuildCitizenMessage(const std::string& Message) {
-    CitizenMessage e;
-        e.Message = Message;
-    return e;
+    return CitizenMessage(Message);
 }
 
 class CriminalMessage : public ClientGMPacket {
 public:
     CriminalMessage();
     CriminalMessage(clsByteQueue* buffer);
+    CriminalMessage(const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3813,15 +3490,14 @@ public:
 };
 
 inline CriminalMessage BuildCriminalMessage(const std::string& Message) {
-    CriminalMessage e;
-        e.Message = Message;
-    return e;
+    return CriminalMessage(Message);
 }
 
 class TalkAsNPC : public ClientGMPacket {
 public:
     TalkAsNPC();
     TalkAsNPC(clsByteQueue* buffer);
+    TalkAsNPC(const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3830,9 +3506,7 @@ public:
 };
 
 inline TalkAsNPC BuildTalkAsNPC(const std::string& Message) {
-    TalkAsNPC e;
-        e.Message = Message;
-    return e;
+    return TalkAsNPC(Message);
 }
 
 class DestroyAllItemsInArea : public ClientGMPacket {
@@ -3847,15 +3521,14 @@ public:
 };
 
 inline DestroyAllItemsInArea BuildDestroyAllItemsInArea() {
-    DestroyAllItemsInArea e;
-
-    return e;
+    return DestroyAllItemsInArea();
 }
 
 class AcceptRoyalCouncilMember : public ClientGMPacket {
 public:
     AcceptRoyalCouncilMember();
     AcceptRoyalCouncilMember(clsByteQueue* buffer);
+    AcceptRoyalCouncilMember(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3864,15 +3537,14 @@ public:
 };
 
 inline AcceptRoyalCouncilMember BuildAcceptRoyalCouncilMember(const std::string& UserName) {
-    AcceptRoyalCouncilMember e;
-        e.UserName = UserName;
-    return e;
+    return AcceptRoyalCouncilMember(UserName);
 }
 
 class AcceptChaosCouncilMember : public ClientGMPacket {
 public:
     AcceptChaosCouncilMember();
     AcceptChaosCouncilMember(clsByteQueue* buffer);
+    AcceptChaosCouncilMember(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3881,9 +3553,7 @@ public:
 };
 
 inline AcceptChaosCouncilMember BuildAcceptChaosCouncilMember(const std::string& UserName) {
-    AcceptChaosCouncilMember e;
-        e.UserName = UserName;
-    return e;
+    return AcceptChaosCouncilMember(UserName);
 }
 
 class ItemsInTheFloor : public ClientGMPacket {
@@ -3898,15 +3568,14 @@ public:
 };
 
 inline ItemsInTheFloor BuildItemsInTheFloor() {
-    ItemsInTheFloor e;
-
-    return e;
+    return ItemsInTheFloor();
 }
 
 class MakeDumb : public ClientGMPacket {
 public:
     MakeDumb();
     MakeDumb(clsByteQueue* buffer);
+    MakeDumb(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3915,15 +3584,14 @@ public:
 };
 
 inline MakeDumb BuildMakeDumb(const std::string& UserName) {
-    MakeDumb e;
-        e.UserName = UserName;
-    return e;
+    return MakeDumb(UserName);
 }
 
 class MakeDumbNoMore : public ClientGMPacket {
 public:
     MakeDumbNoMore();
     MakeDumbNoMore(clsByteQueue* buffer);
+    MakeDumbNoMore(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3932,9 +3600,7 @@ public:
 };
 
 inline MakeDumbNoMore BuildMakeDumbNoMore(const std::string& UserName) {
-    MakeDumbNoMore e;
-        e.UserName = UserName;
-    return e;
+    return MakeDumbNoMore(UserName);
 }
 
 class DumpIPTables : public ClientGMPacket {
@@ -3949,15 +3615,14 @@ public:
 };
 
 inline DumpIPTables BuildDumpIPTables() {
-    DumpIPTables e;
-
-    return e;
+    return DumpIPTables();
 }
 
 class CouncilKick : public ClientGMPacket {
 public:
     CouncilKick();
     CouncilKick(clsByteQueue* buffer);
+    CouncilKick(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3966,15 +3631,14 @@ public:
 };
 
 inline CouncilKick BuildCouncilKick(const std::string& UserName) {
-    CouncilKick e;
-        e.UserName = UserName;
-    return e;
+    return CouncilKick(UserName);
 }
 
 class SetTrigger : public ClientGMPacket {
 public:
     SetTrigger();
     SetTrigger(clsByteQueue* buffer);
+    SetTrigger(std::uint8_t Trigger);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -3983,9 +3647,7 @@ public:
 };
 
 inline SetTrigger BuildSetTrigger(std::uint8_t Trigger) {
-    SetTrigger e;
-        e.Trigger = Trigger;
-    return e;
+    return SetTrigger(Trigger);
 }
 
 class AskTrigger : public ClientGMPacket {
@@ -4000,9 +3662,7 @@ public:
 };
 
 inline AskTrigger BuildAskTrigger() {
-    AskTrigger e;
-
-    return e;
+    return AskTrigger();
 }
 
 class BannedIPList : public ClientGMPacket {
@@ -4017,9 +3677,7 @@ public:
 };
 
 inline BannedIPList BuildBannedIPList() {
-    BannedIPList e;
-
-    return e;
+    return BannedIPList();
 }
 
 class BannedIPReload : public ClientGMPacket {
@@ -4034,15 +3692,14 @@ public:
 };
 
 inline BannedIPReload BuildBannedIPReload() {
-    BannedIPReload e;
-
-    return e;
+    return BannedIPReload();
 }
 
 class GuildMemberList : public ClientGMPacket {
 public:
     GuildMemberList();
     GuildMemberList(clsByteQueue* buffer);
+    GuildMemberList(const std::string& GuildName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4051,15 +3708,14 @@ public:
 };
 
 inline GuildMemberList BuildGuildMemberList(const std::string& GuildName) {
-    GuildMemberList e;
-        e.GuildName = GuildName;
-    return e;
+    return GuildMemberList(GuildName);
 }
 
 class GuildBan : public ClientGMPacket {
 public:
     GuildBan();
     GuildBan(clsByteQueue* buffer);
+    GuildBan(const std::string& GuildName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4068,15 +3724,14 @@ public:
 };
 
 inline GuildBan BuildGuildBan(const std::string& GuildName) {
-    GuildBan e;
-        e.GuildName = GuildName;
-    return e;
+    return GuildBan(GuildName);
 }
 
 class BanIP : public ClientGMPacket {
 public:
     BanIP();
     BanIP(clsByteQueue* buffer);
+    BanIP(const std::string& IP, const std::string& Reason);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4086,16 +3741,14 @@ public:
 };
 
 inline BanIP BuildBanIP(const std::string& IP, const std::string& Reason) {
-    BanIP e;
-        e.IP = IP;
-        e.Reason = Reason;
-    return e;
+    return BanIP(IP, Reason);
 }
 
 class UnbanIP : public ClientGMPacket {
 public:
     UnbanIP();
     UnbanIP(clsByteQueue* buffer);
+    UnbanIP(const std::string& IP);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4104,15 +3757,14 @@ public:
 };
 
 inline UnbanIP BuildUnbanIP(const std::string& IP) {
-    UnbanIP e;
-        e.IP = IP;
-    return e;
+    return UnbanIP(IP);
 }
 
 class CreateItem : public ClientGMPacket {
 public:
     CreateItem();
     CreateItem(clsByteQueue* buffer);
+    CreateItem(std::int16_t Item);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4121,9 +3773,7 @@ public:
 };
 
 inline CreateItem BuildCreateItem(std::int16_t Item) {
-    CreateItem e;
-        e.Item = Item;
-    return e;
+    return CreateItem(Item);
 }
 
 class DestroyItems : public ClientGMPacket {
@@ -4138,15 +3788,14 @@ public:
 };
 
 inline DestroyItems BuildDestroyItems() {
-    DestroyItems e;
-
-    return e;
+    return DestroyItems();
 }
 
 class ChaosLegionKick : public ClientGMPacket {
 public:
     ChaosLegionKick();
     ChaosLegionKick(clsByteQueue* buffer);
+    ChaosLegionKick(const std::string& UserName, const std::string& Reason);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4156,16 +3805,14 @@ public:
 };
 
 inline ChaosLegionKick BuildChaosLegionKick(const std::string& UserName, const std::string& Reason) {
-    ChaosLegionKick e;
-        e.UserName = UserName;
-        e.Reason = Reason;
-    return e;
+    return ChaosLegionKick(UserName, Reason);
 }
 
 class RoyalArmyKick : public ClientGMPacket {
 public:
     RoyalArmyKick();
     RoyalArmyKick(clsByteQueue* buffer);
+    RoyalArmyKick(const std::string& UserName, const std::string& Reason);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4175,16 +3822,14 @@ public:
 };
 
 inline RoyalArmyKick BuildRoyalArmyKick(const std::string& UserName, const std::string& Reason) {
-    RoyalArmyKick e;
-        e.UserName = UserName;
-        e.Reason = Reason;
-    return e;
+    return RoyalArmyKick(UserName, Reason);
 }
 
 class ForceMIDIAll : public ClientGMPacket {
 public:
     ForceMIDIAll();
     ForceMIDIAll(clsByteQueue* buffer);
+    ForceMIDIAll(std::uint8_t MidiID);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4193,15 +3838,14 @@ public:
 };
 
 inline ForceMIDIAll BuildForceMIDIAll(std::uint8_t MidiID) {
-    ForceMIDIAll e;
-        e.MidiID = MidiID;
-    return e;
+    return ForceMIDIAll(MidiID);
 }
 
 class ForceWAVEAll : public ClientGMPacket {
 public:
     ForceWAVEAll();
     ForceWAVEAll(clsByteQueue* buffer);
+    ForceWAVEAll(std::uint8_t WaveID);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4210,15 +3854,14 @@ public:
 };
 
 inline ForceWAVEAll BuildForceWAVEAll(std::uint8_t WaveID) {
-    ForceWAVEAll e;
-        e.WaveID = WaveID;
-    return e;
+    return ForceWAVEAll(WaveID);
 }
 
 class RemovePunishment : public ClientGMPacket {
 public:
     RemovePunishment();
     RemovePunishment(clsByteQueue* buffer);
+    RemovePunishment(const std::string& UserName, std::uint8_t Punishment, const std::string& NewText);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4229,11 +3872,7 @@ public:
 };
 
 inline RemovePunishment BuildRemovePunishment(const std::string& UserName, std::uint8_t Punishment, const std::string& NewText) {
-    RemovePunishment e;
-        e.UserName = UserName;
-        e.Punishment = Punishment;
-        e.NewText = NewText;
-    return e;
+    return RemovePunishment(UserName, Punishment, NewText);
 }
 
 class TileBlockedToggle : public ClientGMPacket {
@@ -4248,9 +3887,7 @@ public:
 };
 
 inline TileBlockedToggle BuildTileBlockedToggle() {
-    TileBlockedToggle e;
-
-    return e;
+    return TileBlockedToggle();
 }
 
 class KillNPCNoRespawn : public ClientGMPacket {
@@ -4265,9 +3902,7 @@ public:
 };
 
 inline KillNPCNoRespawn BuildKillNPCNoRespawn() {
-    KillNPCNoRespawn e;
-
-    return e;
+    return KillNPCNoRespawn();
 }
 
 class KillAllNearbyNPCs : public ClientGMPacket {
@@ -4282,15 +3917,14 @@ public:
 };
 
 inline KillAllNearbyNPCs BuildKillAllNearbyNPCs() {
-    KillAllNearbyNPCs e;
-
-    return e;
+    return KillAllNearbyNPCs();
 }
 
 class LastIP : public ClientGMPacket {
 public:
     LastIP();
     LastIP(clsByteQueue* buffer);
+    LastIP(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4299,9 +3933,7 @@ public:
 };
 
 inline LastIP BuildLastIP(const std::string& UserName) {
-    LastIP e;
-        e.UserName = UserName;
-    return e;
+    return LastIP(UserName);
 }
 
 class ChangeMOTD : public ClientGMPacket {
@@ -4316,15 +3948,14 @@ public:
 };
 
 inline ChangeMOTD BuildChangeMOTD() {
-    ChangeMOTD e;
-
-    return e;
+    return ChangeMOTD();
 }
 
 class SetMOTD : public ClientGMPacket {
 public:
     SetMOTD();
     SetMOTD(clsByteQueue* buffer);
+    SetMOTD(const std::string& Motd);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4333,15 +3964,14 @@ public:
 };
 
 inline SetMOTD BuildSetMOTD(const std::string& Motd) {
-    SetMOTD e;
-        e.Motd = Motd;
-    return e;
+    return SetMOTD(Motd);
 }
 
 class SystemMessage : public ClientGMPacket {
 public:
     SystemMessage();
     SystemMessage(clsByteQueue* buffer);
+    SystemMessage(const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4350,15 +3980,14 @@ public:
 };
 
 inline SystemMessage BuildSystemMessage(const std::string& Message) {
-    SystemMessage e;
-        e.Message = Message;
-    return e;
+    return SystemMessage(Message);
 }
 
 class CreateNPC : public ClientGMPacket {
 public:
     CreateNPC();
     CreateNPC(clsByteQueue* buffer);
+    CreateNPC(std::int16_t NpcIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4367,15 +3996,14 @@ public:
 };
 
 inline CreateNPC BuildCreateNPC(std::int16_t NpcIndex) {
-    CreateNPC e;
-        e.NpcIndex = NpcIndex;
-    return e;
+    return CreateNPC(NpcIndex);
 }
 
 class CreateNPCWithRespawn : public ClientGMPacket {
 public:
     CreateNPCWithRespawn();
     CreateNPCWithRespawn(clsByteQueue* buffer);
+    CreateNPCWithRespawn(std::int16_t NpcIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4384,15 +4012,14 @@ public:
 };
 
 inline CreateNPCWithRespawn BuildCreateNPCWithRespawn(std::int16_t NpcIndex) {
-    CreateNPCWithRespawn e;
-        e.NpcIndex = NpcIndex;
-    return e;
+    return CreateNPCWithRespawn(NpcIndex);
 }
 
 class ImperialArmour : public ClientGMPacket {
 public:
     ImperialArmour();
     ImperialArmour(clsByteQueue* buffer);
+    ImperialArmour(std::uint8_t Index, std::int16_t ObjIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4402,16 +4029,14 @@ public:
 };
 
 inline ImperialArmour BuildImperialArmour(std::uint8_t Index, std::int16_t ObjIndex) {
-    ImperialArmour e;
-        e.Index = Index;
-        e.ObjIndex = ObjIndex;
-    return e;
+    return ImperialArmour(Index, ObjIndex);
 }
 
 class ChaosArmour : public ClientGMPacket {
 public:
     ChaosArmour();
     ChaosArmour(clsByteQueue* buffer);
+    ChaosArmour(std::uint8_t Index, std::int16_t ObjIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4421,10 +4046,7 @@ public:
 };
 
 inline ChaosArmour BuildChaosArmour(std::uint8_t Index, std::int16_t ObjIndex) {
-    ChaosArmour e;
-        e.Index = Index;
-        e.ObjIndex = ObjIndex;
-    return e;
+    return ChaosArmour(Index, ObjIndex);
 }
 
 class NavigateToggle : public ClientGMPacket {
@@ -4439,9 +4061,7 @@ public:
 };
 
 inline NavigateToggle BuildNavigateToggle() {
-    NavigateToggle e;
-
-    return e;
+    return NavigateToggle();
 }
 
 class ServerOpenToUsersToggle : public ClientGMPacket {
@@ -4456,9 +4076,7 @@ public:
 };
 
 inline ServerOpenToUsersToggle BuildServerOpenToUsersToggle() {
-    ServerOpenToUsersToggle e;
-
-    return e;
+    return ServerOpenToUsersToggle();
 }
 
 class TurnOffServer : public ClientGMPacket {
@@ -4473,15 +4091,14 @@ public:
 };
 
 inline TurnOffServer BuildTurnOffServer() {
-    TurnOffServer e;
-
-    return e;
+    return TurnOffServer();
 }
 
 class TurnCriminal : public ClientGMPacket {
 public:
     TurnCriminal();
     TurnCriminal(clsByteQueue* buffer);
+    TurnCriminal(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4490,15 +4107,14 @@ public:
 };
 
 inline TurnCriminal BuildTurnCriminal(const std::string& UserName) {
-    TurnCriminal e;
-        e.UserName = UserName;
-    return e;
+    return TurnCriminal(UserName);
 }
 
 class ResetFactions : public ClientGMPacket {
 public:
     ResetFactions();
     ResetFactions(clsByteQueue* buffer);
+    ResetFactions(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4507,15 +4123,14 @@ public:
 };
 
 inline ResetFactions BuildResetFactions(const std::string& UserName) {
-    ResetFactions e;
-        e.UserName = UserName;
-    return e;
+    return ResetFactions(UserName);
 }
 
 class RemoveCharFromGuild : public ClientGMPacket {
 public:
     RemoveCharFromGuild();
     RemoveCharFromGuild(clsByteQueue* buffer);
+    RemoveCharFromGuild(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4524,15 +4139,14 @@ public:
 };
 
 inline RemoveCharFromGuild BuildRemoveCharFromGuild(const std::string& UserName) {
-    RemoveCharFromGuild e;
-        e.UserName = UserName;
-    return e;
+    return RemoveCharFromGuild(UserName);
 }
 
 class RequestCharMail : public ClientGMPacket {
 public:
     RequestCharMail();
     RequestCharMail(clsByteQueue* buffer);
+    RequestCharMail(const std::string& UserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4541,15 +4155,14 @@ public:
 };
 
 inline RequestCharMail BuildRequestCharMail(const std::string& UserName) {
-    RequestCharMail e;
-        e.UserName = UserName;
-    return e;
+    return RequestCharMail(UserName);
 }
 
 class AlterPassword : public ClientGMPacket {
 public:
     AlterPassword();
     AlterPassword(clsByteQueue* buffer);
+    AlterPassword(const std::string& UserName, const std::string& CopyFrom);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4559,16 +4172,14 @@ public:
 };
 
 inline AlterPassword BuildAlterPassword(const std::string& UserName, const std::string& CopyFrom) {
-    AlterPassword e;
-        e.UserName = UserName;
-        e.CopyFrom = CopyFrom;
-    return e;
+    return AlterPassword(UserName, CopyFrom);
 }
 
 class AlterMail : public ClientGMPacket {
 public:
     AlterMail();
     AlterMail(clsByteQueue* buffer);
+    AlterMail(const std::string& UserName, const std::string& NewMail);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4578,16 +4189,14 @@ public:
 };
 
 inline AlterMail BuildAlterMail(const std::string& UserName, const std::string& NewMail) {
-    AlterMail e;
-        e.UserName = UserName;
-        e.NewMail = NewMail;
-    return e;
+    return AlterMail(UserName, NewMail);
 }
 
 class AlterName : public ClientGMPacket {
 public:
     AlterName();
     AlterName(clsByteQueue* buffer);
+    AlterName(const std::string& UserName, const std::string& NewName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4597,10 +4206,7 @@ public:
 };
 
 inline AlterName BuildAlterName(const std::string& UserName, const std::string& NewName) {
-    AlterName e;
-        e.UserName = UserName;
-        e.NewName = NewName;
-    return e;
+    return AlterName(UserName, NewName);
 }
 
 class ToggleCentinelActivated : public ClientGMPacket {
@@ -4615,9 +4221,7 @@ public:
 };
 
 inline ToggleCentinelActivated BuildToggleCentinelActivated() {
-    ToggleCentinelActivated e;
-
-    return e;
+    return ToggleCentinelActivated();
 }
 
 class DoBackUp : public ClientGMPacket {
@@ -4632,15 +4236,14 @@ public:
 };
 
 inline DoBackUp BuildDoBackUp() {
-    DoBackUp e;
-
-    return e;
+    return DoBackUp();
 }
 
 class ShowGuildMessages : public ClientGMPacket {
 public:
     ShowGuildMessages();
     ShowGuildMessages(clsByteQueue* buffer);
+    ShowGuildMessages(const std::string& GuildName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4649,9 +4252,7 @@ public:
 };
 
 inline ShowGuildMessages BuildShowGuildMessages(const std::string& GuildName) {
-    ShowGuildMessages e;
-        e.GuildName = GuildName;
-    return e;
+    return ShowGuildMessages(GuildName);
 }
 
 class SaveMap : public ClientGMPacket {
@@ -4666,15 +4267,14 @@ public:
 };
 
 inline SaveMap BuildSaveMap() {
-    SaveMap e;
-
-    return e;
+    return SaveMap();
 }
 
 class ChangeMapInfoPK : public ClientGMPacket {
 public:
     ChangeMapInfoPK();
     ChangeMapInfoPK(clsByteQueue* buffer);
+    ChangeMapInfoPK(bool Pk);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4683,15 +4283,14 @@ public:
 };
 
 inline ChangeMapInfoPK BuildChangeMapInfoPK(bool Pk) {
-    ChangeMapInfoPK e;
-        e.Pk = Pk;
-    return e;
+    return ChangeMapInfoPK(Pk);
 }
 
 class ChangeMapInfoBackup : public ClientGMPacket {
 public:
     ChangeMapInfoBackup();
     ChangeMapInfoBackup(clsByteQueue* buffer);
+    ChangeMapInfoBackup(bool Backup);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4700,15 +4299,14 @@ public:
 };
 
 inline ChangeMapInfoBackup BuildChangeMapInfoBackup(bool Backup) {
-    ChangeMapInfoBackup e;
-        e.Backup = Backup;
-    return e;
+    return ChangeMapInfoBackup(Backup);
 }
 
 class ChangeMapInfoRestricted : public ClientGMPacket {
 public:
     ChangeMapInfoRestricted();
     ChangeMapInfoRestricted(clsByteQueue* buffer);
+    ChangeMapInfoRestricted(const std::string& RestrictedTo);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4717,15 +4315,14 @@ public:
 };
 
 inline ChangeMapInfoRestricted BuildChangeMapInfoRestricted(const std::string& RestrictedTo) {
-    ChangeMapInfoRestricted e;
-        e.RestrictedTo = RestrictedTo;
-    return e;
+    return ChangeMapInfoRestricted(RestrictedTo);
 }
 
 class ChangeMapInfoNoMagic : public ClientGMPacket {
 public:
     ChangeMapInfoNoMagic();
     ChangeMapInfoNoMagic(clsByteQueue* buffer);
+    ChangeMapInfoNoMagic(bool NoMagic);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4734,15 +4331,14 @@ public:
 };
 
 inline ChangeMapInfoNoMagic BuildChangeMapInfoNoMagic(bool NoMagic) {
-    ChangeMapInfoNoMagic e;
-        e.NoMagic = NoMagic;
-    return e;
+    return ChangeMapInfoNoMagic(NoMagic);
 }
 
 class ChangeMapInfoNoInvi : public ClientGMPacket {
 public:
     ChangeMapInfoNoInvi();
     ChangeMapInfoNoInvi(clsByteQueue* buffer);
+    ChangeMapInfoNoInvi(bool NoInvi);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4751,15 +4347,14 @@ public:
 };
 
 inline ChangeMapInfoNoInvi BuildChangeMapInfoNoInvi(bool NoInvi) {
-    ChangeMapInfoNoInvi e;
-        e.NoInvi = NoInvi;
-    return e;
+    return ChangeMapInfoNoInvi(NoInvi);
 }
 
 class ChangeMapInfoNoResu : public ClientGMPacket {
 public:
     ChangeMapInfoNoResu();
     ChangeMapInfoNoResu(clsByteQueue* buffer);
+    ChangeMapInfoNoResu(bool NoResu);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4768,15 +4363,14 @@ public:
 };
 
 inline ChangeMapInfoNoResu BuildChangeMapInfoNoResu(bool NoResu) {
-    ChangeMapInfoNoResu e;
-        e.NoResu = NoResu;
-    return e;
+    return ChangeMapInfoNoResu(NoResu);
 }
 
 class ChangeMapInfoLand : public ClientGMPacket {
 public:
     ChangeMapInfoLand();
     ChangeMapInfoLand(clsByteQueue* buffer);
+    ChangeMapInfoLand(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4785,15 +4379,14 @@ public:
 };
 
 inline ChangeMapInfoLand BuildChangeMapInfoLand(const std::string& Data) {
-    ChangeMapInfoLand e;
-        e.Data = Data;
-    return e;
+    return ChangeMapInfoLand(Data);
 }
 
 class ChangeMapInfoZone : public ClientGMPacket {
 public:
     ChangeMapInfoZone();
     ChangeMapInfoZone(clsByteQueue* buffer);
+    ChangeMapInfoZone(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4802,15 +4395,14 @@ public:
 };
 
 inline ChangeMapInfoZone BuildChangeMapInfoZone(const std::string& Data) {
-    ChangeMapInfoZone e;
-        e.Data = Data;
-    return e;
+    return ChangeMapInfoZone(Data);
 }
 
 class ChangeMapInfoStealNpc : public ClientGMPacket {
 public:
     ChangeMapInfoStealNpc();
     ChangeMapInfoStealNpc(clsByteQueue* buffer);
+    ChangeMapInfoStealNpc(bool RoboNpc);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4819,15 +4411,14 @@ public:
 };
 
 inline ChangeMapInfoStealNpc BuildChangeMapInfoStealNpc(bool RoboNpc) {
-    ChangeMapInfoStealNpc e;
-        e.RoboNpc = RoboNpc;
-    return e;
+    return ChangeMapInfoStealNpc(RoboNpc);
 }
 
 class ChangeMapInfoNoOcultar : public ClientGMPacket {
 public:
     ChangeMapInfoNoOcultar();
     ChangeMapInfoNoOcultar(clsByteQueue* buffer);
+    ChangeMapInfoNoOcultar(bool NoOcultar);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4836,15 +4427,14 @@ public:
 };
 
 inline ChangeMapInfoNoOcultar BuildChangeMapInfoNoOcultar(bool NoOcultar) {
-    ChangeMapInfoNoOcultar e;
-        e.NoOcultar = NoOcultar;
-    return e;
+    return ChangeMapInfoNoOcultar(NoOcultar);
 }
 
 class ChangeMapInfoNoInvocar : public ClientGMPacket {
 public:
     ChangeMapInfoNoInvocar();
     ChangeMapInfoNoInvocar(clsByteQueue* buffer);
+    ChangeMapInfoNoInvocar(bool NoInvocar);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -4853,9 +4443,7 @@ public:
 };
 
 inline ChangeMapInfoNoInvocar BuildChangeMapInfoNoInvocar(bool NoInvocar) {
-    ChangeMapInfoNoInvocar e;
-        e.NoInvocar = NoInvocar;
-    return e;
+    return ChangeMapInfoNoInvocar(NoInvocar);
 }
 
 class SaveChars : public ClientGMPacket {
@@ -4870,9 +4458,7 @@ public:
 };
 
 inline SaveChars BuildSaveChars() {
-    SaveChars e;
-
-    return e;
+    return SaveChars();
 }
 
 class CleanSOS : public ClientGMPacket {
@@ -4887,9 +4473,7 @@ public:
 };
 
 inline CleanSOS BuildCleanSOS() {
-    CleanSOS e;
-
-    return e;
+    return CleanSOS();
 }
 
 class ShowServerForm : public ClientGMPacket {
@@ -4904,9 +4488,7 @@ public:
 };
 
 inline ShowServerForm BuildShowServerForm() {
-    ShowServerForm e;
-
-    return e;
+    return ShowServerForm();
 }
 
 class Night : public ClientGMPacket {
@@ -4921,9 +4503,7 @@ public:
 };
 
 inline Night BuildNight() {
-    Night e;
-
-    return e;
+    return Night();
 }
 
 class KickAllChars : public ClientGMPacket {
@@ -4938,9 +4518,7 @@ public:
 };
 
 inline KickAllChars BuildKickAllChars() {
-    KickAllChars e;
-
-    return e;
+    return KickAllChars();
 }
 
 class ReloadNPCs : public ClientGMPacket {
@@ -4955,9 +4533,7 @@ public:
 };
 
 inline ReloadNPCs BuildReloadNPCs() {
-    ReloadNPCs e;
-
-    return e;
+    return ReloadNPCs();
 }
 
 class ReloadServerIni : public ClientGMPacket {
@@ -4972,9 +4548,7 @@ public:
 };
 
 inline ReloadServerIni BuildReloadServerIni() {
-    ReloadServerIni e;
-
-    return e;
+    return ReloadServerIni();
 }
 
 class ReloadSpells : public ClientGMPacket {
@@ -4989,9 +4563,7 @@ public:
 };
 
 inline ReloadSpells BuildReloadSpells() {
-    ReloadSpells e;
-
-    return e;
+    return ReloadSpells();
 }
 
 class ReloadObjects : public ClientGMPacket {
@@ -5006,9 +4578,7 @@ public:
 };
 
 inline ReloadObjects BuildReloadObjects() {
-    ReloadObjects e;
-
-    return e;
+    return ReloadObjects();
 }
 
 class Restart : public ClientGMPacket {
@@ -5023,9 +4593,7 @@ public:
 };
 
 inline Restart BuildRestart() {
-    Restart e;
-
-    return e;
+    return Restart();
 }
 
 class ResetAutoUpdate : public ClientGMPacket {
@@ -5040,15 +4608,14 @@ public:
 };
 
 inline ResetAutoUpdate BuildResetAutoUpdate() {
-    ResetAutoUpdate e;
-
-    return e;
+    return ResetAutoUpdate();
 }
 
 class ChatColor : public ClientGMPacket {
 public:
     ChatColor();
     ChatColor(clsByteQueue* buffer);
+    ChatColor(std::uint8_t R, std::uint8_t G, std::uint8_t B);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5059,11 +4626,7 @@ public:
 };
 
 inline ChatColor BuildChatColor(std::uint8_t R, std::uint8_t G, std::uint8_t B) {
-    ChatColor e;
-        e.R = R;
-        e.G = G;
-        e.B = B;
-    return e;
+    return ChatColor(R, G, B);
 }
 
 class Ignored : public ClientGMPacket {
@@ -5078,15 +4641,14 @@ public:
 };
 
 inline Ignored BuildIgnored() {
-    Ignored e;
-
-    return e;
+    return Ignored();
 }
 
 class CheckSlot : public ClientGMPacket {
 public:
     CheckSlot();
     CheckSlot(clsByteQueue* buffer);
+    CheckSlot(const std::string& UserName, std::uint8_t Slot);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5096,16 +4658,14 @@ public:
 };
 
 inline CheckSlot BuildCheckSlot(const std::string& UserName, std::uint8_t Slot) {
-    CheckSlot e;
-        e.UserName = UserName;
-        e.Slot = Slot;
-    return e;
+    return CheckSlot(UserName, Slot);
 }
 
 class SetIniVar : public ClientGMPacket {
 public:
     SetIniVar();
     SetIniVar(clsByteQueue* buffer);
+    SetIniVar(const std::string& Seccion, const std::string& Clave, const std::string& Valor);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5116,17 +4676,14 @@ public:
 };
 
 inline SetIniVar BuildSetIniVar(const std::string& Seccion, const std::string& Clave, const std::string& Valor) {
-    SetIniVar e;
-        e.Seccion = Seccion;
-        e.Clave = Clave;
-        e.Valor = Valor;
-    return e;
+    return SetIniVar(Seccion, Clave, Valor);
 }
 
 class CreatePretorianClan : public ClientGMPacket {
 public:
     CreatePretorianClan();
     CreatePretorianClan(clsByteQueue* buffer);
+    CreatePretorianClan(std::int16_t Map, std::uint8_t X, std::uint8_t Y);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5137,17 +4694,14 @@ public:
 };
 
 inline CreatePretorianClan BuildCreatePretorianClan(std::int16_t Map, std::uint8_t X, std::uint8_t Y) {
-    CreatePretorianClan e;
-        e.Map = Map;
-        e.X = X;
-        e.Y = Y;
-    return e;
+    return CreatePretorianClan(Map, X, Y);
 }
 
 class RemovePretorianClan : public ClientGMPacket {
 public:
     RemovePretorianClan();
     RemovePretorianClan(clsByteQueue* buffer);
+    RemovePretorianClan(std::int16_t Map);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5156,9 +4710,7 @@ public:
 };
 
 inline RemovePretorianClan BuildRemovePretorianClan(std::int16_t Map) {
-    RemovePretorianClan e;
-        e.Map = Map;
-    return e;
+    return RemovePretorianClan(Map);
 }
 
 class EnableDenounces : public ClientGMPacket {
@@ -5173,9 +4725,7 @@ public:
 };
 
 inline EnableDenounces BuildEnableDenounces() {
-    EnableDenounces e;
-
-    return e;
+    return EnableDenounces();
 }
 
 class ShowDenouncesList : public ClientGMPacket {
@@ -5190,15 +4740,14 @@ public:
 };
 
 inline ShowDenouncesList BuildShowDenouncesList() {
-    ShowDenouncesList e;
-
-    return e;
+    return ShowDenouncesList();
 }
 
 class MapMessage : public ClientGMPacket {
 public:
     MapMessage();
     MapMessage(clsByteQueue* buffer);
+    MapMessage(const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5207,15 +4756,14 @@ public:
 };
 
 inline MapMessage BuildMapMessage(const std::string& Message) {
-    MapMessage e;
-        e.Message = Message;
-    return e;
+    return MapMessage(Message);
 }
 
 class SetDialog : public ClientGMPacket {
 public:
     SetDialog();
     SetDialog(clsByteQueue* buffer);
+    SetDialog(const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5224,9 +4772,7 @@ public:
 };
 
 inline SetDialog BuildSetDialog(const std::string& Message) {
-    SetDialog e;
-        e.Message = Message;
-    return e;
+    return SetDialog(Message);
 }
 
 class Impersonate : public ClientGMPacket {
@@ -5241,9 +4787,7 @@ public:
 };
 
 inline Impersonate BuildImpersonate() {
-    Impersonate e;
-
-    return e;
+    return Impersonate();
 }
 
 class Imitate : public ClientGMPacket {
@@ -5258,15 +4802,14 @@ public:
 };
 
 inline Imitate BuildImitate() {
-    Imitate e;
-
-    return e;
+    return Imitate();
 }
 
 class RecordAdd : public ClientGMPacket {
 public:
     RecordAdd();
     RecordAdd(clsByteQueue* buffer);
+    RecordAdd(const std::string& UserName, const std::string& Reason);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5276,16 +4819,14 @@ public:
 };
 
 inline RecordAdd BuildRecordAdd(const std::string& UserName, const std::string& Reason) {
-    RecordAdd e;
-        e.UserName = UserName;
-        e.Reason = Reason;
-    return e;
+    return RecordAdd(UserName, Reason);
 }
 
 class RecordRemove : public ClientGMPacket {
 public:
     RecordRemove();
     RecordRemove(clsByteQueue* buffer);
+    RecordRemove(std::uint8_t Index);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5294,15 +4835,14 @@ public:
 };
 
 inline RecordRemove BuildRecordRemove(std::uint8_t Index) {
-    RecordRemove e;
-        e.Index = Index;
-    return e;
+    return RecordRemove(Index);
 }
 
 class RecordAddObs : public ClientGMPacket {
 public:
     RecordAddObs();
     RecordAddObs(clsByteQueue* buffer);
+    RecordAddObs(std::uint8_t Index, const std::string& Obs);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5312,10 +4852,7 @@ public:
 };
 
 inline RecordAddObs BuildRecordAddObs(std::uint8_t Index, const std::string& Obs) {
-    RecordAddObs e;
-        e.Index = Index;
-        e.Obs = Obs;
-    return e;
+    return RecordAddObs(Index, Obs);
 }
 
 class RecordListRequest : public ClientGMPacket {
@@ -5330,15 +4867,14 @@ public:
 };
 
 inline RecordListRequest BuildRecordListRequest() {
-    RecordListRequest e;
-
-    return e;
+    return RecordListRequest();
 }
 
 class RecordDetailsRequest : public ClientGMPacket {
 public:
     RecordDetailsRequest();
     RecordDetailsRequest(clsByteQueue* buffer);
+    RecordDetailsRequest(std::uint8_t Index);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5347,15 +4883,14 @@ public:
 };
 
 inline RecordDetailsRequest BuildRecordDetailsRequest(std::uint8_t Index) {
-    RecordDetailsRequest e;
-        e.Index = Index;
-    return e;
+    return RecordDetailsRequest(Index);
 }
 
 class AlterGuildName : public ClientGMPacket {
 public:
     AlterGuildName();
     AlterGuildName(clsByteQueue* buffer);
+    AlterGuildName(const std::string& OldGuildName, const std::string& NewGuildName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5365,16 +4900,14 @@ public:
 };
 
 inline AlterGuildName BuildAlterGuildName(const std::string& OldGuildName, const std::string& NewGuildName) {
-    AlterGuildName e;
-        e.OldGuildName = OldGuildName;
-        e.NewGuildName = NewGuildName;
-    return e;
+    return AlterGuildName(OldGuildName, NewGuildName);
 }
 
 class HigherAdminsMessage : public ClientGMPacket {
 public:
     HigherAdminsMessage();
     HigherAdminsMessage(clsByteQueue* buffer);
+    HigherAdminsMessage(const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5383,9 +4916,7 @@ public:
 };
 
 inline HigherAdminsMessage BuildHigherAdminsMessage(const std::string& Message) {
-    HigherAdminsMessage e;
-        e.Message = Message;
-    return e;
+    return HigherAdminsMessage(Message);
 }
 
 class ClientGMPacketHandler {
@@ -5671,6 +5202,7 @@ class Logged : public ServerPacket {
 public:
     Logged();
     Logged(clsByteQueue* buffer);
+    Logged(std::uint8_t Clase);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5679,9 +5211,7 @@ public:
 };
 
 inline Logged BuildLogged(std::uint8_t Clase) {
-    Logged e;
-        e.Clase = Clase;
-    return e;
+    return Logged(Clase);
 }
 
 class RemoveDialogs : public ServerPacket {
@@ -5696,15 +5226,14 @@ public:
 };
 
 inline RemoveDialogs BuildRemoveDialogs() {
-    RemoveDialogs e;
-
-    return e;
+    return RemoveDialogs();
 }
 
 class RemoveCharDialog : public ServerPacket {
 public:
     RemoveCharDialog();
     RemoveCharDialog(clsByteQueue* buffer);
+    RemoveCharDialog(std::int16_t CharIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5713,9 +5242,7 @@ public:
 };
 
 inline RemoveCharDialog BuildRemoveCharDialog(std::int16_t CharIndex) {
-    RemoveCharDialog e;
-        e.CharIndex = CharIndex;
-    return e;
+    return RemoveCharDialog(CharIndex);
 }
 
 class NavigateToggle : public ServerPacket {
@@ -5730,9 +5257,7 @@ public:
 };
 
 inline NavigateToggle BuildNavigateToggle() {
-    NavigateToggle e;
-
-    return e;
+    return NavigateToggle();
 }
 
 class Disconnect : public ServerPacket {
@@ -5747,9 +5272,7 @@ public:
 };
 
 inline Disconnect BuildDisconnect() {
-    Disconnect e;
-
-    return e;
+    return Disconnect();
 }
 
 class CommerceEnd : public ServerPacket {
@@ -5764,9 +5287,7 @@ public:
 };
 
 inline CommerceEnd BuildCommerceEnd() {
-    CommerceEnd e;
-
-    return e;
+    return CommerceEnd();
 }
 
 class BankEnd : public ServerPacket {
@@ -5781,9 +5302,7 @@ public:
 };
 
 inline BankEnd BuildBankEnd() {
-    BankEnd e;
-
-    return e;
+    return BankEnd();
 }
 
 class CommerceInit : public ServerPacket {
@@ -5798,15 +5317,14 @@ public:
 };
 
 inline CommerceInit BuildCommerceInit() {
-    CommerceInit e;
-
-    return e;
+    return CommerceInit();
 }
 
 class BankInit : public ServerPacket {
 public:
     BankInit();
     BankInit(clsByteQueue* buffer);
+    BankInit(std::int32_t Banco);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5815,15 +5333,14 @@ public:
 };
 
 inline BankInit BuildBankInit(std::int32_t Banco) {
-    BankInit e;
-        e.Banco = Banco;
-    return e;
+    return BankInit(Banco);
 }
 
 class UserCommerceInit : public ServerPacket {
 public:
     UserCommerceInit();
     UserCommerceInit(clsByteQueue* buffer);
+    UserCommerceInit(const std::string& DestUserName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5832,9 +5349,7 @@ public:
 };
 
 inline UserCommerceInit BuildUserCommerceInit(const std::string& DestUserName) {
-    UserCommerceInit e;
-        e.DestUserName = DestUserName;
-    return e;
+    return UserCommerceInit(DestUserName);
 }
 
 class UserCommerceEnd : public ServerPacket {
@@ -5849,9 +5364,7 @@ public:
 };
 
 inline UserCommerceEnd BuildUserCommerceEnd() {
-    UserCommerceEnd e;
-
-    return e;
+    return UserCommerceEnd();
 }
 
 class UserOfferConfirm : public ServerPacket {
@@ -5866,15 +5379,14 @@ public:
 };
 
 inline UserOfferConfirm BuildUserOfferConfirm() {
-    UserOfferConfirm e;
-
-    return e;
+    return UserOfferConfirm();
 }
 
 class CommerceChat : public ServerPacket {
 public:
     CommerceChat();
     CommerceChat(clsByteQueue* buffer);
+    CommerceChat(const std::string& Chat, std::uint8_t FontIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5884,10 +5396,7 @@ public:
 };
 
 inline CommerceChat BuildCommerceChat(const std::string& Chat, std::uint8_t FontIndex) {
-    CommerceChat e;
-        e.Chat = Chat;
-        e.FontIndex = FontIndex;
-    return e;
+    return CommerceChat(Chat, FontIndex);
 }
 
 class ShowBlacksmithForm : public ServerPacket {
@@ -5902,9 +5411,7 @@ public:
 };
 
 inline ShowBlacksmithForm BuildShowBlacksmithForm() {
-    ShowBlacksmithForm e;
-
-    return e;
+    return ShowBlacksmithForm();
 }
 
 class ShowCarpenterForm : public ServerPacket {
@@ -5919,15 +5426,14 @@ public:
 };
 
 inline ShowCarpenterForm BuildShowCarpenterForm() {
-    ShowCarpenterForm e;
-
-    return e;
+    return ShowCarpenterForm();
 }
 
 class UpdateSta : public ServerPacket {
 public:
     UpdateSta();
     UpdateSta(clsByteQueue* buffer);
+    UpdateSta(std::int16_t Value);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5936,15 +5442,14 @@ public:
 };
 
 inline UpdateSta BuildUpdateSta(std::int16_t Value) {
-    UpdateSta e;
-        e.Value = Value;
-    return e;
+    return UpdateSta(Value);
 }
 
 class UpdateMana : public ServerPacket {
 public:
     UpdateMana();
     UpdateMana(clsByteQueue* buffer);
+    UpdateMana(std::int16_t Value);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5953,15 +5458,14 @@ public:
 };
 
 inline UpdateMana BuildUpdateMana(std::int16_t Value) {
-    UpdateMana e;
-        e.Value = Value;
-    return e;
+    return UpdateMana(Value);
 }
 
 class UpdateHP : public ServerPacket {
 public:
     UpdateHP();
     UpdateHP(clsByteQueue* buffer);
+    UpdateHP(std::int16_t Value);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5970,15 +5474,14 @@ public:
 };
 
 inline UpdateHP BuildUpdateHP(std::int16_t Value) {
-    UpdateHP e;
-        e.Value = Value;
-    return e;
+    return UpdateHP(Value);
 }
 
 class UpdateGold : public ServerPacket {
 public:
     UpdateGold();
     UpdateGold(clsByteQueue* buffer);
+    UpdateGold(std::int32_t Value);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -5987,15 +5490,14 @@ public:
 };
 
 inline UpdateGold BuildUpdateGold(std::int32_t Value) {
-    UpdateGold e;
-        e.Value = Value;
-    return e;
+    return UpdateGold(Value);
 }
 
 class UpdateBankGold : public ServerPacket {
 public:
     UpdateBankGold();
     UpdateBankGold(clsByteQueue* buffer);
+    UpdateBankGold(std::int32_t Value);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6004,15 +5506,14 @@ public:
 };
 
 inline UpdateBankGold BuildUpdateBankGold(std::int32_t Value) {
-    UpdateBankGold e;
-        e.Value = Value;
-    return e;
+    return UpdateBankGold(Value);
 }
 
 class UpdateExp : public ServerPacket {
 public:
     UpdateExp();
     UpdateExp(clsByteQueue* buffer);
+    UpdateExp(std::int32_t Value);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6021,15 +5522,14 @@ public:
 };
 
 inline UpdateExp BuildUpdateExp(std::int32_t Value) {
-    UpdateExp e;
-        e.Value = Value;
-    return e;
+    return UpdateExp(Value);
 }
 
 class ChangeMap : public ServerPacket {
 public:
     ChangeMap();
     ChangeMap(clsByteQueue* buffer);
+    ChangeMap(std::int16_t Map, std::int16_t Version);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6039,16 +5539,14 @@ public:
 };
 
 inline ChangeMap BuildChangeMap(std::int16_t Map, std::int16_t Version) {
-    ChangeMap e;
-        e.Map = Map;
-        e.Version = Version;
-    return e;
+    return ChangeMap(Map, Version);
 }
 
 class PosUpdate : public ServerPacket {
 public:
     PosUpdate();
     PosUpdate(clsByteQueue* buffer);
+    PosUpdate(std::uint8_t X, std::uint8_t Y);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6058,16 +5556,14 @@ public:
 };
 
 inline PosUpdate BuildPosUpdate(std::uint8_t X, std::uint8_t Y) {
-    PosUpdate e;
-        e.X = X;
-        e.Y = Y;
-    return e;
+    return PosUpdate(X, Y);
 }
 
 class ChatOverHead : public ServerPacket {
 public:
     ChatOverHead();
     ChatOverHead(clsByteQueue* buffer);
+    ChatOverHead(const std::string& Chat, std::int16_t CharIndex, std::uint8_t R, std::uint8_t G, std::uint8_t B);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6080,38 +5576,31 @@ public:
 };
 
 inline ChatOverHead BuildChatOverHead(const std::string& Chat, std::int16_t CharIndex, std::uint8_t R, std::uint8_t G, std::uint8_t B) {
-    ChatOverHead e;
-        e.Chat = Chat;
-        e.CharIndex = CharIndex;
-        e.R = R;
-        e.G = G;
-        e.B = B;
-    return e;
+    return ChatOverHead(Chat, CharIndex, R, G, B);
 }
 
 class ConsoleMsg : public ServerPacket {
 public:
     ConsoleMsg();
     ConsoleMsg(clsByteQueue* buffer);
+    ConsoleMsg(const std::string& Chat, std::int16_t FontIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
 
     std::string Chat; 
-    std::uint8_t FontIndex; 
+    std::int16_t FontIndex; 
 };
 
-inline ConsoleMsg BuildConsoleMsg(const std::string& Chat, std::uint8_t FontIndex) {
-    ConsoleMsg e;
-        e.Chat = Chat;
-        e.FontIndex = FontIndex;
-    return e;
+inline ConsoleMsg BuildConsoleMsg(const std::string& Chat, std::int16_t FontIndex) {
+    return ConsoleMsg(Chat, FontIndex);
 }
 
 class GuildChat : public ServerPacket {
 public:
     GuildChat();
     GuildChat(clsByteQueue* buffer);
+    GuildChat(const std::string& Chat);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6120,15 +5609,14 @@ public:
 };
 
 inline GuildChat BuildGuildChat(const std::string& Chat) {
-    GuildChat e;
-        e.Chat = Chat;
-    return e;
+    return GuildChat(Chat);
 }
 
 class ShowMessageBox : public ServerPacket {
 public:
     ShowMessageBox();
     ShowMessageBox(clsByteQueue* buffer);
+    ShowMessageBox(const std::string& Chat);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6137,15 +5625,14 @@ public:
 };
 
 inline ShowMessageBox BuildShowMessageBox(const std::string& Chat) {
-    ShowMessageBox e;
-        e.Chat = Chat;
-    return e;
+    return ShowMessageBox(Chat);
 }
 
 class UserIndexInServer : public ServerPacket {
 public:
     UserIndexInServer();
     UserIndexInServer(clsByteQueue* buffer);
+    UserIndexInServer(std::int16_t UserIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6154,15 +5641,14 @@ public:
 };
 
 inline UserIndexInServer BuildUserIndexInServer(std::int16_t UserIndex) {
-    UserIndexInServer e;
-        e.UserIndex = UserIndex;
-    return e;
+    return UserIndexInServer(UserIndex);
 }
 
 class UserCharIndexInServer : public ServerPacket {
 public:
     UserCharIndexInServer();
     UserCharIndexInServer(clsByteQueue* buffer);
+    UserCharIndexInServer(std::int16_t CharIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6171,15 +5657,14 @@ public:
 };
 
 inline UserCharIndexInServer BuildUserCharIndexInServer(std::int16_t CharIndex) {
-    UserCharIndexInServer e;
-        e.CharIndex = CharIndex;
-    return e;
+    return UserCharIndexInServer(CharIndex);
 }
 
 class CharacterCreate : public ServerPacket {
 public:
     CharacterCreate();
     CharacterCreate(clsByteQueue* buffer);
+    CharacterCreate(std::int16_t CharIndex, std::int16_t Body, std::int16_t Head, std::uint8_t Heading, std::uint8_t X, std::uint8_t Y, std::int16_t Weapon, std::int16_t Shield, std::int16_t Helmet, std::int16_t FX, std::int16_t FXLoops, const std::string& Name, std::uint8_t NickColor, std::uint8_t Privileges);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6201,28 +5686,14 @@ public:
 };
 
 inline CharacterCreate BuildCharacterCreate(std::int16_t CharIndex, std::int16_t Body, std::int16_t Head, std::uint8_t Heading, std::uint8_t X, std::uint8_t Y, std::int16_t Weapon, std::int16_t Shield, std::int16_t Helmet, std::int16_t FX, std::int16_t FXLoops, const std::string& Name, std::uint8_t NickColor, std::uint8_t Privileges) {
-    CharacterCreate e;
-        e.CharIndex = CharIndex;
-        e.Body = Body;
-        e.Head = Head;
-        e.Heading = Heading;
-        e.X = X;
-        e.Y = Y;
-        e.Weapon = Weapon;
-        e.Shield = Shield;
-        e.Helmet = Helmet;
-        e.FX = FX;
-        e.FXLoops = FXLoops;
-        e.Name = Name;
-        e.NickColor = NickColor;
-        e.Privileges = Privileges;
-    return e;
+    return CharacterCreate(CharIndex, Body, Head, Heading, X, Y, Weapon, Shield, Helmet, FX, FXLoops, Name, NickColor, Privileges);
 }
 
 class CharacterRemove : public ServerPacket {
 public:
     CharacterRemove();
     CharacterRemove(clsByteQueue* buffer);
+    CharacterRemove(std::int16_t CharIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6231,15 +5702,14 @@ public:
 };
 
 inline CharacterRemove BuildCharacterRemove(std::int16_t CharIndex) {
-    CharacterRemove e;
-        e.CharIndex = CharIndex;
-    return e;
+    return CharacterRemove(CharIndex);
 }
 
 class CharacterChangeNick : public ServerPacket {
 public:
     CharacterChangeNick();
     CharacterChangeNick(clsByteQueue* buffer);
+    CharacterChangeNick(std::int16_t CharIndex, const std::string& NewName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6249,16 +5719,14 @@ public:
 };
 
 inline CharacterChangeNick BuildCharacterChangeNick(std::int16_t CharIndex, const std::string& NewName) {
-    CharacterChangeNick e;
-        e.CharIndex = CharIndex;
-        e.NewName = NewName;
-    return e;
+    return CharacterChangeNick(CharIndex, NewName);
 }
 
 class CharacterMove : public ServerPacket {
 public:
     CharacterMove();
     CharacterMove(clsByteQueue* buffer);
+    CharacterMove(std::int16_t CharIndex, std::uint8_t X, std::uint8_t Y);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6269,17 +5737,14 @@ public:
 };
 
 inline CharacterMove BuildCharacterMove(std::int16_t CharIndex, std::uint8_t X, std::uint8_t Y) {
-    CharacterMove e;
-        e.CharIndex = CharIndex;
-        e.X = X;
-        e.Y = Y;
-    return e;
+    return CharacterMove(CharIndex, X, Y);
 }
 
 class ForceCharMove : public ServerPacket {
 public:
     ForceCharMove();
     ForceCharMove(clsByteQueue* buffer);
+    ForceCharMove(std::uint8_t Direction);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6288,15 +5753,14 @@ public:
 };
 
 inline ForceCharMove BuildForceCharMove(std::uint8_t Direction) {
-    ForceCharMove e;
-        e.Direction = Direction;
-    return e;
+    return ForceCharMove(Direction);
 }
 
 class CharacterChange : public ServerPacket {
 public:
     CharacterChange();
     CharacterChange(clsByteQueue* buffer);
+    CharacterChange(std::int16_t CharIndex, std::int16_t Body, std::int16_t Head, std::uint8_t Heading, std::int16_t Weapon, std::int16_t Shield, std::int16_t Helmet, std::int16_t FX, std::int16_t FXLoops);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6313,23 +5777,14 @@ public:
 };
 
 inline CharacterChange BuildCharacterChange(std::int16_t CharIndex, std::int16_t Body, std::int16_t Head, std::uint8_t Heading, std::int16_t Weapon, std::int16_t Shield, std::int16_t Helmet, std::int16_t FX, std::int16_t FXLoops) {
-    CharacterChange e;
-        e.CharIndex = CharIndex;
-        e.Body = Body;
-        e.Head = Head;
-        e.Heading = Heading;
-        e.Weapon = Weapon;
-        e.Shield = Shield;
-        e.Helmet = Helmet;
-        e.FX = FX;
-        e.FXLoops = FXLoops;
-    return e;
+    return CharacterChange(CharIndex, Body, Head, Heading, Weapon, Shield, Helmet, FX, FXLoops);
 }
 
 class ObjectCreate : public ServerPacket {
 public:
     ObjectCreate();
     ObjectCreate(clsByteQueue* buffer);
+    ObjectCreate(std::uint8_t X, std::uint8_t Y, std::int16_t GrhIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6340,17 +5795,14 @@ public:
 };
 
 inline ObjectCreate BuildObjectCreate(std::uint8_t X, std::uint8_t Y, std::int16_t GrhIndex) {
-    ObjectCreate e;
-        e.X = X;
-        e.Y = Y;
-        e.GrhIndex = GrhIndex;
-    return e;
+    return ObjectCreate(X, Y, GrhIndex);
 }
 
 class ObjectDelete : public ServerPacket {
 public:
     ObjectDelete();
     ObjectDelete(clsByteQueue* buffer);
+    ObjectDelete(std::uint8_t X, std::uint8_t Y);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6360,16 +5812,14 @@ public:
 };
 
 inline ObjectDelete BuildObjectDelete(std::uint8_t X, std::uint8_t Y) {
-    ObjectDelete e;
-        e.X = X;
-        e.Y = Y;
-    return e;
+    return ObjectDelete(X, Y);
 }
 
 class BlockPosition : public ServerPacket {
 public:
     BlockPosition();
     BlockPosition(clsByteQueue* buffer);
+    BlockPosition(std::uint8_t X, std::uint8_t Y, bool Blocked);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6380,17 +5830,14 @@ public:
 };
 
 inline BlockPosition BuildBlockPosition(std::uint8_t X, std::uint8_t Y, bool Blocked) {
-    BlockPosition e;
-        e.X = X;
-        e.Y = Y;
-        e.Blocked = Blocked;
-    return e;
+    return BlockPosition(X, Y, Blocked);
 }
 
 class PlayMidi : public ServerPacket {
 public:
     PlayMidi();
     PlayMidi(clsByteQueue* buffer);
+    PlayMidi(std::int16_t MidiID, std::int16_t Loops);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6400,16 +5847,14 @@ public:
 };
 
 inline PlayMidi BuildPlayMidi(std::int16_t MidiID, std::int16_t Loops) {
-    PlayMidi e;
-        e.MidiID = MidiID;
-        e.Loops = Loops;
-    return e;
+    return PlayMidi(MidiID, Loops);
 }
 
 class PlayWave : public ServerPacket {
 public:
     PlayWave();
     PlayWave(clsByteQueue* buffer);
+    PlayWave(std::uint8_t WaveID, std::uint8_t X, std::uint8_t Y);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6420,17 +5865,14 @@ public:
 };
 
 inline PlayWave BuildPlayWave(std::uint8_t WaveID, std::uint8_t X, std::uint8_t Y) {
-    PlayWave e;
-        e.WaveID = WaveID;
-        e.X = X;
-        e.Y = Y;
-    return e;
+    return PlayWave(WaveID, X, Y);
 }
 
 class GuildList : public ServerPacket {
 public:
     GuildList();
     GuildList(clsByteQueue* buffer);
+    GuildList(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6439,15 +5881,14 @@ public:
 };
 
 inline GuildList BuildGuildList(const std::string& Data) {
-    GuildList e;
-        e.Data = Data;
-    return e;
+    return GuildList(Data);
 }
 
 class AreaChanged : public ServerPacket {
 public:
     AreaChanged();
     AreaChanged(clsByteQueue* buffer);
+    AreaChanged(std::uint8_t X, std::uint8_t Y);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6457,10 +5898,7 @@ public:
 };
 
 inline AreaChanged BuildAreaChanged(std::uint8_t X, std::uint8_t Y) {
-    AreaChanged e;
-        e.X = X;
-        e.Y = Y;
-    return e;
+    return AreaChanged(X, Y);
 }
 
 class PauseToggle : public ServerPacket {
@@ -6475,9 +5913,7 @@ public:
 };
 
 inline PauseToggle BuildPauseToggle() {
-    PauseToggle e;
-
-    return e;
+    return PauseToggle();
 }
 
 class RainToggle : public ServerPacket {
@@ -6492,15 +5928,14 @@ public:
 };
 
 inline RainToggle BuildRainToggle() {
-    RainToggle e;
-
-    return e;
+    return RainToggle();
 }
 
 class CreateFX : public ServerPacket {
 public:
     CreateFX();
     CreateFX(clsByteQueue* buffer);
+    CreateFX(std::int16_t CharIndex, std::int16_t FX, std::int16_t FXLoops);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6511,17 +5946,14 @@ public:
 };
 
 inline CreateFX BuildCreateFX(std::int16_t CharIndex, std::int16_t FX, std::int16_t FXLoops) {
-    CreateFX e;
-        e.CharIndex = CharIndex;
-        e.FX = FX;
-        e.FXLoops = FXLoops;
-    return e;
+    return CreateFX(CharIndex, FX, FXLoops);
 }
 
 class UpdateUserStats : public ServerPacket {
 public:
     UpdateUserStats();
     UpdateUserStats(clsByteQueue* buffer);
+    UpdateUserStats(std::int16_t MaxHp, std::int16_t MinHp, std::int16_t MaxMan, std::int16_t MinMan, std::int16_t MaxSta, std::int16_t MinSta, std::int32_t Gld, std::uint8_t Elv, std::int32_t Elu, std::int32_t Exp);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6539,24 +5971,14 @@ public:
 };
 
 inline UpdateUserStats BuildUpdateUserStats(std::int16_t MaxHp, std::int16_t MinHp, std::int16_t MaxMan, std::int16_t MinMan, std::int16_t MaxSta, std::int16_t MinSta, std::int32_t Gld, std::uint8_t Elv, std::int32_t Elu, std::int32_t Exp) {
-    UpdateUserStats e;
-        e.MaxHp = MaxHp;
-        e.MinHp = MinHp;
-        e.MaxMan = MaxMan;
-        e.MinMan = MinMan;
-        e.MaxSta = MaxSta;
-        e.MinSta = MinSta;
-        e.Gld = Gld;
-        e.Elv = Elv;
-        e.Elu = Elu;
-        e.Exp = Exp;
-    return e;
+    return UpdateUserStats(MaxHp, MinHp, MaxMan, MinMan, MaxSta, MinSta, Gld, Elv, Elu, Exp);
 }
 
 class WorkRequestTarget : public ServerPacket {
 public:
     WorkRequestTarget();
     WorkRequestTarget(clsByteQueue* buffer);
+    WorkRequestTarget(std::uint8_t Skill);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6565,15 +5987,14 @@ public:
 };
 
 inline WorkRequestTarget BuildWorkRequestTarget(std::uint8_t Skill) {
-    WorkRequestTarget e;
-        e.Skill = Skill;
-    return e;
+    return WorkRequestTarget(Skill);
 }
 
 class ChangeInventorySlot : public ServerPacket {
 public:
     ChangeInventorySlot();
     ChangeInventorySlot(clsByteQueue* buffer);
+    ChangeInventorySlot(std::uint8_t Slot, std::int16_t ObjIndex, const std::string& ObjName, std::int16_t Amount, bool Equiped, std::int16_t GrhIndex, std::uint8_t ObjType, std::int16_t MaxHit, std::int16_t MinHit, std::int16_t MaxDef, std::int16_t MinDef, float ObjSalePrice);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6593,26 +6014,14 @@ public:
 };
 
 inline ChangeInventorySlot BuildChangeInventorySlot(std::uint8_t Slot, std::int16_t ObjIndex, const std::string& ObjName, std::int16_t Amount, bool Equiped, std::int16_t GrhIndex, std::uint8_t ObjType, std::int16_t MaxHit, std::int16_t MinHit, std::int16_t MaxDef, std::int16_t MinDef, float ObjSalePrice) {
-    ChangeInventorySlot e;
-        e.Slot = Slot;
-        e.ObjIndex = ObjIndex;
-        e.ObjName = ObjName;
-        e.Amount = Amount;
-        e.Equiped = Equiped;
-        e.GrhIndex = GrhIndex;
-        e.ObjType = ObjType;
-        e.MaxHit = MaxHit;
-        e.MinHit = MinHit;
-        e.MaxDef = MaxDef;
-        e.MinDef = MinDef;
-        e.ObjSalePrice = ObjSalePrice;
-    return e;
+    return ChangeInventorySlot(Slot, ObjIndex, ObjName, Amount, Equiped, GrhIndex, ObjType, MaxHit, MinHit, MaxDef, MinDef, ObjSalePrice);
 }
 
 class ChangeBankSlot : public ServerPacket {
 public:
     ChangeBankSlot();
     ChangeBankSlot(clsByteQueue* buffer);
+    ChangeBankSlot(std::uint8_t Slot, std::int16_t ObjIndex, const std::string& ObjName, std::int16_t Amount, std::int16_t GrhIndex, std::uint8_t ObjType, std::int16_t MaxHit, std::int16_t MinHit, std::int16_t MaxDef, std::int16_t MinDef, float ObjSalePrice);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6631,25 +6040,14 @@ public:
 };
 
 inline ChangeBankSlot BuildChangeBankSlot(std::uint8_t Slot, std::int16_t ObjIndex, const std::string& ObjName, std::int16_t Amount, std::int16_t GrhIndex, std::uint8_t ObjType, std::int16_t MaxHit, std::int16_t MinHit, std::int16_t MaxDef, std::int16_t MinDef, float ObjSalePrice) {
-    ChangeBankSlot e;
-        e.Slot = Slot;
-        e.ObjIndex = ObjIndex;
-        e.ObjName = ObjName;
-        e.Amount = Amount;
-        e.GrhIndex = GrhIndex;
-        e.ObjType = ObjType;
-        e.MaxHit = MaxHit;
-        e.MinHit = MinHit;
-        e.MaxDef = MaxDef;
-        e.MinDef = MinDef;
-        e.ObjSalePrice = ObjSalePrice;
-    return e;
+    return ChangeBankSlot(Slot, ObjIndex, ObjName, Amount, GrhIndex, ObjType, MaxHit, MinHit, MaxDef, MinDef, ObjSalePrice);
 }
 
 class ChangeSpellSlot : public ServerPacket {
 public:
     ChangeSpellSlot();
     ChangeSpellSlot(clsByteQueue* buffer);
+    ChangeSpellSlot(std::uint8_t Slot, std::int16_t SpellID, const std::string& Name);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6660,17 +6058,14 @@ public:
 };
 
 inline ChangeSpellSlot BuildChangeSpellSlot(std::uint8_t Slot, std::int16_t SpellID, const std::string& Name) {
-    ChangeSpellSlot e;
-        e.Slot = Slot;
-        e.SpellID = SpellID;
-        e.Name = Name;
-    return e;
+    return ChangeSpellSlot(Slot, SpellID, Name);
 }
 
 class Atributes : public ServerPacket {
 public:
     Atributes();
     Atributes(clsByteQueue* buffer);
+    Atributes(std::uint8_t Fuerza, std::uint8_t Agilidad, std::uint8_t Inteligencia, std::uint8_t Carisma, std::uint8_t Constitucion);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6683,13 +6078,7 @@ public:
 };
 
 inline Atributes BuildAtributes(std::uint8_t Fuerza, std::uint8_t Agilidad, std::uint8_t Inteligencia, std::uint8_t Carisma, std::uint8_t Constitucion) {
-    Atributes e;
-        e.Fuerza = Fuerza;
-        e.Agilidad = Agilidad;
-        e.Inteligencia = Inteligencia;
-        e.Carisma = Carisma;
-        e.Constitucion = Constitucion;
-    return e;
+    return Atributes(Fuerza, Agilidad, Inteligencia, Carisma, Constitucion);
 }
 
 class BlacksmithWeapons : public ServerPacket {
@@ -6801,15 +6190,14 @@ public:
 };
 
 inline RestOK BuildRestOK() {
-    RestOK e;
-
-    return e;
+    return RestOK();
 }
 
 class ErrorMsg : public ServerPacket {
 public:
     ErrorMsg();
     ErrorMsg(clsByteQueue* buffer);
+    ErrorMsg(const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6818,9 +6206,7 @@ public:
 };
 
 inline ErrorMsg BuildErrorMsg(const std::string& Message) {
-    ErrorMsg e;
-        e.Message = Message;
-    return e;
+    return ErrorMsg(Message);
 }
 
 class Blind : public ServerPacket {
@@ -6835,9 +6221,7 @@ public:
 };
 
 inline Blind BuildBlind() {
-    Blind e;
-
-    return e;
+    return Blind();
 }
 
 class Dumb : public ServerPacket {
@@ -6852,15 +6236,14 @@ public:
 };
 
 inline Dumb BuildDumb() {
-    Dumb e;
-
-    return e;
+    return Dumb();
 }
 
 class ShowSignal : public ServerPacket {
 public:
     ShowSignal();
     ShowSignal(clsByteQueue* buffer);
+    ShowSignal(const std::string& Texto, std::int16_t Grh);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6870,16 +6253,14 @@ public:
 };
 
 inline ShowSignal BuildShowSignal(const std::string& Texto, std::int16_t Grh) {
-    ShowSignal e;
-        e.Texto = Texto;
-        e.Grh = Grh;
-    return e;
+    return ShowSignal(Texto, Grh);
 }
 
 class ChangeNPCInventorySlot : public ServerPacket {
 public:
     ChangeNPCInventorySlot();
     ChangeNPCInventorySlot(clsByteQueue* buffer);
+    ChangeNPCInventorySlot(std::uint8_t Slot, const std::string& ObjName, std::int16_t Amount, float Price, std::int16_t GrhIndex, std::int16_t ObjIndex, std::uint8_t ObjType, std::int16_t MaxHit, std::int16_t MinHit, std::int16_t MaxDef, std::int16_t MinDef);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6898,25 +6279,14 @@ public:
 };
 
 inline ChangeNPCInventorySlot BuildChangeNPCInventorySlot(std::uint8_t Slot, const std::string& ObjName, std::int16_t Amount, float Price, std::int16_t GrhIndex, std::int16_t ObjIndex, std::uint8_t ObjType, std::int16_t MaxHit, std::int16_t MinHit, std::int16_t MaxDef, std::int16_t MinDef) {
-    ChangeNPCInventorySlot e;
-        e.Slot = Slot;
-        e.ObjName = ObjName;
-        e.Amount = Amount;
-        e.Price = Price;
-        e.GrhIndex = GrhIndex;
-        e.ObjIndex = ObjIndex;
-        e.ObjType = ObjType;
-        e.MaxHit = MaxHit;
-        e.MinHit = MinHit;
-        e.MaxDef = MaxDef;
-        e.MinDef = MinDef;
-    return e;
+    return ChangeNPCInventorySlot(Slot, ObjName, Amount, Price, GrhIndex, ObjIndex, ObjType, MaxHit, MinHit, MaxDef, MinDef);
 }
 
 class UpdateHungerAndThirst : public ServerPacket {
 public:
     UpdateHungerAndThirst();
     UpdateHungerAndThirst(clsByteQueue* buffer);
+    UpdateHungerAndThirst(std::uint8_t MaxAgu, std::uint8_t MinAgu, std::uint8_t MaxHam, std::uint8_t MinHam);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6928,18 +6298,14 @@ public:
 };
 
 inline UpdateHungerAndThirst BuildUpdateHungerAndThirst(std::uint8_t MaxAgu, std::uint8_t MinAgu, std::uint8_t MaxHam, std::uint8_t MinHam) {
-    UpdateHungerAndThirst e;
-        e.MaxAgu = MaxAgu;
-        e.MinAgu = MinAgu;
-        e.MaxHam = MaxHam;
-        e.MinHam = MinHam;
-    return e;
+    return UpdateHungerAndThirst(MaxAgu, MinAgu, MaxHam, MinHam);
 }
 
 class Fame : public ServerPacket {
 public:
     Fame();
     Fame(clsByteQueue* buffer);
+    Fame(std::int32_t Asesino, std::int32_t Bandido, std::int32_t Burgues, std::int32_t Ladron, std::int32_t Noble, std::int32_t Plebe, std::int32_t Promedio);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6954,21 +6320,14 @@ public:
 };
 
 inline Fame BuildFame(std::int32_t Asesino, std::int32_t Bandido, std::int32_t Burgues, std::int32_t Ladron, std::int32_t Noble, std::int32_t Plebe, std::int32_t Promedio) {
-    Fame e;
-        e.Asesino = Asesino;
-        e.Bandido = Bandido;
-        e.Burgues = Burgues;
-        e.Ladron = Ladron;
-        e.Noble = Noble;
-        e.Plebe = Plebe;
-        e.Promedio = Promedio;
-    return e;
+    return Fame(Asesino, Bandido, Burgues, Ladron, Noble, Plebe, Promedio);
 }
 
 class MiniStats : public ServerPacket {
 public:
     MiniStats();
     MiniStats(clsByteQueue* buffer);
+    MiniStats(std::int32_t CiudadanosMatados, std::int32_t CriminalesMatados, std::int32_t UsuariosMatados, std::int16_t NpcsMuertos, std::uint8_t Clase, std::int32_t Pena);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -6982,20 +6341,14 @@ public:
 };
 
 inline MiniStats BuildMiniStats(std::int32_t CiudadanosMatados, std::int32_t CriminalesMatados, std::int32_t UsuariosMatados, std::int16_t NpcsMuertos, std::uint8_t Clase, std::int32_t Pena) {
-    MiniStats e;
-        e.CiudadanosMatados = CiudadanosMatados;
-        e.CriminalesMatados = CriminalesMatados;
-        e.UsuariosMatados = UsuariosMatados;
-        e.NpcsMuertos = NpcsMuertos;
-        e.Clase = Clase;
-        e.Pena = Pena;
-    return e;
+    return MiniStats(CiudadanosMatados, CriminalesMatados, UsuariosMatados, NpcsMuertos, Clase, Pena);
 }
 
 class LevelUp : public ServerPacket {
 public:
     LevelUp();
     LevelUp(clsByteQueue* buffer);
+    LevelUp(std::int16_t SkillPoints);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7004,15 +6357,14 @@ public:
 };
 
 inline LevelUp BuildLevelUp(std::int16_t SkillPoints) {
-    LevelUp e;
-        e.SkillPoints = SkillPoints;
-    return e;
+    return LevelUp(SkillPoints);
 }
 
 class AddForumMsg : public ServerPacket {
 public:
     AddForumMsg();
     AddForumMsg(clsByteQueue* buffer);
+    AddForumMsg(std::int32_t ForumType, const std::string& Title, const std::string& Author, const std::string& Message);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7024,18 +6376,14 @@ public:
 };
 
 inline AddForumMsg BuildAddForumMsg(std::int32_t ForumType, const std::string& Title, const std::string& Author, const std::string& Message) {
-    AddForumMsg e;
-        e.ForumType = ForumType;
-        e.Title = Title;
-        e.Author = Author;
-        e.Message = Message;
-    return e;
+    return AddForumMsg(ForumType, Title, Author, Message);
 }
 
 class ShowForumForm : public ServerPacket {
 public:
     ShowForumForm();
     ShowForumForm(clsByteQueue* buffer);
+    ShowForumForm(std::uint8_t Visibilidad, std::uint8_t CanMakeSticky);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7045,16 +6393,14 @@ public:
 };
 
 inline ShowForumForm BuildShowForumForm(std::uint8_t Visibilidad, std::uint8_t CanMakeSticky) {
-    ShowForumForm e;
-        e.Visibilidad = Visibilidad;
-        e.CanMakeSticky = CanMakeSticky;
-    return e;
+    return ShowForumForm(Visibilidad, CanMakeSticky);
 }
 
 class SetInvisible : public ServerPacket {
 public:
     SetInvisible();
     SetInvisible(clsByteQueue* buffer);
+    SetInvisible(std::int16_t charIndex, bool invisible);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7064,16 +6410,14 @@ public:
 };
 
 inline SetInvisible BuildSetInvisible(std::int16_t charIndex, bool invisible) {
-    SetInvisible e;
-        e.charIndex = charIndex;
-        e.invisible = invisible;
-    return e;
+    return SetInvisible(charIndex, invisible);
 }
 
 class DiceRoll : public ServerPacket {
 public:
     DiceRoll();
     DiceRoll(clsByteQueue* buffer);
+    DiceRoll(std::uint8_t Fuerza, std::uint8_t Agilidad, std::uint8_t Inteligencia, std::uint8_t Carisma, std::uint8_t Constitucion);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7086,13 +6430,7 @@ public:
 };
 
 inline DiceRoll BuildDiceRoll(std::uint8_t Fuerza, std::uint8_t Agilidad, std::uint8_t Inteligencia, std::uint8_t Carisma, std::uint8_t Constitucion) {
-    DiceRoll e;
-        e.Fuerza = Fuerza;
-        e.Agilidad = Agilidad;
-        e.Inteligencia = Inteligencia;
-        e.Carisma = Carisma;
-        e.Constitucion = Constitucion;
-    return e;
+    return DiceRoll(Fuerza, Agilidad, Inteligencia, Carisma, Constitucion);
 }
 
 class MeditateToggle : public ServerPacket {
@@ -7107,9 +6445,7 @@ public:
 };
 
 inline MeditateToggle BuildMeditateToggle() {
-    MeditateToggle e;
-
-    return e;
+    return MeditateToggle();
 }
 
 class BlindNoMore : public ServerPacket {
@@ -7124,9 +6460,7 @@ public:
 };
 
 inline BlindNoMore BuildBlindNoMore() {
-    BlindNoMore e;
-
-    return e;
+    return BlindNoMore();
 }
 
 class DumbNoMore : public ServerPacket {
@@ -7141,15 +6475,14 @@ public:
 };
 
 inline DumbNoMore BuildDumbNoMore() {
-    DumbNoMore e;
-
-    return e;
+    return DumbNoMore();
 }
 
 class SendSkills : public ServerPacket {
 public:
     SendSkills();
     SendSkills(clsByteQueue* buffer);
+    SendSkills(std::vector<std::uint8_t> Skills );
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7158,15 +6491,14 @@ public:
 };
 
 inline SendSkills BuildSendSkills(std::vector<std::uint8_t> Skills ) {
-    SendSkills e;
-        e.Skills = Skills;
-    return e;
+    return SendSkills(Skills);
 }
 
 class TrainerCreatureList : public ServerPacket {
 public:
     TrainerCreatureList();
     TrainerCreatureList(clsByteQueue* buffer);
+    TrainerCreatureList(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7175,15 +6507,14 @@ public:
 };
 
 inline TrainerCreatureList BuildTrainerCreatureList(const std::string& Data) {
-    TrainerCreatureList e;
-        e.Data = Data;
-    return e;
+    return TrainerCreatureList(Data);
 }
 
 class GuildNews : public ServerPacket {
 public:
     GuildNews();
     GuildNews(clsByteQueue* buffer);
+    GuildNews(const std::string& News, const std::string& EnemiesList, const std::string& AlliesList);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7194,17 +6525,14 @@ public:
 };
 
 inline GuildNews BuildGuildNews(const std::string& News, const std::string& EnemiesList, const std::string& AlliesList) {
-    GuildNews e;
-        e.News = News;
-        e.EnemiesList = EnemiesList;
-        e.AlliesList = AlliesList;
-    return e;
+    return GuildNews(News, EnemiesList, AlliesList);
 }
 
 class OfferDetails : public ServerPacket {
 public:
     OfferDetails();
     OfferDetails(clsByteQueue* buffer);
+    OfferDetails(const std::string& Details);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7213,15 +6541,14 @@ public:
 };
 
 inline OfferDetails BuildOfferDetails(const std::string& Details) {
-    OfferDetails e;
-        e.Details = Details;
-    return e;
+    return OfferDetails(Details);
 }
 
 class AlianceProposalsList : public ServerPacket {
 public:
     AlianceProposalsList();
     AlianceProposalsList(clsByteQueue* buffer);
+    AlianceProposalsList(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7230,15 +6557,14 @@ public:
 };
 
 inline AlianceProposalsList BuildAlianceProposalsList(const std::string& Data) {
-    AlianceProposalsList e;
-        e.Data = Data;
-    return e;
+    return AlianceProposalsList(Data);
 }
 
 class PeaceProposalsList : public ServerPacket {
 public:
     PeaceProposalsList();
     PeaceProposalsList(clsByteQueue* buffer);
+    PeaceProposalsList(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7247,15 +6573,14 @@ public:
 };
 
 inline PeaceProposalsList BuildPeaceProposalsList(const std::string& Data) {
-    PeaceProposalsList e;
-        e.Data = Data;
-    return e;
+    return PeaceProposalsList(Data);
 }
 
 class CharacterInfo : public ServerPacket {
 public:
     CharacterInfo();
     CharacterInfo(clsByteQueue* buffer);
+    CharacterInfo(const std::string& CharName, std::uint8_t Race, std::uint8_t Class, std::uint8_t Gender, std::uint8_t Level, std::int32_t Gold, std::int32_t Bank, std::int32_t Reputation, const std::string& PreviousPetitions, const std::string& CurrentGuild, const std::string& PreviousGuilds, bool RoyalArmy, bool ChaosLegion, std::int32_t CiudadanosMatados, std::int32_t CriminalesMatados);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7278,29 +6603,14 @@ public:
 };
 
 inline CharacterInfo BuildCharacterInfo(const std::string& CharName, std::uint8_t Race, std::uint8_t Class, std::uint8_t Gender, std::uint8_t Level, std::int32_t Gold, std::int32_t Bank, std::int32_t Reputation, const std::string& PreviousPetitions, const std::string& CurrentGuild, const std::string& PreviousGuilds, bool RoyalArmy, bool ChaosLegion, std::int32_t CiudadanosMatados, std::int32_t CriminalesMatados) {
-    CharacterInfo e;
-        e.CharName = CharName;
-        e.Race = Race;
-        e.Class = Class;
-        e.Gender = Gender;
-        e.Level = Level;
-        e.Gold = Gold;
-        e.Bank = Bank;
-        e.Reputation = Reputation;
-        e.PreviousPetitions = PreviousPetitions;
-        e.CurrentGuild = CurrentGuild;
-        e.PreviousGuilds = PreviousGuilds;
-        e.RoyalArmy = RoyalArmy;
-        e.ChaosLegion = ChaosLegion;
-        e.CiudadanosMatados = CiudadanosMatados;
-        e.CriminalesMatados = CriminalesMatados;
-    return e;
+    return CharacterInfo(CharName, Race, Class, Gender, Level, Gold, Bank, Reputation, PreviousPetitions, CurrentGuild, PreviousGuilds, RoyalArmy, ChaosLegion, CiudadanosMatados, CriminalesMatados);
 }
 
 class GuildLeaderInfo : public ServerPacket {
 public:
     GuildLeaderInfo();
     GuildLeaderInfo(clsByteQueue* buffer);
+    GuildLeaderInfo(const std::string& GuildList, const std::string& MemberList, const std::string& GuildNews, const std::string& JoinRequests);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7312,18 +6622,14 @@ public:
 };
 
 inline GuildLeaderInfo BuildGuildLeaderInfo(const std::string& GuildList, const std::string& MemberList, const std::string& GuildNews, const std::string& JoinRequests) {
-    GuildLeaderInfo e;
-        e.GuildList = GuildList;
-        e.MemberList = MemberList;
-        e.GuildNews = GuildNews;
-        e.JoinRequests = JoinRequests;
-    return e;
+    return GuildLeaderInfo(GuildList, MemberList, GuildNews, JoinRequests);
 }
 
 class GuildMemberInfo : public ServerPacket {
 public:
     GuildMemberInfo();
     GuildMemberInfo(clsByteQueue* buffer);
+    GuildMemberInfo(const std::string& GuildList, const std::string& MemberList);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7333,16 +6639,14 @@ public:
 };
 
 inline GuildMemberInfo BuildGuildMemberInfo(const std::string& GuildList, const std::string& MemberList) {
-    GuildMemberInfo e;
-        e.GuildList = GuildList;
-        e.MemberList = MemberList;
-    return e;
+    return GuildMemberInfo(GuildList, MemberList);
 }
 
 class GuildDetails : public ServerPacket {
 public:
     GuildDetails();
     GuildDetails(clsByteQueue* buffer);
+    GuildDetails(const std::string& GuildName, const std::string& Founder, const std::string& FoundationDate, const std::string& Leader, const std::string& URL, std::int16_t MemberCount, bool ElectionsOpen, const std::string& Aligment, std::int16_t EnemiesCount, std::int16_t AlliesCount, const std::string& AntifactionPoints, const std::string& Codex, const std::string& GuildDesc);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7363,21 +6667,7 @@ public:
 };
 
 inline GuildDetails BuildGuildDetails(const std::string& GuildName, const std::string& Founder, const std::string& FoundationDate, const std::string& Leader, const std::string& URL, std::int16_t MemberCount, bool ElectionsOpen, const std::string& Aligment, std::int16_t EnemiesCount, std::int16_t AlliesCount, const std::string& AntifactionPoints, const std::string& Codex, const std::string& GuildDesc) {
-    GuildDetails e;
-        e.GuildName = GuildName;
-        e.Founder = Founder;
-        e.FoundationDate = FoundationDate;
-        e.Leader = Leader;
-        e.URL = URL;
-        e.MemberCount = MemberCount;
-        e.ElectionsOpen = ElectionsOpen;
-        e.Aligment = Aligment;
-        e.EnemiesCount = EnemiesCount;
-        e.AlliesCount = AlliesCount;
-        e.AntifactionPoints = AntifactionPoints;
-        e.Codex = Codex;
-        e.GuildDesc = GuildDesc;
-    return e;
+    return GuildDetails(GuildName, Founder, FoundationDate, Leader, URL, MemberCount, ElectionsOpen, Aligment, EnemiesCount, AlliesCount, AntifactionPoints, Codex, GuildDesc);
 }
 
 class ShowGuildFundationForm : public ServerPacket {
@@ -7392,9 +6682,7 @@ public:
 };
 
 inline ShowGuildFundationForm BuildShowGuildFundationForm() {
-    ShowGuildFundationForm e;
-
-    return e;
+    return ShowGuildFundationForm();
 }
 
 class ParalizeOK : public ServerPacket {
@@ -7409,15 +6697,14 @@ public:
 };
 
 inline ParalizeOK BuildParalizeOK() {
-    ParalizeOK e;
-
-    return e;
+    return ParalizeOK();
 }
 
 class ShowUserRequest : public ServerPacket {
 public:
     ShowUserRequest();
     ShowUserRequest(clsByteQueue* buffer);
+    ShowUserRequest(const std::string& Details);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7426,9 +6713,7 @@ public:
 };
 
 inline ShowUserRequest BuildShowUserRequest(const std::string& Details) {
-    ShowUserRequest e;
-        e.Details = Details;
-    return e;
+    return ShowUserRequest(Details);
 }
 
 class TradeOK : public ServerPacket {
@@ -7443,9 +6728,7 @@ public:
 };
 
 inline TradeOK BuildTradeOK() {
-    TradeOK e;
-
-    return e;
+    return TradeOK();
 }
 
 class BankOK : public ServerPacket {
@@ -7460,15 +6743,14 @@ public:
 };
 
 inline BankOK BuildBankOK() {
-    BankOK e;
-
-    return e;
+    return BankOK();
 }
 
 class ChangeUserTradeSlot : public ServerPacket {
 public:
     ChangeUserTradeSlot();
     ChangeUserTradeSlot(clsByteQueue* buffer);
+    ChangeUserTradeSlot(std::uint8_t OfferSlot, std::int16_t ObjIndex, std::int32_t Amount, std::int16_t GrhIndex, std::uint8_t ObjType, std::int16_t MaxHit, std::int16_t MinHit, std::int16_t MaxDef, std::int16_t MinDef, std::int32_t Price, const std::string& ObjName);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7487,25 +6769,14 @@ public:
 };
 
 inline ChangeUserTradeSlot BuildChangeUserTradeSlot(std::uint8_t OfferSlot, std::int16_t ObjIndex, std::int32_t Amount, std::int16_t GrhIndex, std::uint8_t ObjType, std::int16_t MaxHit, std::int16_t MinHit, std::int16_t MaxDef, std::int16_t MinDef, std::int32_t Price, const std::string& ObjName) {
-    ChangeUserTradeSlot e;
-        e.OfferSlot = OfferSlot;
-        e.ObjIndex = ObjIndex;
-        e.Amount = Amount;
-        e.GrhIndex = GrhIndex;
-        e.ObjType = ObjType;
-        e.MaxHit = MaxHit;
-        e.MinHit = MinHit;
-        e.MaxDef = MaxDef;
-        e.MinDef = MinDef;
-        e.Price = Price;
-        e.ObjName = ObjName;
-    return e;
+    return ChangeUserTradeSlot(OfferSlot, ObjIndex, Amount, GrhIndex, ObjType, MaxHit, MinHit, MaxDef, MinDef, Price, ObjName);
 }
 
 class SendNight : public ServerPacket {
 public:
     SendNight();
     SendNight(clsByteQueue* buffer);
+    SendNight(bool Night);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7514,9 +6785,7 @@ public:
 };
 
 inline SendNight BuildSendNight(bool Night) {
-    SendNight e;
-        e.Night = Night;
-    return e;
+    return SendNight(Night);
 }
 
 class Pong : public ServerPacket {
@@ -7531,15 +6800,14 @@ public:
 };
 
 inline Pong BuildPong() {
-    Pong e;
-
-    return e;
+    return Pong();
 }
 
 class UpdateTagAndStatus : public ServerPacket {
 public:
     UpdateTagAndStatus();
     UpdateTagAndStatus(clsByteQueue* buffer);
+    UpdateTagAndStatus(std::int16_t CharIndex, std::uint8_t NickColor, const std::string& Tag);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7550,17 +6818,14 @@ public:
 };
 
 inline UpdateTagAndStatus BuildUpdateTagAndStatus(std::int16_t CharIndex, std::uint8_t NickColor, const std::string& Tag) {
-    UpdateTagAndStatus e;
-        e.CharIndex = CharIndex;
-        e.NickColor = NickColor;
-        e.Tag = Tag;
-    return e;
+    return UpdateTagAndStatus(CharIndex, NickColor, Tag);
 }
 
 class SpawnList : public ServerPacket {
 public:
     SpawnList();
     SpawnList(clsByteQueue* buffer);
+    SpawnList(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7569,15 +6834,14 @@ public:
 };
 
 inline SpawnList BuildSpawnList(const std::string& Data) {
-    SpawnList e;
-        e.Data = Data;
-    return e;
+    return SpawnList(Data);
 }
 
 class ShowSOSForm : public ServerPacket {
 public:
     ShowSOSForm();
     ShowSOSForm(clsByteQueue* buffer);
+    ShowSOSForm(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7586,15 +6850,14 @@ public:
 };
 
 inline ShowSOSForm BuildShowSOSForm(const std::string& Data) {
-    ShowSOSForm e;
-        e.Data = Data;
-    return e;
+    return ShowSOSForm(Data);
 }
 
 class ShowMOTDEditionForm : public ServerPacket {
 public:
     ShowMOTDEditionForm();
     ShowMOTDEditionForm(clsByteQueue* buffer);
+    ShowMOTDEditionForm(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7603,9 +6866,7 @@ public:
 };
 
 inline ShowMOTDEditionForm BuildShowMOTDEditionForm(const std::string& Data) {
-    ShowMOTDEditionForm e;
-        e.Data = Data;
-    return e;
+    return ShowMOTDEditionForm(Data);
 }
 
 class ShowGMPanelForm : public ServerPacket {
@@ -7620,15 +6881,14 @@ public:
 };
 
 inline ShowGMPanelForm BuildShowGMPanelForm() {
-    ShowGMPanelForm e;
-
-    return e;
+    return ShowGMPanelForm();
 }
 
 class UserNameList : public ServerPacket {
 public:
     UserNameList();
     UserNameList(clsByteQueue* buffer);
+    UserNameList(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7637,15 +6897,14 @@ public:
 };
 
 inline UserNameList BuildUserNameList(const std::string& Data) {
-    UserNameList e;
-        e.Data = Data;
-    return e;
+    return UserNameList(Data);
 }
 
 class ShowDenounces : public ServerPacket {
 public:
     ShowDenounces();
     ShowDenounces(clsByteQueue* buffer);
+    ShowDenounces(const std::string& Data);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7654,9 +6913,7 @@ public:
 };
 
 inline ShowDenounces BuildShowDenounces(const std::string& Data) {
-    ShowDenounces e;
-        e.Data = Data;
-    return e;
+    return ShowDenounces(Data);
 }
 
 class RecordList : public ServerPacket {
@@ -7684,6 +6941,7 @@ class RecordDetails : public ServerPacket {
 public:
     RecordDetails();
     RecordDetails(clsByteQueue* buffer);
+    RecordDetails(const std::string& Creador, const std::string& Motivo, bool Online, const std::string& IP, const std::string& OnlineTime, const std::string& Obs);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7697,14 +6955,7 @@ public:
 };
 
 inline RecordDetails BuildRecordDetails(const std::string& Creador, const std::string& Motivo, bool Online, const std::string& IP, const std::string& OnlineTime, const std::string& Obs) {
-    RecordDetails e;
-        e.Creador = Creador;
-        e.Motivo = Motivo;
-        e.Online = Online;
-        e.IP = IP;
-        e.OnlineTime = OnlineTime;
-        e.Obs = Obs;
-    return e;
+    return RecordDetails(Creador, Motivo, Online, IP, OnlineTime, Obs);
 }
 
 class ShowGuildAlign : public ServerPacket {
@@ -7719,15 +6970,14 @@ public:
 };
 
 inline ShowGuildAlign BuildShowGuildAlign() {
-    ShowGuildAlign e;
-
-    return e;
+    return ShowGuildAlign();
 }
 
 class ShowPartyForm : public ServerPacket {
 public:
     ShowPartyForm();
     ShowPartyForm(clsByteQueue* buffer);
+    ShowPartyForm(std::uint8_t EsLider, const std::string& Data, std::int32_t Exp);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7738,17 +6988,14 @@ public:
 };
 
 inline ShowPartyForm BuildShowPartyForm(std::uint8_t EsLider, const std::string& Data, std::int32_t Exp) {
-    ShowPartyForm e;
-        e.EsLider = EsLider;
-        e.Data = Data;
-        e.Exp = Exp;
-    return e;
+    return ShowPartyForm(EsLider, Data, Exp);
 }
 
 class UpdateStrenghtAndDexterity : public ServerPacket {
 public:
     UpdateStrenghtAndDexterity();
     UpdateStrenghtAndDexterity(clsByteQueue* buffer);
+    UpdateStrenghtAndDexterity(std::uint8_t Fuerza, std::uint8_t Agilidad);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7758,16 +7005,14 @@ public:
 };
 
 inline UpdateStrenghtAndDexterity BuildUpdateStrenghtAndDexterity(std::uint8_t Fuerza, std::uint8_t Agilidad) {
-    UpdateStrenghtAndDexterity e;
-        e.Fuerza = Fuerza;
-        e.Agilidad = Agilidad;
-    return e;
+    return UpdateStrenghtAndDexterity(Fuerza, Agilidad);
 }
 
 class UpdateStrenght : public ServerPacket {
 public:
     UpdateStrenght();
     UpdateStrenght(clsByteQueue* buffer);
+    UpdateStrenght(std::uint8_t Fuerza);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7776,15 +7021,14 @@ public:
 };
 
 inline UpdateStrenght BuildUpdateStrenght(std::uint8_t Fuerza) {
-    UpdateStrenght e;
-        e.Fuerza = Fuerza;
-    return e;
+    return UpdateStrenght(Fuerza);
 }
 
 class UpdateDexterity : public ServerPacket {
 public:
     UpdateDexterity();
     UpdateDexterity(clsByteQueue* buffer);
+    UpdateDexterity(std::uint8_t Agilidad);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7793,15 +7037,14 @@ public:
 };
 
 inline UpdateDexterity BuildUpdateDexterity(std::uint8_t Agilidad) {
-    UpdateDexterity e;
-        e.Agilidad = Agilidad;
-    return e;
+    return UpdateDexterity(Agilidad);
 }
 
 class AddSlots : public ServerPacket {
 public:
     AddSlots();
     AddSlots(clsByteQueue* buffer);
+    AddSlots(std::uint8_t Mochila);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7810,9 +7053,7 @@ public:
 };
 
 inline AddSlots BuildAddSlots(std::uint8_t Mochila) {
-    AddSlots e;
-        e.Mochila = Mochila;
-    return e;
+    return AddSlots(Mochila);
 }
 
 class MultiMessage : public ServerPacket {
@@ -7827,9 +7068,7 @@ public:
 };
 
 inline MultiMessage BuildMultiMessage() {
-    MultiMessage e;
-
-    return e;
+    return MultiMessage();
 }
 
 class StopWorking : public ServerPacket {
@@ -7844,15 +7083,14 @@ public:
 };
 
 inline StopWorking BuildStopWorking() {
-    StopWorking e;
-
-    return e;
+    return StopWorking();
 }
 
 class CancelOfferItem : public ServerPacket {
 public:
     CancelOfferItem();
     CancelOfferItem(clsByteQueue* buffer);
+    CancelOfferItem(std::uint8_t Slot);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
@@ -7861,9 +7099,7 @@ public:
 };
 
 inline CancelOfferItem BuildCancelOfferItem(std::uint8_t Slot) {
-    CancelOfferItem e;
-        e.Slot = Slot;
-    return e;
+    return CancelOfferItem(Slot);
 }
 
 class ServerPacketHandler {

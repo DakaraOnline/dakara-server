@@ -1467,7 +1467,7 @@ void ClientPacketDecodeAndDispatch(clsByteQueue* buffer, PacketHandler* handler)
     }
 }
 
-LoginExistingChar::LoginExistingChar() : ClientPacket(ClientPacketID_LoginExistingChar /* 0 */) {
+LoginExistingChar::LoginExistingChar() : ClientPacket(ClientPacketID_LoginExistingChar /* 0 */), UserName(), Password(), VerA(), VerB(), VerC() {
 }
 
 LoginExistingChar::LoginExistingChar(clsByteQueue* buffer) : ClientPacket(ClientPacketID_LoginExistingChar /* 0 */) {
@@ -1478,6 +1478,9 @@ LoginExistingChar::LoginExistingChar(clsByteQueue* buffer) : ClientPacket(Client
     VerB = buffer->ReadByte();
     VerC = buffer->ReadByte();
 
+}
+
+LoginExistingChar::LoginExistingChar(const std::string& UserName_, const std::string& Password_, std::uint8_t VerA_, std::uint8_t VerB_, std::uint8_t VerC_) : ClientPacket(ClientPacketID_LoginExistingChar /* 0 */), UserName(UserName_), Password(Password_), VerA(VerA_), VerB(VerB_), VerC(VerC_) {
 }
 
 void LoginExistingChar::serialize(clsByteQueue* buffer) const {
@@ -1511,7 +1514,7 @@ void ThrowDices::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleThrowDices(this);
 }
 
-LoginNewChar::LoginNewChar() : ClientPacket(ClientPacketID_LoginNewChar /* 2 */) {
+LoginNewChar::LoginNewChar() : ClientPacket(ClientPacketID_LoginNewChar /* 2 */), UserName(), Password(), VerA(), VerB(), VerC(), Race(), Gender(), Class(), Head(), Mail(), Homeland() {
 }
 
 LoginNewChar::LoginNewChar(clsByteQueue* buffer) : ClientPacket(ClientPacketID_LoginNewChar /* 2 */) {
@@ -1528,6 +1531,9 @@ LoginNewChar::LoginNewChar(clsByteQueue* buffer) : ClientPacket(ClientPacketID_L
     Mail = buffer->ReadUnicodeString();
     Homeland = buffer->ReadByte();
 
+}
+
+LoginNewChar::LoginNewChar(const std::string& UserName_, const std::string& Password_, std::uint8_t VerA_, std::uint8_t VerB_, std::uint8_t VerC_, std::uint8_t Race_, std::uint8_t Gender_, std::uint8_t Class_, std::int16_t Head_, const std::string& Mail_, std::uint8_t Homeland_) : ClientPacket(ClientPacketID_LoginNewChar /* 2 */), UserName(UserName_), Password(Password_), VerA(VerA_), VerB(VerB_), VerC(VerC_), Race(Race_), Gender(Gender_), Class(Class_), Head(Head_), Mail(Mail_), Homeland(Homeland_) {
 }
 
 void LoginNewChar::serialize(clsByteQueue* buffer) const {
@@ -1550,13 +1556,16 @@ void LoginNewChar::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleLoginNewChar(this);
 }
 
-Talk::Talk() : ClientPacket(ClientPacketID_Talk /* 3 */) {
+Talk::Talk() : ClientPacket(ClientPacketID_Talk /* 3 */), Chat() {
 }
 
 Talk::Talk(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Talk /* 3 */) {
     buffer->ReadByte(); /* PacketID */
     Chat = buffer->ReadUnicodeString();
 
+}
+
+Talk::Talk(const std::string& Chat_) : ClientPacket(ClientPacketID_Talk /* 3 */), Chat(Chat_) {
 }
 
 void Talk::serialize(clsByteQueue* buffer) const {
@@ -1569,13 +1578,16 @@ void Talk::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleTalk(this);
 }
 
-Yell::Yell() : ClientPacket(ClientPacketID_Yell /* 4 */) {
+Yell::Yell() : ClientPacket(ClientPacketID_Yell /* 4 */), Chat() {
 }
 
 Yell::Yell(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Yell /* 4 */) {
     buffer->ReadByte(); /* PacketID */
     Chat = buffer->ReadUnicodeString();
 
+}
+
+Yell::Yell(const std::string& Chat_) : ClientPacket(ClientPacketID_Yell /* 4 */), Chat(Chat_) {
 }
 
 void Yell::serialize(clsByteQueue* buffer) const {
@@ -1588,7 +1600,7 @@ void Yell::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleYell(this);
 }
 
-Whisper::Whisper() : ClientPacket(ClientPacketID_Whisper /* 5 */) {
+Whisper::Whisper() : ClientPacket(ClientPacketID_Whisper /* 5 */), TargetName(), Chat() {
 }
 
 Whisper::Whisper(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Whisper /* 5 */) {
@@ -1596,6 +1608,9 @@ Whisper::Whisper(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Whisper /* 
     TargetName = buffer->ReadUnicodeString();
     Chat = buffer->ReadUnicodeString();
 
+}
+
+Whisper::Whisper(const std::string& TargetName_, const std::string& Chat_) : ClientPacket(ClientPacketID_Whisper /* 5 */), TargetName(TargetName_), Chat(Chat_) {
 }
 
 void Whisper::serialize(clsByteQueue* buffer) const {
@@ -1609,13 +1624,16 @@ void Whisper::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleWhisper(this);
 }
 
-Walk::Walk() : ClientPacket(ClientPacketID_Walk /* 6 */) {
+Walk::Walk() : ClientPacket(ClientPacketID_Walk /* 6 */), Heading() {
 }
 
 Walk::Walk(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Walk /* 6 */) {
     buffer->ReadByte(); /* PacketID */
     Heading = buffer->ReadByte();
 
+}
+
+Walk::Walk(std::uint8_t Heading_) : ClientPacket(ClientPacketID_Walk /* 6 */), Heading(Heading_) {
 }
 
 void Walk::serialize(clsByteQueue* buffer) const {
@@ -1849,13 +1867,16 @@ void UserCommerceConfirm::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleUserCommerceConfirm(this);
 }
 
-CommerceChat::CommerceChat() : ClientPacket(ClientPacketID_CommerceChat /* 20 */) {
+CommerceChat::CommerceChat() : ClientPacket(ClientPacketID_CommerceChat /* 20 */), Chat() {
 }
 
 CommerceChat::CommerceChat(clsByteQueue* buffer) : ClientPacket(ClientPacketID_CommerceChat /* 20 */) {
     buffer->ReadByte(); /* PacketID */
     Chat = buffer->ReadUnicodeString();
 
+}
+
+CommerceChat::CommerceChat(const std::string& Chat_) : ClientPacket(ClientPacketID_CommerceChat /* 20 */), Chat(Chat_) {
 }
 
 void CommerceChat::serialize(clsByteQueue* buffer) const {
@@ -1919,7 +1940,7 @@ void UserCommerceReject::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleUserCommerceReject(this);
 }
 
-Drop::Drop() : ClientPacket(ClientPacketID_Drop /* 24 */) {
+Drop::Drop() : ClientPacket(ClientPacketID_Drop /* 24 */), Slot(), Amount() {
 }
 
 Drop::Drop(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Drop /* 24 */) {
@@ -1927,6 +1948,9 @@ Drop::Drop(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Drop /* 24 */) {
     Slot = buffer->ReadByte();
     Amount = buffer->ReadInteger();
 
+}
+
+Drop::Drop(std::uint8_t Slot_, std::int16_t Amount_) : ClientPacket(ClientPacketID_Drop /* 24 */), Slot(Slot_), Amount(Amount_) {
 }
 
 void Drop::serialize(clsByteQueue* buffer) const {
@@ -1940,13 +1964,16 @@ void Drop::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleDrop(this);
 }
 
-CastSpell::CastSpell() : ClientPacket(ClientPacketID_CastSpell /* 25 */) {
+CastSpell::CastSpell() : ClientPacket(ClientPacketID_CastSpell /* 25 */), Spell() {
 }
 
 CastSpell::CastSpell(clsByteQueue* buffer) : ClientPacket(ClientPacketID_CastSpell /* 25 */) {
     buffer->ReadByte(); /* PacketID */
     Spell = buffer->ReadByte();
 
+}
+
+CastSpell::CastSpell(std::uint8_t Spell_) : ClientPacket(ClientPacketID_CastSpell /* 25 */), Spell(Spell_) {
 }
 
 void CastSpell::serialize(clsByteQueue* buffer) const {
@@ -1959,7 +1986,7 @@ void CastSpell::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleCastSpell(this);
 }
 
-LeftClick::LeftClick() : ClientPacket(ClientPacketID_LeftClick /* 26 */) {
+LeftClick::LeftClick() : ClientPacket(ClientPacketID_LeftClick /* 26 */), X(), Y() {
 }
 
 LeftClick::LeftClick(clsByteQueue* buffer) : ClientPacket(ClientPacketID_LeftClick /* 26 */) {
@@ -1967,6 +1994,9 @@ LeftClick::LeftClick(clsByteQueue* buffer) : ClientPacket(ClientPacketID_LeftCli
     X = buffer->ReadByte();
     Y = buffer->ReadByte();
 
+}
+
+LeftClick::LeftClick(std::uint8_t X_, std::uint8_t Y_) : ClientPacket(ClientPacketID_LeftClick /* 26 */), X(X_), Y(Y_) {
 }
 
 void LeftClick::serialize(clsByteQueue* buffer) const {
@@ -1980,7 +2010,7 @@ void LeftClick::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleLeftClick(this);
 }
 
-DoubleClick::DoubleClick() : ClientPacket(ClientPacketID_DoubleClick /* 27 */) {
+DoubleClick::DoubleClick() : ClientPacket(ClientPacketID_DoubleClick /* 27 */), X(), Y() {
 }
 
 DoubleClick::DoubleClick(clsByteQueue* buffer) : ClientPacket(ClientPacketID_DoubleClick /* 27 */) {
@@ -1988,6 +2018,9 @@ DoubleClick::DoubleClick(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Dou
     X = buffer->ReadByte();
     Y = buffer->ReadByte();
 
+}
+
+DoubleClick::DoubleClick(std::uint8_t X_, std::uint8_t Y_) : ClientPacket(ClientPacketID_DoubleClick /* 27 */), X(X_), Y(Y_) {
 }
 
 void DoubleClick::serialize(clsByteQueue* buffer) const {
@@ -2001,13 +2034,16 @@ void DoubleClick::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleDoubleClick(this);
 }
 
-Work::Work() : ClientPacket(ClientPacketID_Work /* 28 */) {
+Work::Work() : ClientPacket(ClientPacketID_Work /* 28 */), Skill() {
 }
 
 Work::Work(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Work /* 28 */) {
     buffer->ReadByte(); /* PacketID */
     Skill = buffer->ReadByte();
 
+}
+
+Work::Work(std::uint8_t Skill_) : ClientPacket(ClientPacketID_Work /* 28 */), Skill(Skill_) {
 }
 
 void Work::serialize(clsByteQueue* buffer) const {
@@ -2037,13 +2073,16 @@ void UseSpellMacro::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleUseSpellMacro(this);
 }
 
-UseItem::UseItem() : ClientPacket(ClientPacketID_UseItem /* 30 */) {
+UseItem::UseItem() : ClientPacket(ClientPacketID_UseItem /* 30 */), Slot() {
 }
 
 UseItem::UseItem(clsByteQueue* buffer) : ClientPacket(ClientPacketID_UseItem /* 30 */) {
     buffer->ReadByte(); /* PacketID */
     Slot = buffer->ReadByte();
 
+}
+
+UseItem::UseItem(std::uint8_t Slot_) : ClientPacket(ClientPacketID_UseItem /* 30 */), Slot(Slot_) {
 }
 
 void UseItem::serialize(clsByteQueue* buffer) const {
@@ -2056,13 +2095,16 @@ void UseItem::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleUseItem(this);
 }
 
-CraftBlacksmith::CraftBlacksmith() : ClientPacket(ClientPacketID_CraftBlacksmith /* 31 */) {
+CraftBlacksmith::CraftBlacksmith() : ClientPacket(ClientPacketID_CraftBlacksmith /* 31 */), Item() {
 }
 
 CraftBlacksmith::CraftBlacksmith(clsByteQueue* buffer) : ClientPacket(ClientPacketID_CraftBlacksmith /* 31 */) {
     buffer->ReadByte(); /* PacketID */
     Item = buffer->ReadInteger();
 
+}
+
+CraftBlacksmith::CraftBlacksmith(std::int16_t Item_) : ClientPacket(ClientPacketID_CraftBlacksmith /* 31 */), Item(Item_) {
 }
 
 void CraftBlacksmith::serialize(clsByteQueue* buffer) const {
@@ -2075,13 +2117,16 @@ void CraftBlacksmith::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleCraftBlacksmith(this);
 }
 
-CraftCarpenter::CraftCarpenter() : ClientPacket(ClientPacketID_CraftCarpenter /* 32 */) {
+CraftCarpenter::CraftCarpenter() : ClientPacket(ClientPacketID_CraftCarpenter /* 32 */), Item() {
 }
 
 CraftCarpenter::CraftCarpenter(clsByteQueue* buffer) : ClientPacket(ClientPacketID_CraftCarpenter /* 32 */) {
     buffer->ReadByte(); /* PacketID */
     Item = buffer->ReadInteger();
 
+}
+
+CraftCarpenter::CraftCarpenter(std::int16_t Item_) : ClientPacket(ClientPacketID_CraftCarpenter /* 32 */), Item(Item_) {
 }
 
 void CraftCarpenter::serialize(clsByteQueue* buffer) const {
@@ -2094,7 +2139,7 @@ void CraftCarpenter::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleCraftCarpenter(this);
 }
 
-WorkLeftClick::WorkLeftClick() : ClientPacket(ClientPacketID_WorkLeftClick /* 33 */) {
+WorkLeftClick::WorkLeftClick() : ClientPacket(ClientPacketID_WorkLeftClick /* 33 */), X(), Y(), Skill() {
 }
 
 WorkLeftClick::WorkLeftClick(clsByteQueue* buffer) : ClientPacket(ClientPacketID_WorkLeftClick /* 33 */) {
@@ -2103,6 +2148,9 @@ WorkLeftClick::WorkLeftClick(clsByteQueue* buffer) : ClientPacket(ClientPacketID
     Y = buffer->ReadByte();
     Skill = buffer->ReadByte();
 
+}
+
+WorkLeftClick::WorkLeftClick(std::uint8_t X_, std::uint8_t Y_, std::uint8_t Skill_) : ClientPacket(ClientPacketID_WorkLeftClick /* 33 */), X(X_), Y(Y_), Skill(Skill_) {
 }
 
 void WorkLeftClick::serialize(clsByteQueue* buffer) const {
@@ -2117,7 +2165,7 @@ void WorkLeftClick::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleWorkLeftClick(this);
 }
 
-CreateNewGuild::CreateNewGuild() : ClientPacket(ClientPacketID_CreateNewGuild /* 34 */) {
+CreateNewGuild::CreateNewGuild() : ClientPacket(ClientPacketID_CreateNewGuild /* 34 */), Desc(), GuildName(), Site(), Codex() {
 }
 
 CreateNewGuild::CreateNewGuild(clsByteQueue* buffer) : ClientPacket(ClientPacketID_CreateNewGuild /* 34 */) {
@@ -2127,6 +2175,9 @@ CreateNewGuild::CreateNewGuild(clsByteQueue* buffer) : ClientPacket(ClientPacket
     Site = buffer->ReadUnicodeString();
     Codex = buffer->ReadUnicodeString();
 
+}
+
+CreateNewGuild::CreateNewGuild(const std::string& Desc_, const std::string& GuildName_, const std::string& Site_, const std::string& Codex_) : ClientPacket(ClientPacketID_CreateNewGuild /* 34 */), Desc(Desc_), GuildName(GuildName_), Site(Site_), Codex(Codex_) {
 }
 
 void CreateNewGuild::serialize(clsByteQueue* buffer) const {
@@ -2142,13 +2193,16 @@ void CreateNewGuild::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleCreateNewGuild(this);
 }
 
-SpellInfo::SpellInfo() : ClientPacket(ClientPacketID_SpellInfo /* 35 */) {
+SpellInfo::SpellInfo() : ClientPacket(ClientPacketID_SpellInfo /* 35 */), Slot() {
 }
 
 SpellInfo::SpellInfo(clsByteQueue* buffer) : ClientPacket(ClientPacketID_SpellInfo /* 35 */) {
     buffer->ReadByte(); /* PacketID */
     Slot = buffer->ReadByte();
 
+}
+
+SpellInfo::SpellInfo(std::uint8_t Slot_) : ClientPacket(ClientPacketID_SpellInfo /* 35 */), Slot(Slot_) {
 }
 
 void SpellInfo::serialize(clsByteQueue* buffer) const {
@@ -2161,13 +2215,16 @@ void SpellInfo::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleSpellInfo(this);
 }
 
-EquipItem::EquipItem() : ClientPacket(ClientPacketID_EquipItem /* 36 */) {
+EquipItem::EquipItem() : ClientPacket(ClientPacketID_EquipItem /* 36 */), Slot() {
 }
 
 EquipItem::EquipItem(clsByteQueue* buffer) : ClientPacket(ClientPacketID_EquipItem /* 36 */) {
     buffer->ReadByte(); /* PacketID */
     Slot = buffer->ReadByte();
 
+}
+
+EquipItem::EquipItem(std::uint8_t Slot_) : ClientPacket(ClientPacketID_EquipItem /* 36 */), Slot(Slot_) {
 }
 
 void EquipItem::serialize(clsByteQueue* buffer) const {
@@ -2180,13 +2237,16 @@ void EquipItem::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleEquipItem(this);
 }
 
-ChangeHeading::ChangeHeading() : ClientPacket(ClientPacketID_ChangeHeading /* 37 */) {
+ChangeHeading::ChangeHeading() : ClientPacket(ClientPacketID_ChangeHeading /* 37 */), Heading() {
 }
 
 ChangeHeading::ChangeHeading(clsByteQueue* buffer) : ClientPacket(ClientPacketID_ChangeHeading /* 37 */) {
     buffer->ReadByte(); /* PacketID */
     Heading = buffer->ReadByte();
 
+}
+
+ChangeHeading::ChangeHeading(std::uint8_t Heading_) : ClientPacket(ClientPacketID_ChangeHeading /* 37 */), Heading(Heading_) {
 }
 
 void ChangeHeading::serialize(clsByteQueue* buffer) const {
@@ -2199,13 +2259,16 @@ void ChangeHeading::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleChangeHeading(this);
 }
 
-ModifySkills::ModifySkills() : ClientPacket(ClientPacketID_ModifySkills /* 38 */) {
+ModifySkills::ModifySkills() : ClientPacket(ClientPacketID_ModifySkills /* 38 */), Skills() {
 }
 
 ModifySkills::ModifySkills(clsByteQueue* buffer) : ClientPacket(ClientPacketID_ModifySkills /* 38 */) {
     buffer->ReadByte(); /* PacketID */
     { int i; Skills.resize(20); for (i=0; i<20; ++i) Skills[i] = buffer->ReadByte(); }
 
+}
+
+ModifySkills::ModifySkills(std::vector<std::uint8_t> Skills_ ) : ClientPacket(ClientPacketID_ModifySkills /* 38 */), Skills(Skills_) {
 }
 
 void ModifySkills::serialize(clsByteQueue* buffer) const {
@@ -2218,13 +2281,16 @@ void ModifySkills::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleModifySkills(this);
 }
 
-Train::Train() : ClientPacket(ClientPacketID_Train /* 39 */) {
+Train::Train() : ClientPacket(ClientPacketID_Train /* 39 */), PetIndex() {
 }
 
 Train::Train(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Train /* 39 */) {
     buffer->ReadByte(); /* PacketID */
     PetIndex = buffer->ReadByte();
 
+}
+
+Train::Train(std::uint8_t PetIndex_) : ClientPacket(ClientPacketID_Train /* 39 */), PetIndex(PetIndex_) {
 }
 
 void Train::serialize(clsByteQueue* buffer) const {
@@ -2237,7 +2303,7 @@ void Train::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleTrain(this);
 }
 
-CommerceBuy::CommerceBuy() : ClientPacket(ClientPacketID_CommerceBuy /* 40 */) {
+CommerceBuy::CommerceBuy() : ClientPacket(ClientPacketID_CommerceBuy /* 40 */), Slot(), Amount() {
 }
 
 CommerceBuy::CommerceBuy(clsByteQueue* buffer) : ClientPacket(ClientPacketID_CommerceBuy /* 40 */) {
@@ -2245,6 +2311,9 @@ CommerceBuy::CommerceBuy(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Com
     Slot = buffer->ReadByte();
     Amount = buffer->ReadInteger();
 
+}
+
+CommerceBuy::CommerceBuy(std::uint8_t Slot_, std::int16_t Amount_) : ClientPacket(ClientPacketID_CommerceBuy /* 40 */), Slot(Slot_), Amount(Amount_) {
 }
 
 void CommerceBuy::serialize(clsByteQueue* buffer) const {
@@ -2258,7 +2327,7 @@ void CommerceBuy::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleCommerceBuy(this);
 }
 
-BankExtractItem::BankExtractItem() : ClientPacket(ClientPacketID_BankExtractItem /* 41 */) {
+BankExtractItem::BankExtractItem() : ClientPacket(ClientPacketID_BankExtractItem /* 41 */), Slot(), Amount() {
 }
 
 BankExtractItem::BankExtractItem(clsByteQueue* buffer) : ClientPacket(ClientPacketID_BankExtractItem /* 41 */) {
@@ -2266,6 +2335,9 @@ BankExtractItem::BankExtractItem(clsByteQueue* buffer) : ClientPacket(ClientPack
     Slot = buffer->ReadByte();
     Amount = buffer->ReadInteger();
 
+}
+
+BankExtractItem::BankExtractItem(std::uint8_t Slot_, std::int16_t Amount_) : ClientPacket(ClientPacketID_BankExtractItem /* 41 */), Slot(Slot_), Amount(Amount_) {
 }
 
 void BankExtractItem::serialize(clsByteQueue* buffer) const {
@@ -2279,7 +2351,7 @@ void BankExtractItem::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleBankExtractItem(this);
 }
 
-CommerceSell::CommerceSell() : ClientPacket(ClientPacketID_CommerceSell /* 42 */) {
+CommerceSell::CommerceSell() : ClientPacket(ClientPacketID_CommerceSell /* 42 */), Slot(), Amount() {
 }
 
 CommerceSell::CommerceSell(clsByteQueue* buffer) : ClientPacket(ClientPacketID_CommerceSell /* 42 */) {
@@ -2287,6 +2359,9 @@ CommerceSell::CommerceSell(clsByteQueue* buffer) : ClientPacket(ClientPacketID_C
     Slot = buffer->ReadByte();
     Amount = buffer->ReadInteger();
 
+}
+
+CommerceSell::CommerceSell(std::uint8_t Slot_, std::int16_t Amount_) : ClientPacket(ClientPacketID_CommerceSell /* 42 */), Slot(Slot_), Amount(Amount_) {
 }
 
 void CommerceSell::serialize(clsByteQueue* buffer) const {
@@ -2300,7 +2375,7 @@ void CommerceSell::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleCommerceSell(this);
 }
 
-BankDeposit::BankDeposit() : ClientPacket(ClientPacketID_BankDeposit /* 43 */) {
+BankDeposit::BankDeposit() : ClientPacket(ClientPacketID_BankDeposit /* 43 */), Slot(), Amount() {
 }
 
 BankDeposit::BankDeposit(clsByteQueue* buffer) : ClientPacket(ClientPacketID_BankDeposit /* 43 */) {
@@ -2308,6 +2383,9 @@ BankDeposit::BankDeposit(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Ban
     Slot = buffer->ReadByte();
     Amount = buffer->ReadInteger();
 
+}
+
+BankDeposit::BankDeposit(std::uint8_t Slot_, std::int16_t Amount_) : ClientPacket(ClientPacketID_BankDeposit /* 43 */), Slot(Slot_), Amount(Amount_) {
 }
 
 void BankDeposit::serialize(clsByteQueue* buffer) const {
@@ -2321,7 +2399,7 @@ void BankDeposit::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleBankDeposit(this);
 }
 
-ForumPost::ForumPost() : ClientPacket(ClientPacketID_ForumPost /* 44 */) {
+ForumPost::ForumPost() : ClientPacket(ClientPacketID_ForumPost /* 44 */), MsgType(), Title(), Post() {
 }
 
 ForumPost::ForumPost(clsByteQueue* buffer) : ClientPacket(ClientPacketID_ForumPost /* 44 */) {
@@ -2330,6 +2408,9 @@ ForumPost::ForumPost(clsByteQueue* buffer) : ClientPacket(ClientPacketID_ForumPo
     Title = buffer->ReadUnicodeString();
     Post = buffer->ReadUnicodeString();
 
+}
+
+ForumPost::ForumPost(std::uint8_t MsgType_, const std::string& Title_, const std::string& Post_) : ClientPacket(ClientPacketID_ForumPost /* 44 */), MsgType(MsgType_), Title(Title_), Post(Post_) {
 }
 
 void ForumPost::serialize(clsByteQueue* buffer) const {
@@ -2344,7 +2425,7 @@ void ForumPost::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleForumPost(this);
 }
 
-MoveSpell::MoveSpell() : ClientPacket(ClientPacketID_MoveSpell /* 45 */) {
+MoveSpell::MoveSpell() : ClientPacket(ClientPacketID_MoveSpell /* 45 */), Direction(), Slot() {
 }
 
 MoveSpell::MoveSpell(clsByteQueue* buffer) : ClientPacket(ClientPacketID_MoveSpell /* 45 */) {
@@ -2352,6 +2433,9 @@ MoveSpell::MoveSpell(clsByteQueue* buffer) : ClientPacket(ClientPacketID_MoveSpe
     Direction = buffer->ReadBoolean();
     Slot = buffer->ReadByte();
 
+}
+
+MoveSpell::MoveSpell(bool Direction_, std::uint8_t Slot_) : ClientPacket(ClientPacketID_MoveSpell /* 45 */), Direction(Direction_), Slot(Slot_) {
 }
 
 void MoveSpell::serialize(clsByteQueue* buffer) const {
@@ -2365,7 +2449,7 @@ void MoveSpell::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleMoveSpell(this);
 }
 
-MoveBank::MoveBank() : ClientPacket(ClientPacketID_MoveBank /* 46 */) {
+MoveBank::MoveBank() : ClientPacket(ClientPacketID_MoveBank /* 46 */), Direction(), Slot() {
 }
 
 MoveBank::MoveBank(clsByteQueue* buffer) : ClientPacket(ClientPacketID_MoveBank /* 46 */) {
@@ -2373,6 +2457,9 @@ MoveBank::MoveBank(clsByteQueue* buffer) : ClientPacket(ClientPacketID_MoveBank 
     Direction = buffer->ReadBoolean();
     Slot = buffer->ReadByte();
 
+}
+
+MoveBank::MoveBank(bool Direction_, std::uint8_t Slot_) : ClientPacket(ClientPacketID_MoveBank /* 46 */), Direction(Direction_), Slot(Slot_) {
 }
 
 void MoveBank::serialize(clsByteQueue* buffer) const {
@@ -2386,7 +2473,7 @@ void MoveBank::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleMoveBank(this);
 }
 
-ClanCodexUpdate::ClanCodexUpdate() : ClientPacket(ClientPacketID_ClanCodexUpdate /* 47 */) {
+ClanCodexUpdate::ClanCodexUpdate() : ClientPacket(ClientPacketID_ClanCodexUpdate /* 47 */), Desc(), Codex() {
 }
 
 ClanCodexUpdate::ClanCodexUpdate(clsByteQueue* buffer) : ClientPacket(ClientPacketID_ClanCodexUpdate /* 47 */) {
@@ -2394,6 +2481,9 @@ ClanCodexUpdate::ClanCodexUpdate(clsByteQueue* buffer) : ClientPacket(ClientPack
     Desc = buffer->ReadUnicodeString();
     Codex = buffer->ReadUnicodeString();
 
+}
+
+ClanCodexUpdate::ClanCodexUpdate(const std::string& Desc_, const std::string& Codex_) : ClientPacket(ClientPacketID_ClanCodexUpdate /* 47 */), Desc(Desc_), Codex(Codex_) {
 }
 
 void ClanCodexUpdate::serialize(clsByteQueue* buffer) const {
@@ -2407,7 +2497,7 @@ void ClanCodexUpdate::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleClanCodexUpdate(this);
 }
 
-UserCommerceOffer::UserCommerceOffer() : ClientPacket(ClientPacketID_UserCommerceOffer /* 48 */) {
+UserCommerceOffer::UserCommerceOffer() : ClientPacket(ClientPacketID_UserCommerceOffer /* 48 */), Slot(), Amount(), OfferSlot() {
 }
 
 UserCommerceOffer::UserCommerceOffer(clsByteQueue* buffer) : ClientPacket(ClientPacketID_UserCommerceOffer /* 48 */) {
@@ -2416,6 +2506,9 @@ UserCommerceOffer::UserCommerceOffer(clsByteQueue* buffer) : ClientPacket(Client
     Amount = buffer->ReadLong();
     OfferSlot = buffer->ReadByte();
 
+}
+
+UserCommerceOffer::UserCommerceOffer(std::uint8_t Slot_, std::int32_t Amount_, std::uint8_t OfferSlot_) : ClientPacket(ClientPacketID_UserCommerceOffer /* 48 */), Slot(Slot_), Amount(Amount_), OfferSlot(OfferSlot_) {
 }
 
 void UserCommerceOffer::serialize(clsByteQueue* buffer) const {
@@ -2430,13 +2523,16 @@ void UserCommerceOffer::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleUserCommerceOffer(this);
 }
 
-GuildAcceptPeace::GuildAcceptPeace() : ClientPacket(ClientPacketID_GuildAcceptPeace /* 49 */) {
+GuildAcceptPeace::GuildAcceptPeace() : ClientPacket(ClientPacketID_GuildAcceptPeace /* 49 */), Guild() {
 }
 
 GuildAcceptPeace::GuildAcceptPeace(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildAcceptPeace /* 49 */) {
     buffer->ReadByte(); /* PacketID */
     Guild = buffer->ReadUnicodeString();
 
+}
+
+GuildAcceptPeace::GuildAcceptPeace(const std::string& Guild_) : ClientPacket(ClientPacketID_GuildAcceptPeace /* 49 */), Guild(Guild_) {
 }
 
 void GuildAcceptPeace::serialize(clsByteQueue* buffer) const {
@@ -2449,13 +2545,16 @@ void GuildAcceptPeace::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildAcceptPeace(this);
 }
 
-GuildRejectAlliance::GuildRejectAlliance() : ClientPacket(ClientPacketID_GuildRejectAlliance /* 50 */) {
+GuildRejectAlliance::GuildRejectAlliance() : ClientPacket(ClientPacketID_GuildRejectAlliance /* 50 */), Guild() {
 }
 
 GuildRejectAlliance::GuildRejectAlliance(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildRejectAlliance /* 50 */) {
     buffer->ReadByte(); /* PacketID */
     Guild = buffer->ReadUnicodeString();
 
+}
+
+GuildRejectAlliance::GuildRejectAlliance(const std::string& Guild_) : ClientPacket(ClientPacketID_GuildRejectAlliance /* 50 */), Guild(Guild_) {
 }
 
 void GuildRejectAlliance::serialize(clsByteQueue* buffer) const {
@@ -2468,13 +2567,16 @@ void GuildRejectAlliance::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildRejectAlliance(this);
 }
 
-GuildRejectPeace::GuildRejectPeace() : ClientPacket(ClientPacketID_GuildRejectPeace /* 51 */) {
+GuildRejectPeace::GuildRejectPeace() : ClientPacket(ClientPacketID_GuildRejectPeace /* 51 */), Guild() {
 }
 
 GuildRejectPeace::GuildRejectPeace(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildRejectPeace /* 51 */) {
     buffer->ReadByte(); /* PacketID */
     Guild = buffer->ReadUnicodeString();
 
+}
+
+GuildRejectPeace::GuildRejectPeace(const std::string& Guild_) : ClientPacket(ClientPacketID_GuildRejectPeace /* 51 */), Guild(Guild_) {
 }
 
 void GuildRejectPeace::serialize(clsByteQueue* buffer) const {
@@ -2487,13 +2589,16 @@ void GuildRejectPeace::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildRejectPeace(this);
 }
 
-GuildAcceptAlliance::GuildAcceptAlliance() : ClientPacket(ClientPacketID_GuildAcceptAlliance /* 52 */) {
+GuildAcceptAlliance::GuildAcceptAlliance() : ClientPacket(ClientPacketID_GuildAcceptAlliance /* 52 */), Guild() {
 }
 
 GuildAcceptAlliance::GuildAcceptAlliance(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildAcceptAlliance /* 52 */) {
     buffer->ReadByte(); /* PacketID */
     Guild = buffer->ReadUnicodeString();
 
+}
+
+GuildAcceptAlliance::GuildAcceptAlliance(const std::string& Guild_) : ClientPacket(ClientPacketID_GuildAcceptAlliance /* 52 */), Guild(Guild_) {
 }
 
 void GuildAcceptAlliance::serialize(clsByteQueue* buffer) const {
@@ -2506,7 +2611,7 @@ void GuildAcceptAlliance::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildAcceptAlliance(this);
 }
 
-GuildOfferPeace::GuildOfferPeace() : ClientPacket(ClientPacketID_GuildOfferPeace /* 53 */) {
+GuildOfferPeace::GuildOfferPeace() : ClientPacket(ClientPacketID_GuildOfferPeace /* 53 */), Guild(), Proposal() {
 }
 
 GuildOfferPeace::GuildOfferPeace(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildOfferPeace /* 53 */) {
@@ -2514,6 +2619,9 @@ GuildOfferPeace::GuildOfferPeace(clsByteQueue* buffer) : ClientPacket(ClientPack
     Guild = buffer->ReadUnicodeString();
     Proposal = buffer->ReadUnicodeString();
 
+}
+
+GuildOfferPeace::GuildOfferPeace(const std::string& Guild_, const std::string& Proposal_) : ClientPacket(ClientPacketID_GuildOfferPeace /* 53 */), Guild(Guild_), Proposal(Proposal_) {
 }
 
 void GuildOfferPeace::serialize(clsByteQueue* buffer) const {
@@ -2527,7 +2635,7 @@ void GuildOfferPeace::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildOfferPeace(this);
 }
 
-GuildOfferAlliance::GuildOfferAlliance() : ClientPacket(ClientPacketID_GuildOfferAlliance /* 54 */) {
+GuildOfferAlliance::GuildOfferAlliance() : ClientPacket(ClientPacketID_GuildOfferAlliance /* 54 */), Guild(), Proposal() {
 }
 
 GuildOfferAlliance::GuildOfferAlliance(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildOfferAlliance /* 54 */) {
@@ -2535,6 +2643,9 @@ GuildOfferAlliance::GuildOfferAlliance(clsByteQueue* buffer) : ClientPacket(Clie
     Guild = buffer->ReadUnicodeString();
     Proposal = buffer->ReadUnicodeString();
 
+}
+
+GuildOfferAlliance::GuildOfferAlliance(const std::string& Guild_, const std::string& Proposal_) : ClientPacket(ClientPacketID_GuildOfferAlliance /* 54 */), Guild(Guild_), Proposal(Proposal_) {
 }
 
 void GuildOfferAlliance::serialize(clsByteQueue* buffer) const {
@@ -2548,13 +2659,16 @@ void GuildOfferAlliance::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildOfferAlliance(this);
 }
 
-GuildAllianceDetails::GuildAllianceDetails() : ClientPacket(ClientPacketID_GuildAllianceDetails /* 55 */) {
+GuildAllianceDetails::GuildAllianceDetails() : ClientPacket(ClientPacketID_GuildAllianceDetails /* 55 */), Guild() {
 }
 
 GuildAllianceDetails::GuildAllianceDetails(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildAllianceDetails /* 55 */) {
     buffer->ReadByte(); /* PacketID */
     Guild = buffer->ReadUnicodeString();
 
+}
+
+GuildAllianceDetails::GuildAllianceDetails(const std::string& Guild_) : ClientPacket(ClientPacketID_GuildAllianceDetails /* 55 */), Guild(Guild_) {
 }
 
 void GuildAllianceDetails::serialize(clsByteQueue* buffer) const {
@@ -2567,13 +2681,16 @@ void GuildAllianceDetails::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildAllianceDetails(this);
 }
 
-GuildPeaceDetails::GuildPeaceDetails() : ClientPacket(ClientPacketID_GuildPeaceDetails /* 56 */) {
+GuildPeaceDetails::GuildPeaceDetails() : ClientPacket(ClientPacketID_GuildPeaceDetails /* 56 */), Guild() {
 }
 
 GuildPeaceDetails::GuildPeaceDetails(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildPeaceDetails /* 56 */) {
     buffer->ReadByte(); /* PacketID */
     Guild = buffer->ReadUnicodeString();
 
+}
+
+GuildPeaceDetails::GuildPeaceDetails(const std::string& Guild_) : ClientPacket(ClientPacketID_GuildPeaceDetails /* 56 */), Guild(Guild_) {
 }
 
 void GuildPeaceDetails::serialize(clsByteQueue* buffer) const {
@@ -2586,13 +2703,16 @@ void GuildPeaceDetails::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildPeaceDetails(this);
 }
 
-GuildRequestJoinerInfo::GuildRequestJoinerInfo() : ClientPacket(ClientPacketID_GuildRequestJoinerInfo /* 57 */) {
+GuildRequestJoinerInfo::GuildRequestJoinerInfo() : ClientPacket(ClientPacketID_GuildRequestJoinerInfo /* 57 */), User() {
 }
 
 GuildRequestJoinerInfo::GuildRequestJoinerInfo(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildRequestJoinerInfo /* 57 */) {
     buffer->ReadByte(); /* PacketID */
     User = buffer->ReadUnicodeString();
 
+}
+
+GuildRequestJoinerInfo::GuildRequestJoinerInfo(const std::string& User_) : ClientPacket(ClientPacketID_GuildRequestJoinerInfo /* 57 */), User(User_) {
 }
 
 void GuildRequestJoinerInfo::serialize(clsByteQueue* buffer) const {
@@ -2639,13 +2759,16 @@ void GuildPeacePropList::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildPeacePropList(this);
 }
 
-GuildDeclareWar::GuildDeclareWar() : ClientPacket(ClientPacketID_GuildDeclareWar /* 60 */) {
+GuildDeclareWar::GuildDeclareWar() : ClientPacket(ClientPacketID_GuildDeclareWar /* 60 */), Guild() {
 }
 
 GuildDeclareWar::GuildDeclareWar(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildDeclareWar /* 60 */) {
     buffer->ReadByte(); /* PacketID */
     Guild = buffer->ReadUnicodeString();
 
+}
+
+GuildDeclareWar::GuildDeclareWar(const std::string& Guild_) : ClientPacket(ClientPacketID_GuildDeclareWar /* 60 */), Guild(Guild_) {
 }
 
 void GuildDeclareWar::serialize(clsByteQueue* buffer) const {
@@ -2658,13 +2781,16 @@ void GuildDeclareWar::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildDeclareWar(this);
 }
 
-GuildNewWebsite::GuildNewWebsite() : ClientPacket(ClientPacketID_GuildNewWebsite /* 61 */) {
+GuildNewWebsite::GuildNewWebsite() : ClientPacket(ClientPacketID_GuildNewWebsite /* 61 */), Website() {
 }
 
 GuildNewWebsite::GuildNewWebsite(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildNewWebsite /* 61 */) {
     buffer->ReadByte(); /* PacketID */
     Website = buffer->ReadUnicodeString();
 
+}
+
+GuildNewWebsite::GuildNewWebsite(const std::string& Website_) : ClientPacket(ClientPacketID_GuildNewWebsite /* 61 */), Website(Website_) {
 }
 
 void GuildNewWebsite::serialize(clsByteQueue* buffer) const {
@@ -2677,13 +2803,16 @@ void GuildNewWebsite::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildNewWebsite(this);
 }
 
-GuildAcceptNewMember::GuildAcceptNewMember() : ClientPacket(ClientPacketID_GuildAcceptNewMember /* 62 */) {
+GuildAcceptNewMember::GuildAcceptNewMember() : ClientPacket(ClientPacketID_GuildAcceptNewMember /* 62 */), UserName() {
 }
 
 GuildAcceptNewMember::GuildAcceptNewMember(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildAcceptNewMember /* 62 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+GuildAcceptNewMember::GuildAcceptNewMember(const std::string& UserName_) : ClientPacket(ClientPacketID_GuildAcceptNewMember /* 62 */), UserName(UserName_) {
 }
 
 void GuildAcceptNewMember::serialize(clsByteQueue* buffer) const {
@@ -2696,7 +2825,7 @@ void GuildAcceptNewMember::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildAcceptNewMember(this);
 }
 
-GuildRejectNewMember::GuildRejectNewMember() : ClientPacket(ClientPacketID_GuildRejectNewMember /* 63 */) {
+GuildRejectNewMember::GuildRejectNewMember() : ClientPacket(ClientPacketID_GuildRejectNewMember /* 63 */), UserName(), Reason() {
 }
 
 GuildRejectNewMember::GuildRejectNewMember(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildRejectNewMember /* 63 */) {
@@ -2704,6 +2833,9 @@ GuildRejectNewMember::GuildRejectNewMember(clsByteQueue* buffer) : ClientPacket(
     UserName = buffer->ReadUnicodeString();
     Reason = buffer->ReadUnicodeString();
 
+}
+
+GuildRejectNewMember::GuildRejectNewMember(const std::string& UserName_, const std::string& Reason_) : ClientPacket(ClientPacketID_GuildRejectNewMember /* 63 */), UserName(UserName_), Reason(Reason_) {
 }
 
 void GuildRejectNewMember::serialize(clsByteQueue* buffer) const {
@@ -2717,13 +2849,16 @@ void GuildRejectNewMember::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildRejectNewMember(this);
 }
 
-GuildKickMember::GuildKickMember() : ClientPacket(ClientPacketID_GuildKickMember /* 64 */) {
+GuildKickMember::GuildKickMember() : ClientPacket(ClientPacketID_GuildKickMember /* 64 */), UserName() {
 }
 
 GuildKickMember::GuildKickMember(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildKickMember /* 64 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+GuildKickMember::GuildKickMember(const std::string& UserName_) : ClientPacket(ClientPacketID_GuildKickMember /* 64 */), UserName(UserName_) {
 }
 
 void GuildKickMember::serialize(clsByteQueue* buffer) const {
@@ -2736,13 +2871,16 @@ void GuildKickMember::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildKickMember(this);
 }
 
-GuildUpdateNews::GuildUpdateNews() : ClientPacket(ClientPacketID_GuildUpdateNews /* 65 */) {
+GuildUpdateNews::GuildUpdateNews() : ClientPacket(ClientPacketID_GuildUpdateNews /* 65 */), News() {
 }
 
 GuildUpdateNews::GuildUpdateNews(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildUpdateNews /* 65 */) {
     buffer->ReadByte(); /* PacketID */
     News = buffer->ReadUnicodeString();
 
+}
+
+GuildUpdateNews::GuildUpdateNews(const std::string& News_) : ClientPacket(ClientPacketID_GuildUpdateNews /* 65 */), News(News_) {
 }
 
 void GuildUpdateNews::serialize(clsByteQueue* buffer) const {
@@ -2755,13 +2893,16 @@ void GuildUpdateNews::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildUpdateNews(this);
 }
 
-GuildMemberInfo::GuildMemberInfo() : ClientPacket(ClientPacketID_GuildMemberInfo /* 66 */) {
+GuildMemberInfo::GuildMemberInfo() : ClientPacket(ClientPacketID_GuildMemberInfo /* 66 */), UserName() {
 }
 
 GuildMemberInfo::GuildMemberInfo(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildMemberInfo /* 66 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+GuildMemberInfo::GuildMemberInfo(const std::string& UserName_) : ClientPacket(ClientPacketID_GuildMemberInfo /* 66 */), UserName(UserName_) {
 }
 
 void GuildMemberInfo::serialize(clsByteQueue* buffer) const {
@@ -2791,7 +2932,7 @@ void GuildOpenElections::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildOpenElections(this);
 }
 
-GuildRequestMembership::GuildRequestMembership() : ClientPacket(ClientPacketID_GuildRequestMembership /* 68 */) {
+GuildRequestMembership::GuildRequestMembership() : ClientPacket(ClientPacketID_GuildRequestMembership /* 68 */), Guild(), Application() {
 }
 
 GuildRequestMembership::GuildRequestMembership(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildRequestMembership /* 68 */) {
@@ -2799,6 +2940,9 @@ GuildRequestMembership::GuildRequestMembership(clsByteQueue* buffer) : ClientPac
     Guild = buffer->ReadUnicodeString();
     Application = buffer->ReadUnicodeString();
 
+}
+
+GuildRequestMembership::GuildRequestMembership(const std::string& Guild_, const std::string& Application_) : ClientPacket(ClientPacketID_GuildRequestMembership /* 68 */), Guild(Guild_), Application(Application_) {
 }
 
 void GuildRequestMembership::serialize(clsByteQueue* buffer) const {
@@ -2812,13 +2956,16 @@ void GuildRequestMembership::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildRequestMembership(this);
 }
 
-GuildRequestDetails::GuildRequestDetails() : ClientPacket(ClientPacketID_GuildRequestDetails /* 69 */) {
+GuildRequestDetails::GuildRequestDetails() : ClientPacket(ClientPacketID_GuildRequestDetails /* 69 */), Guild() {
 }
 
 GuildRequestDetails::GuildRequestDetails(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildRequestDetails /* 69 */) {
     buffer->ReadByte(); /* PacketID */
     Guild = buffer->ReadUnicodeString();
 
+}
+
+GuildRequestDetails::GuildRequestDetails(const std::string& Guild_) : ClientPacket(ClientPacketID_GuildRequestDetails /* 69 */), Guild(Guild_) {
 }
 
 void GuildRequestDetails::serialize(clsByteQueue* buffer) const {
@@ -3256,13 +3403,16 @@ void Inquiry::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleInquiry(this);
 }
 
-GuildMessage::GuildMessage() : ClientPacket(ClientPacketID_GuildMessage /* 95 */) {
+GuildMessage::GuildMessage() : ClientPacket(ClientPacketID_GuildMessage /* 95 */), Chat() {
 }
 
 GuildMessage::GuildMessage(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildMessage /* 95 */) {
     buffer->ReadByte(); /* PacketID */
     Chat = buffer->ReadUnicodeString();
 
+}
+
+GuildMessage::GuildMessage(const std::string& Chat_) : ClientPacket(ClientPacketID_GuildMessage /* 95 */), Chat(Chat_) {
 }
 
 void GuildMessage::serialize(clsByteQueue* buffer) const {
@@ -3275,13 +3425,16 @@ void GuildMessage::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildMessage(this);
 }
 
-PartyMessage::PartyMessage() : ClientPacket(ClientPacketID_PartyMessage /* 96 */) {
+PartyMessage::PartyMessage() : ClientPacket(ClientPacketID_PartyMessage /* 96 */), Chat() {
 }
 
 PartyMessage::PartyMessage(clsByteQueue* buffer) : ClientPacket(ClientPacketID_PartyMessage /* 96 */) {
     buffer->ReadByte(); /* PacketID */
     Chat = buffer->ReadUnicodeString();
 
+}
+
+PartyMessage::PartyMessage(const std::string& Chat_) : ClientPacket(ClientPacketID_PartyMessage /* 96 */), Chat(Chat_) {
 }
 
 void PartyMessage::serialize(clsByteQueue* buffer) const {
@@ -3294,13 +3447,16 @@ void PartyMessage::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handlePartyMessage(this);
 }
 
-CentinelReport::CentinelReport() : ClientPacket(ClientPacketID_CentinelReport /* 97 */) {
+CentinelReport::CentinelReport() : ClientPacket(ClientPacketID_CentinelReport /* 97 */), Code() {
 }
 
 CentinelReport::CentinelReport(clsByteQueue* buffer) : ClientPacket(ClientPacketID_CentinelReport /* 97 */) {
     buffer->ReadByte(); /* PacketID */
     Code = buffer->ReadInteger();
 
+}
+
+CentinelReport::CentinelReport(std::int16_t Code_) : ClientPacket(ClientPacketID_CentinelReport /* 97 */), Code(Code_) {
 }
 
 void CentinelReport::serialize(clsByteQueue* buffer) const {
@@ -3347,13 +3503,16 @@ void PartyOnline::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handlePartyOnline(this);
 }
 
-CouncilMessage::CouncilMessage() : ClientPacket(ClientPacketID_CouncilMessage /* 100 */) {
+CouncilMessage::CouncilMessage() : ClientPacket(ClientPacketID_CouncilMessage /* 100 */), Chat() {
 }
 
 CouncilMessage::CouncilMessage(clsByteQueue* buffer) : ClientPacket(ClientPacketID_CouncilMessage /* 100 */) {
     buffer->ReadByte(); /* PacketID */
     Chat = buffer->ReadUnicodeString();
 
+}
+
+CouncilMessage::CouncilMessage(const std::string& Chat_) : ClientPacket(ClientPacketID_CouncilMessage /* 100 */), Chat(Chat_) {
 }
 
 void CouncilMessage::serialize(clsByteQueue* buffer) const {
@@ -3366,13 +3525,16 @@ void CouncilMessage::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleCouncilMessage(this);
 }
 
-RoleMasterRequest::RoleMasterRequest() : ClientPacket(ClientPacketID_RoleMasterRequest /* 101 */) {
+RoleMasterRequest::RoleMasterRequest() : ClientPacket(ClientPacketID_RoleMasterRequest /* 101 */), Request() {
 }
 
 RoleMasterRequest::RoleMasterRequest(clsByteQueue* buffer) : ClientPacket(ClientPacketID_RoleMasterRequest /* 101 */) {
     buffer->ReadByte(); /* PacketID */
     Request = buffer->ReadUnicodeString();
 
+}
+
+RoleMasterRequest::RoleMasterRequest(const std::string& Request_) : ClientPacket(ClientPacketID_RoleMasterRequest /* 101 */), Request(Request_) {
 }
 
 void RoleMasterRequest::serialize(clsByteQueue* buffer) const {
@@ -3402,13 +3564,16 @@ void GMRequest::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGMRequest(this);
 }
 
-BugReport::BugReport() : ClientPacket(ClientPacketID_BugReport /* 103 */) {
+BugReport::BugReport() : ClientPacket(ClientPacketID_BugReport /* 103 */), Report() {
 }
 
 BugReport::BugReport(clsByteQueue* buffer) : ClientPacket(ClientPacketID_BugReport /* 103 */) {
     buffer->ReadByte(); /* PacketID */
     Report = buffer->ReadUnicodeString();
 
+}
+
+BugReport::BugReport(const std::string& Report_) : ClientPacket(ClientPacketID_BugReport /* 103 */), Report(Report_) {
 }
 
 void BugReport::serialize(clsByteQueue* buffer) const {
@@ -3421,13 +3586,16 @@ void BugReport::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleBugReport(this);
 }
 
-ChangeDescription::ChangeDescription() : ClientPacket(ClientPacketID_ChangeDescription /* 104 */) {
+ChangeDescription::ChangeDescription() : ClientPacket(ClientPacketID_ChangeDescription /* 104 */), Description() {
 }
 
 ChangeDescription::ChangeDescription(clsByteQueue* buffer) : ClientPacket(ClientPacketID_ChangeDescription /* 104 */) {
     buffer->ReadByte(); /* PacketID */
     Description = buffer->ReadUnicodeString();
 
+}
+
+ChangeDescription::ChangeDescription(const std::string& Description_) : ClientPacket(ClientPacketID_ChangeDescription /* 104 */), Description(Description_) {
 }
 
 void ChangeDescription::serialize(clsByteQueue* buffer) const {
@@ -3440,13 +3608,16 @@ void ChangeDescription::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleChangeDescription(this);
 }
 
-GuildVote::GuildVote() : ClientPacket(ClientPacketID_GuildVote /* 105 */) {
+GuildVote::GuildVote() : ClientPacket(ClientPacketID_GuildVote /* 105 */), Vote() {
 }
 
 GuildVote::GuildVote(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildVote /* 105 */) {
     buffer->ReadByte(); /* PacketID */
     Vote = buffer->ReadUnicodeString();
 
+}
+
+GuildVote::GuildVote(const std::string& Vote_) : ClientPacket(ClientPacketID_GuildVote /* 105 */), Vote(Vote_) {
 }
 
 void GuildVote::serialize(clsByteQueue* buffer) const {
@@ -3459,13 +3630,16 @@ void GuildVote::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildVote(this);
 }
 
-Punishments::Punishments() : ClientPacket(ClientPacketID_Punishments /* 106 */) {
+Punishments::Punishments() : ClientPacket(ClientPacketID_Punishments /* 106 */), Name() {
 }
 
 Punishments::Punishments(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Punishments /* 106 */) {
     buffer->ReadByte(); /* PacketID */
     Name = buffer->ReadUnicodeString();
 
+}
+
+Punishments::Punishments(const std::string& Name_) : ClientPacket(ClientPacketID_Punishments /* 106 */), Name(Name_) {
 }
 
 void Punishments::serialize(clsByteQueue* buffer) const {
@@ -3478,7 +3652,7 @@ void Punishments::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handlePunishments(this);
 }
 
-ChangePassword::ChangePassword() : ClientPacket(ClientPacketID_ChangePassword /* 107 */) {
+ChangePassword::ChangePassword() : ClientPacket(ClientPacketID_ChangePassword /* 107 */), OldPass(), NewPass() {
 }
 
 ChangePassword::ChangePassword(clsByteQueue* buffer) : ClientPacket(ClientPacketID_ChangePassword /* 107 */) {
@@ -3486,6 +3660,9 @@ ChangePassword::ChangePassword(clsByteQueue* buffer) : ClientPacket(ClientPacket
     OldPass = buffer->ReadUnicodeString();
     NewPass = buffer->ReadUnicodeString();
 
+}
+
+ChangePassword::ChangePassword(const std::string& OldPass_, const std::string& NewPass_) : ClientPacket(ClientPacketID_ChangePassword /* 107 */), OldPass(OldPass_), NewPass(NewPass_) {
 }
 
 void ChangePassword::serialize(clsByteQueue* buffer) const {
@@ -3499,13 +3676,16 @@ void ChangePassword::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleChangePassword(this);
 }
 
-Gamble::Gamble() : ClientPacket(ClientPacketID_Gamble /* 108 */) {
+Gamble::Gamble() : ClientPacket(ClientPacketID_Gamble /* 108 */), Amount() {
 }
 
 Gamble::Gamble(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Gamble /* 108 */) {
     buffer->ReadByte(); /* PacketID */
     Amount = buffer->ReadInteger();
 
+}
+
+Gamble::Gamble(std::int16_t Amount_) : ClientPacket(ClientPacketID_Gamble /* 108 */), Amount(Amount_) {
 }
 
 void Gamble::serialize(clsByteQueue* buffer) const {
@@ -3518,13 +3698,16 @@ void Gamble::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGamble(this);
 }
 
-InquiryVote::InquiryVote() : ClientPacket(ClientPacketID_InquiryVote /* 109 */) {
+InquiryVote::InquiryVote() : ClientPacket(ClientPacketID_InquiryVote /* 109 */), Opt() {
 }
 
 InquiryVote::InquiryVote(clsByteQueue* buffer) : ClientPacket(ClientPacketID_InquiryVote /* 109 */) {
     buffer->ReadByte(); /* PacketID */
     Opt = buffer->ReadByte();
 
+}
+
+InquiryVote::InquiryVote(std::uint8_t Opt_) : ClientPacket(ClientPacketID_InquiryVote /* 109 */), Opt(Opt_) {
 }
 
 void InquiryVote::serialize(clsByteQueue* buffer) const {
@@ -3554,13 +3737,16 @@ void LeaveFaction::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleLeaveFaction(this);
 }
 
-BankExtractGold::BankExtractGold() : ClientPacket(ClientPacketID_BankExtractGold /* 111 */) {
+BankExtractGold::BankExtractGold() : ClientPacket(ClientPacketID_BankExtractGold /* 111 */), Amount() {
 }
 
 BankExtractGold::BankExtractGold(clsByteQueue* buffer) : ClientPacket(ClientPacketID_BankExtractGold /* 111 */) {
     buffer->ReadByte(); /* PacketID */
     Amount = buffer->ReadLong();
 
+}
+
+BankExtractGold::BankExtractGold(std::int32_t Amount_) : ClientPacket(ClientPacketID_BankExtractGold /* 111 */), Amount(Amount_) {
 }
 
 void BankExtractGold::serialize(clsByteQueue* buffer) const {
@@ -3573,13 +3759,16 @@ void BankExtractGold::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleBankExtractGold(this);
 }
 
-BankDepositGold::BankDepositGold() : ClientPacket(ClientPacketID_BankDepositGold /* 112 */) {
+BankDepositGold::BankDepositGold() : ClientPacket(ClientPacketID_BankDepositGold /* 112 */), Amount() {
 }
 
 BankDepositGold::BankDepositGold(clsByteQueue* buffer) : ClientPacket(ClientPacketID_BankDepositGold /* 112 */) {
     buffer->ReadByte(); /* PacketID */
     Amount = buffer->ReadLong();
 
+}
+
+BankDepositGold::BankDepositGold(std::int32_t Amount_) : ClientPacket(ClientPacketID_BankDepositGold /* 112 */), Amount(Amount_) {
 }
 
 void BankDepositGold::serialize(clsByteQueue* buffer) const {
@@ -3592,13 +3781,16 @@ void BankDepositGold::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleBankDepositGold(this);
 }
 
-Denounce::Denounce() : ClientPacket(ClientPacketID_Denounce /* 113 */) {
+Denounce::Denounce() : ClientPacket(ClientPacketID_Denounce /* 113 */), Text() {
 }
 
 Denounce::Denounce(clsByteQueue* buffer) : ClientPacket(ClientPacketID_Denounce /* 113 */) {
     buffer->ReadByte(); /* PacketID */
     Text = buffer->ReadUnicodeString();
 
+}
+
+Denounce::Denounce(const std::string& Text_) : ClientPacket(ClientPacketID_Denounce /* 113 */), Text(Text_) {
 }
 
 void Denounce::serialize(clsByteQueue* buffer) const {
@@ -3628,13 +3820,16 @@ void GuildFundate::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildFundate(this);
 }
 
-GuildFundation::GuildFundation() : ClientPacket(ClientPacketID_GuildFundation /* 115 */) {
+GuildFundation::GuildFundation() : ClientPacket(ClientPacketID_GuildFundation /* 115 */), ClanType() {
 }
 
 GuildFundation::GuildFundation(clsByteQueue* buffer) : ClientPacket(ClientPacketID_GuildFundation /* 115 */) {
     buffer->ReadByte(); /* PacketID */
     ClanType = buffer->ReadByte();
 
+}
+
+GuildFundation::GuildFundation(std::uint8_t ClanType_) : ClientPacket(ClientPacketID_GuildFundation /* 115 */), ClanType(ClanType_) {
 }
 
 void GuildFundation::serialize(clsByteQueue* buffer) const {
@@ -3647,13 +3842,16 @@ void GuildFundation::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGuildFundation(this);
 }
 
-PartyKick::PartyKick() : ClientPacket(ClientPacketID_PartyKick /* 116 */) {
+PartyKick::PartyKick() : ClientPacket(ClientPacketID_PartyKick /* 116 */), UserName() {
 }
 
 PartyKick::PartyKick(clsByteQueue* buffer) : ClientPacket(ClientPacketID_PartyKick /* 116 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+PartyKick::PartyKick(const std::string& UserName_) : ClientPacket(ClientPacketID_PartyKick /* 116 */), UserName(UserName_) {
 }
 
 void PartyKick::serialize(clsByteQueue* buffer) const {
@@ -3666,13 +3864,16 @@ void PartyKick::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handlePartyKick(this);
 }
 
-PartySetLeader::PartySetLeader() : ClientPacket(ClientPacketID_PartySetLeader /* 117 */) {
+PartySetLeader::PartySetLeader() : ClientPacket(ClientPacketID_PartySetLeader /* 117 */), UserName() {
 }
 
 PartySetLeader::PartySetLeader(clsByteQueue* buffer) : ClientPacket(ClientPacketID_PartySetLeader /* 117 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+PartySetLeader::PartySetLeader(const std::string& UserName_) : ClientPacket(ClientPacketID_PartySetLeader /* 117 */), UserName(UserName_) {
 }
 
 void PartySetLeader::serialize(clsByteQueue* buffer) const {
@@ -3685,13 +3886,16 @@ void PartySetLeader::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handlePartySetLeader(this);
 }
 
-PartyAcceptMember::PartyAcceptMember() : ClientPacket(ClientPacketID_PartyAcceptMember /* 118 */) {
+PartyAcceptMember::PartyAcceptMember() : ClientPacket(ClientPacketID_PartyAcceptMember /* 118 */), UserName() {
 }
 
 PartyAcceptMember::PartyAcceptMember(clsByteQueue* buffer) : ClientPacket(ClientPacketID_PartyAcceptMember /* 118 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+PartyAcceptMember::PartyAcceptMember(const std::string& UserName_) : ClientPacket(ClientPacketID_PartyAcceptMember /* 118 */), UserName(UserName_) {
 }
 
 void PartyAcceptMember::serialize(clsByteQueue* buffer) const {
@@ -3738,13 +3942,16 @@ void RequestPartyForm::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleRequestPartyForm(this);
 }
 
-ItemUpgrade::ItemUpgrade() : ClientPacket(ClientPacketID_ItemUpgrade /* 121 */) {
+ItemUpgrade::ItemUpgrade() : ClientPacket(ClientPacketID_ItemUpgrade /* 121 */), ItemIndex() {
 }
 
 ItemUpgrade::ItemUpgrade(clsByteQueue* buffer) : ClientPacket(ClientPacketID_ItemUpgrade /* 121 */) {
     buffer->ReadByte(); /* PacketID */
     ItemIndex = buffer->ReadInteger();
 
+}
+
+ItemUpgrade::ItemUpgrade(std::int16_t ItemIndex_) : ClientPacket(ClientPacketID_ItemUpgrade /* 121 */), ItemIndex(ItemIndex_) {
 }
 
 void ItemUpgrade::serialize(clsByteQueue* buffer) const {
@@ -3777,7 +3984,7 @@ void GMCommands::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleGMCommands(this);
 }
 
-InitCrafting::InitCrafting() : ClientPacket(ClientPacketID_InitCrafting /* 123 */) {
+InitCrafting::InitCrafting() : ClientPacket(ClientPacketID_InitCrafting /* 123 */), TotalItems(), ItemsPorCiclo() {
 }
 
 InitCrafting::InitCrafting(clsByteQueue* buffer) : ClientPacket(ClientPacketID_InitCrafting /* 123 */) {
@@ -3785,6 +3992,9 @@ InitCrafting::InitCrafting(clsByteQueue* buffer) : ClientPacket(ClientPacketID_I
     TotalItems = buffer->ReadLong();
     ItemsPorCiclo = buffer->ReadInteger();
 
+}
+
+InitCrafting::InitCrafting(std::int32_t TotalItems_, std::int16_t ItemsPorCiclo_) : ClientPacket(ClientPacketID_InitCrafting /* 123 */), TotalItems(TotalItems_), ItemsPorCiclo(ItemsPorCiclo_) {
 }
 
 void InitCrafting::serialize(clsByteQueue* buffer) const {
@@ -3883,7 +4093,7 @@ void Consultation::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientPacket()->handleConsultation(this);
 }
 
-MoveItem::MoveItem() : ClientPacket(ClientPacketID_MoveItem /* 129 */) {
+MoveItem::MoveItem() : ClientPacket(ClientPacketID_MoveItem /* 129 */), OldSlot(), NewSlot() {
 }
 
 MoveItem::MoveItem(clsByteQueue* buffer) : ClientPacket(ClientPacketID_MoveItem /* 129 */) {
@@ -3891,6 +4101,9 @@ MoveItem::MoveItem(clsByteQueue* buffer) : ClientPacket(ClientPacketID_MoveItem 
     OldSlot = buffer->ReadByte();
     NewSlot = buffer->ReadByte();
 
+}
+
+MoveItem::MoveItem(std::uint8_t OldSlot_, std::uint8_t NewSlot_) : ClientPacket(ClientPacketID_MoveItem /* 129 */), OldSlot(OldSlot_), NewSlot(NewSlot_) {
 }
 
 void MoveItem::serialize(clsByteQueue* buffer) const {
@@ -5695,13 +5908,16 @@ void ClientGMPacketDecodeAndDispatch(clsByteQueue* buffer, PacketHandler* handle
     }
 }
 
-GMMessage::GMMessage() : ClientGMPacket(ClientGMPacketID_GMMessage /* 1 */) {
+GMMessage::GMMessage() : ClientGMPacket(ClientGMPacketID_GMMessage /* 1 */), Chat() {
 }
 
 GMMessage::GMMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_GMMessage /* 1 */) {
     buffer->ReadByte(); /* PacketID */
     Chat = buffer->ReadUnicodeString();
 
+}
+
+GMMessage::GMMessage(const std::string& Chat_) : ClientGMPacket(ClientGMPacketID_GMMessage /* 1 */), Chat(Chat_) {
 }
 
 void GMMessage::serialize(clsByteQueue* buffer) const {
@@ -5769,13 +5985,16 @@ void OnlineChaosLegion::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleOnlineChaosLegion(this);
 }
 
-GoNearby::GoNearby() : ClientGMPacket(ClientGMPacketID_GoNearby /* 5 */) {
+GoNearby::GoNearby() : ClientGMPacket(ClientGMPacketID_GoNearby /* 5 */), UserName() {
 }
 
 GoNearby::GoNearby(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_GoNearby /* 5 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+GoNearby::GoNearby(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_GoNearby /* 5 */), UserName(UserName_) {
 }
 
 void GoNearby::serialize(clsByteQueue* buffer) const {
@@ -5789,13 +6008,16 @@ void GoNearby::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleGoNearby(this);
 }
 
-Comment::Comment() : ClientGMPacket(ClientGMPacketID_Comment /* 6 */) {
+Comment::Comment() : ClientGMPacket(ClientGMPacketID_Comment /* 6 */), Data() {
 }
 
 Comment::Comment(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Comment /* 6 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+Comment::Comment(const std::string& Data_) : ClientGMPacket(ClientGMPacketID_Comment /* 6 */), Data(Data_) {
 }
 
 void Comment::serialize(clsByteQueue* buffer) const {
@@ -5827,13 +6049,16 @@ void ServerTime::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleServerTime(this);
 }
 
-Where::Where() : ClientGMPacket(ClientGMPacketID_Where /* 8 */) {
+Where::Where() : ClientGMPacket(ClientGMPacketID_Where /* 8 */), UserName() {
 }
 
 Where::Where(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Where /* 8 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+Where::Where(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_Where /* 8 */), UserName(UserName_) {
 }
 
 void Where::serialize(clsByteQueue* buffer) const {
@@ -5847,13 +6072,16 @@ void Where::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleWhere(this);
 }
 
-CreaturesInMap::CreaturesInMap() : ClientGMPacket(ClientGMPacketID_CreaturesInMap /* 9 */) {
+CreaturesInMap::CreaturesInMap() : ClientGMPacket(ClientGMPacketID_CreaturesInMap /* 9 */), Map() {
 }
 
 CreaturesInMap::CreaturesInMap(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_CreaturesInMap /* 9 */) {
     buffer->ReadByte(); /* PacketID */
     Map = buffer->ReadInteger();
 
+}
+
+CreaturesInMap::CreaturesInMap(std::int16_t Map_) : ClientGMPacket(ClientGMPacketID_CreaturesInMap /* 9 */), Map(Map_) {
 }
 
 void CreaturesInMap::serialize(clsByteQueue* buffer) const {
@@ -5885,7 +6113,7 @@ void WarpMeToTarget::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleWarpMeToTarget(this);
 }
 
-WarpChar::WarpChar() : ClientGMPacket(ClientGMPacketID_WarpChar /* 11 */) {
+WarpChar::WarpChar() : ClientGMPacket(ClientGMPacketID_WarpChar /* 11 */), UserName(), Map(), X(), Y() {
 }
 
 WarpChar::WarpChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_WarpChar /* 11 */) {
@@ -5895,6 +6123,9 @@ WarpChar::WarpChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_WarpC
     X = buffer->ReadByte();
     Y = buffer->ReadByte();
 
+}
+
+WarpChar::WarpChar(const std::string& UserName_, std::int16_t Map_, std::uint8_t X_, std::uint8_t Y_) : ClientGMPacket(ClientGMPacketID_WarpChar /* 11 */), UserName(UserName_), Map(Map_), X(X_), Y(Y_) {
 }
 
 void WarpChar::serialize(clsByteQueue* buffer) const {
@@ -5911,13 +6142,16 @@ void WarpChar::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleWarpChar(this);
 }
 
-Silence::Silence() : ClientGMPacket(ClientGMPacketID_Silence /* 12 */) {
+Silence::Silence() : ClientGMPacket(ClientGMPacketID_Silence /* 12 */), UserName() {
 }
 
 Silence::Silence(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Silence /* 12 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+Silence::Silence(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_Silence /* 12 */), UserName(UserName_) {
 }
 
 void Silence::serialize(clsByteQueue* buffer) const {
@@ -5949,13 +6183,16 @@ void SOSShowList::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleSOSShowList(this);
 }
 
-SOSRemove::SOSRemove() : ClientGMPacket(ClientGMPacketID_SOSRemove /* 14 */) {
+SOSRemove::SOSRemove() : ClientGMPacket(ClientGMPacketID_SOSRemove /* 14 */), UserName() {
 }
 
 SOSRemove::SOSRemove(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SOSRemove /* 14 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+SOSRemove::SOSRemove(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_SOSRemove /* 14 */), UserName(UserName_) {
 }
 
 void SOSRemove::serialize(clsByteQueue* buffer) const {
@@ -5969,13 +6206,16 @@ void SOSRemove::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleSOSRemove(this);
 }
 
-GoToChar::GoToChar() : ClientGMPacket(ClientGMPacketID_GoToChar /* 15 */) {
+GoToChar::GoToChar() : ClientGMPacket(ClientGMPacketID_GoToChar /* 15 */), UserName() {
 }
 
 GoToChar::GoToChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_GoToChar /* 15 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+GoToChar::GoToChar(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_GoToChar /* 15 */), UserName(UserName_) {
 }
 
 void GoToChar::serialize(clsByteQueue* buffer) const {
@@ -6079,7 +6319,7 @@ void Hiding::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleHiding(this);
 }
 
-Jail::Jail() : ClientGMPacket(ClientGMPacketID_Jail /* 21 */) {
+Jail::Jail() : ClientGMPacket(ClientGMPacketID_Jail /* 21 */), UserName(), Reason(), JailTime() {
 }
 
 Jail::Jail(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Jail /* 21 */) {
@@ -6088,6 +6328,9 @@ Jail::Jail(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Jail /* 21 */
     Reason = buffer->ReadUnicodeString();
     JailTime = buffer->ReadByte();
 
+}
+
+Jail::Jail(const std::string& UserName_, const std::string& Reason_, std::uint8_t JailTime_) : ClientGMPacket(ClientGMPacketID_Jail /* 21 */), UserName(UserName_), Reason(Reason_), JailTime(JailTime_) {
 }
 
 void Jail::serialize(clsByteQueue* buffer) const {
@@ -6121,7 +6364,7 @@ void KillNPC::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleKillNPC(this);
 }
 
-WarnUser::WarnUser() : ClientGMPacket(ClientGMPacketID_WarnUser /* 23 */) {
+WarnUser::WarnUser() : ClientGMPacket(ClientGMPacketID_WarnUser /* 23 */), UserName(), Reason() {
 }
 
 WarnUser::WarnUser(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_WarnUser /* 23 */) {
@@ -6129,6 +6372,9 @@ WarnUser::WarnUser(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_WarnU
     UserName = buffer->ReadUnicodeString();
     Reason = buffer->ReadUnicodeString();
 
+}
+
+WarnUser::WarnUser(const std::string& UserName_, const std::string& Reason_) : ClientGMPacket(ClientGMPacketID_WarnUser /* 23 */), UserName(UserName_), Reason(Reason_) {
 }
 
 void WarnUser::serialize(clsByteQueue* buffer) const {
@@ -6143,7 +6389,7 @@ void WarnUser::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleWarnUser(this);
 }
 
-EditChar::EditChar() : ClientGMPacket(ClientGMPacketID_EditChar /* 24 */) {
+EditChar::EditChar() : ClientGMPacket(ClientGMPacketID_EditChar /* 24 */), UserName(), Opcion(), Arg1(), Arg2() {
 }
 
 EditChar::EditChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_EditChar /* 24 */) {
@@ -6153,6 +6399,9 @@ EditChar::EditChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_EditC
     Arg1 = buffer->ReadUnicodeString();
     Arg2 = buffer->ReadUnicodeString();
 
+}
+
+EditChar::EditChar(const std::string& UserName_, std::uint8_t Opcion_, const std::string& Arg1_, const std::string& Arg2_) : ClientGMPacket(ClientGMPacketID_EditChar /* 24 */), UserName(UserName_), Opcion(Opcion_), Arg1(Arg1_), Arg2(Arg2_) {
 }
 
 void EditChar::serialize(clsByteQueue* buffer) const {
@@ -6169,13 +6418,16 @@ void EditChar::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleEditChar(this);
 }
 
-RequestCharInfo::RequestCharInfo() : ClientGMPacket(ClientGMPacketID_RequestCharInfo /* 25 */) {
+RequestCharInfo::RequestCharInfo() : ClientGMPacket(ClientGMPacketID_RequestCharInfo /* 25 */), TargetName() {
 }
 
 RequestCharInfo::RequestCharInfo(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RequestCharInfo /* 25 */) {
     buffer->ReadByte(); /* PacketID */
     TargetName = buffer->ReadUnicodeString();
 
+}
+
+RequestCharInfo::RequestCharInfo(const std::string& TargetName_) : ClientGMPacket(ClientGMPacketID_RequestCharInfo /* 25 */), TargetName(TargetName_) {
 }
 
 void RequestCharInfo::serialize(clsByteQueue* buffer) const {
@@ -6189,13 +6441,16 @@ void RequestCharInfo::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRequestCharInfo(this);
 }
 
-RequestCharStats::RequestCharStats() : ClientGMPacket(ClientGMPacketID_RequestCharStats /* 26 */) {
+RequestCharStats::RequestCharStats() : ClientGMPacket(ClientGMPacketID_RequestCharStats /* 26 */), UserName() {
 }
 
 RequestCharStats::RequestCharStats(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RequestCharStats /* 26 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+RequestCharStats::RequestCharStats(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_RequestCharStats /* 26 */), UserName(UserName_) {
 }
 
 void RequestCharStats::serialize(clsByteQueue* buffer) const {
@@ -6209,13 +6464,16 @@ void RequestCharStats::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRequestCharStats(this);
 }
 
-RequestCharGold::RequestCharGold() : ClientGMPacket(ClientGMPacketID_RequestCharGold /* 27 */) {
+RequestCharGold::RequestCharGold() : ClientGMPacket(ClientGMPacketID_RequestCharGold /* 27 */), UserName() {
 }
 
 RequestCharGold::RequestCharGold(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RequestCharGold /* 27 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+RequestCharGold::RequestCharGold(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_RequestCharGold /* 27 */), UserName(UserName_) {
 }
 
 void RequestCharGold::serialize(clsByteQueue* buffer) const {
@@ -6229,13 +6487,16 @@ void RequestCharGold::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRequestCharGold(this);
 }
 
-RequestCharInventory::RequestCharInventory() : ClientGMPacket(ClientGMPacketID_RequestCharInventory /* 28 */) {
+RequestCharInventory::RequestCharInventory() : ClientGMPacket(ClientGMPacketID_RequestCharInventory /* 28 */), UserName() {
 }
 
 RequestCharInventory::RequestCharInventory(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RequestCharInventory /* 28 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+RequestCharInventory::RequestCharInventory(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_RequestCharInventory /* 28 */), UserName(UserName_) {
 }
 
 void RequestCharInventory::serialize(clsByteQueue* buffer) const {
@@ -6249,13 +6510,16 @@ void RequestCharInventory::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRequestCharInventory(this);
 }
 
-RequestCharBank::RequestCharBank() : ClientGMPacket(ClientGMPacketID_RequestCharBank /* 29 */) {
+RequestCharBank::RequestCharBank() : ClientGMPacket(ClientGMPacketID_RequestCharBank /* 29 */), UserName() {
 }
 
 RequestCharBank::RequestCharBank(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RequestCharBank /* 29 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+RequestCharBank::RequestCharBank(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_RequestCharBank /* 29 */), UserName(UserName_) {
 }
 
 void RequestCharBank::serialize(clsByteQueue* buffer) const {
@@ -6269,13 +6533,16 @@ void RequestCharBank::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRequestCharBank(this);
 }
 
-RequestCharSkills::RequestCharSkills() : ClientGMPacket(ClientGMPacketID_RequestCharSkills /* 30 */) {
+RequestCharSkills::RequestCharSkills() : ClientGMPacket(ClientGMPacketID_RequestCharSkills /* 30 */), UserName() {
 }
 
 RequestCharSkills::RequestCharSkills(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RequestCharSkills /* 30 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+RequestCharSkills::RequestCharSkills(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_RequestCharSkills /* 30 */), UserName(UserName_) {
 }
 
 void RequestCharSkills::serialize(clsByteQueue* buffer) const {
@@ -6289,13 +6556,16 @@ void RequestCharSkills::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRequestCharSkills(this);
 }
 
-ReviveChar::ReviveChar() : ClientGMPacket(ClientGMPacketID_ReviveChar /* 31 */) {
+ReviveChar::ReviveChar() : ClientGMPacket(ClientGMPacketID_ReviveChar /* 31 */), UserName() {
 }
 
 ReviveChar::ReviveChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ReviveChar /* 31 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+ReviveChar::ReviveChar(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_ReviveChar /* 31 */), UserName(UserName_) {
 }
 
 void ReviveChar::serialize(clsByteQueue* buffer) const {
@@ -6327,13 +6597,16 @@ void OnlineGM::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleOnlineGM(this);
 }
 
-OnlineMap::OnlineMap() : ClientGMPacket(ClientGMPacketID_OnlineMap /* 33 */) {
+OnlineMap::OnlineMap() : ClientGMPacket(ClientGMPacketID_OnlineMap /* 33 */), Map() {
 }
 
 OnlineMap::OnlineMap(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_OnlineMap /* 33 */) {
     buffer->ReadByte(); /* PacketID */
     Map = buffer->ReadInteger();
 
+}
+
+OnlineMap::OnlineMap(std::int16_t Map_) : ClientGMPacket(ClientGMPacketID_OnlineMap /* 33 */), Map(Map_) {
 }
 
 void OnlineMap::serialize(clsByteQueue* buffer) const {
@@ -6347,13 +6620,16 @@ void OnlineMap::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleOnlineMap(this);
 }
 
-Forgive::Forgive() : ClientGMPacket(ClientGMPacketID_Forgive /* 34 */) {
+Forgive::Forgive() : ClientGMPacket(ClientGMPacketID_Forgive /* 34 */), UserName() {
 }
 
 Forgive::Forgive(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Forgive /* 34 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+Forgive::Forgive(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_Forgive /* 34 */), UserName(UserName_) {
 }
 
 void Forgive::serialize(clsByteQueue* buffer) const {
@@ -6367,13 +6643,16 @@ void Forgive::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleForgive(this);
 }
 
-Kick::Kick() : ClientGMPacket(ClientGMPacketID_Kick /* 35 */) {
+Kick::Kick() : ClientGMPacket(ClientGMPacketID_Kick /* 35 */), UserName() {
 }
 
 Kick::Kick(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Kick /* 35 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+Kick::Kick(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_Kick /* 35 */), UserName(UserName_) {
 }
 
 void Kick::serialize(clsByteQueue* buffer) const {
@@ -6387,13 +6666,16 @@ void Kick::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleKick(this);
 }
 
-Execute::Execute() : ClientGMPacket(ClientGMPacketID_Execute /* 36 */) {
+Execute::Execute() : ClientGMPacket(ClientGMPacketID_Execute /* 36 */), UserName() {
 }
 
 Execute::Execute(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Execute /* 36 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+Execute::Execute(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_Execute /* 36 */), UserName(UserName_) {
 }
 
 void Execute::serialize(clsByteQueue* buffer) const {
@@ -6407,7 +6689,7 @@ void Execute::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleExecute(this);
 }
 
-BanChar::BanChar() : ClientGMPacket(ClientGMPacketID_BanChar /* 37 */) {
+BanChar::BanChar() : ClientGMPacket(ClientGMPacketID_BanChar /* 37 */), UserName(), Reason() {
 }
 
 BanChar::BanChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_BanChar /* 37 */) {
@@ -6415,6 +6697,9 @@ BanChar::BanChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_BanChar
     UserName = buffer->ReadUnicodeString();
     Reason = buffer->ReadUnicodeString();
 
+}
+
+BanChar::BanChar(const std::string& UserName_, const std::string& Reason_) : ClientGMPacket(ClientGMPacketID_BanChar /* 37 */), UserName(UserName_), Reason(Reason_) {
 }
 
 void BanChar::serialize(clsByteQueue* buffer) const {
@@ -6429,13 +6714,16 @@ void BanChar::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleBanChar(this);
 }
 
-UnbanChar::UnbanChar() : ClientGMPacket(ClientGMPacketID_UnbanChar /* 38 */) {
+UnbanChar::UnbanChar() : ClientGMPacket(ClientGMPacketID_UnbanChar /* 38 */), UserName() {
 }
 
 UnbanChar::UnbanChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_UnbanChar /* 38 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+UnbanChar::UnbanChar(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_UnbanChar /* 38 */), UserName(UserName_) {
 }
 
 void UnbanChar::serialize(clsByteQueue* buffer) const {
@@ -6467,13 +6755,16 @@ void NPCFollow::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleNPCFollow(this);
 }
 
-SummonChar::SummonChar() : ClientGMPacket(ClientGMPacketID_SummonChar /* 40 */) {
+SummonChar::SummonChar() : ClientGMPacket(ClientGMPacketID_SummonChar /* 40 */), UserName() {
 }
 
 SummonChar::SummonChar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SummonChar /* 40 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+SummonChar::SummonChar(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_SummonChar /* 40 */), UserName(UserName_) {
 }
 
 void SummonChar::serialize(clsByteQueue* buffer) const {
@@ -6505,13 +6796,16 @@ void SpawnListRequest::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleSpawnListRequest(this);
 }
 
-SpawnCreature::SpawnCreature() : ClientGMPacket(ClientGMPacketID_SpawnCreature /* 42 */) {
+SpawnCreature::SpawnCreature() : ClientGMPacket(ClientGMPacketID_SpawnCreature /* 42 */), NPC() {
 }
 
 SpawnCreature::SpawnCreature(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SpawnCreature /* 42 */) {
     buffer->ReadByte(); /* PacketID */
     NPC = buffer->ReadInteger();
 
+}
+
+SpawnCreature::SpawnCreature(std::int16_t NPC_) : ClientGMPacket(ClientGMPacketID_SpawnCreature /* 42 */), NPC(NPC_) {
 }
 
 void SpawnCreature::serialize(clsByteQueue* buffer) const {
@@ -6561,13 +6855,16 @@ void CleanWorld::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleCleanWorld(this);
 }
 
-ServerMessage::ServerMessage() : ClientGMPacket(ClientGMPacketID_ServerMessage /* 45 */) {
+ServerMessage::ServerMessage() : ClientGMPacket(ClientGMPacketID_ServerMessage /* 45 */), Message() {
 }
 
 ServerMessage::ServerMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ServerMessage /* 45 */) {
     buffer->ReadByte(); /* PacketID */
     Message = buffer->ReadUnicodeString();
 
+}
+
+ServerMessage::ServerMessage(const std::string& Message_) : ClientGMPacket(ClientGMPacketID_ServerMessage /* 45 */), Message(Message_) {
 }
 
 void ServerMessage::serialize(clsByteQueue* buffer) const {
@@ -6581,13 +6878,16 @@ void ServerMessage::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleServerMessage(this);
 }
 
-NickToIP::NickToIP() : ClientGMPacket(ClientGMPacketID_NickToIP /* 46 */) {
+NickToIP::NickToIP() : ClientGMPacket(ClientGMPacketID_NickToIP /* 46 */), UserName() {
 }
 
 NickToIP::NickToIP(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_NickToIP /* 46 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+NickToIP::NickToIP(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_NickToIP /* 46 */), UserName(UserName_) {
 }
 
 void NickToIP::serialize(clsByteQueue* buffer) const {
@@ -6601,7 +6901,7 @@ void NickToIP::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleNickToIP(this);
 }
 
-IPToNick::IPToNick() : ClientGMPacket(ClientGMPacketID_IPToNick /* 47 */) {
+IPToNick::IPToNick() : ClientGMPacket(ClientGMPacketID_IPToNick /* 47 */), A(), B(), C(), D() {
 }
 
 IPToNick::IPToNick(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_IPToNick /* 47 */) {
@@ -6611,6 +6911,9 @@ IPToNick::IPToNick(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_IPToN
     C = buffer->ReadByte();
     D = buffer->ReadByte();
 
+}
+
+IPToNick::IPToNick(std::uint8_t A_, std::uint8_t B_, std::uint8_t C_, std::uint8_t D_) : ClientGMPacket(ClientGMPacketID_IPToNick /* 47 */), A(A_), B(B_), C(C_), D(D_) {
 }
 
 void IPToNick::serialize(clsByteQueue* buffer) const {
@@ -6627,13 +6930,16 @@ void IPToNick::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleIPToNick(this);
 }
 
-GuildOnlineMembers::GuildOnlineMembers() : ClientGMPacket(ClientGMPacketID_GuildOnlineMembers /* 48 */) {
+GuildOnlineMembers::GuildOnlineMembers() : ClientGMPacket(ClientGMPacketID_GuildOnlineMembers /* 48 */), GuildName() {
 }
 
 GuildOnlineMembers::GuildOnlineMembers(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_GuildOnlineMembers /* 48 */) {
     buffer->ReadByte(); /* PacketID */
     GuildName = buffer->ReadUnicodeString();
 
+}
+
+GuildOnlineMembers::GuildOnlineMembers(const std::string& GuildName_) : ClientGMPacket(ClientGMPacketID_GuildOnlineMembers /* 48 */), GuildName(GuildName_) {
 }
 
 void GuildOnlineMembers::serialize(clsByteQueue* buffer) const {
@@ -6647,7 +6953,7 @@ void GuildOnlineMembers::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleGuildOnlineMembers(this);
 }
 
-TeleportCreate::TeleportCreate() : ClientGMPacket(ClientGMPacketID_TeleportCreate /* 49 */) {
+TeleportCreate::TeleportCreate() : ClientGMPacket(ClientGMPacketID_TeleportCreate /* 49 */), Map(), X(), Y(), Radio() {
 }
 
 TeleportCreate::TeleportCreate(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_TeleportCreate /* 49 */) {
@@ -6657,6 +6963,9 @@ TeleportCreate::TeleportCreate(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
     Y = buffer->ReadByte();
     Radio = buffer->ReadByte();
 
+}
+
+TeleportCreate::TeleportCreate(std::int16_t Map_, std::uint8_t X_, std::uint8_t Y_, std::uint8_t Radio_) : ClientGMPacket(ClientGMPacketID_TeleportCreate /* 49 */), Map(Map_), X(X_), Y(Y_), Radio(Radio_) {
 }
 
 void TeleportCreate::serialize(clsByteQueue* buffer) const {
@@ -6709,13 +7018,16 @@ void RainToggle::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRainToggle(this);
 }
 
-SetCharDescription::SetCharDescription() : ClientGMPacket(ClientGMPacketID_SetCharDescription /* 52 */) {
+SetCharDescription::SetCharDescription() : ClientGMPacket(ClientGMPacketID_SetCharDescription /* 52 */), Description() {
 }
 
 SetCharDescription::SetCharDescription(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SetCharDescription /* 52 */) {
     buffer->ReadByte(); /* PacketID */
     Description = buffer->ReadUnicodeString();
 
+}
+
+SetCharDescription::SetCharDescription(const std::string& Description_) : ClientGMPacket(ClientGMPacketID_SetCharDescription /* 52 */), Description(Description_) {
 }
 
 void SetCharDescription::serialize(clsByteQueue* buffer) const {
@@ -6729,7 +7041,7 @@ void SetCharDescription::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleSetCharDescription(this);
 }
 
-ForceMIDIToMap::ForceMIDIToMap() : ClientGMPacket(ClientGMPacketID_ForceMIDIToMap /* 53 */) {
+ForceMIDIToMap::ForceMIDIToMap() : ClientGMPacket(ClientGMPacketID_ForceMIDIToMap /* 53 */), MidiID(), Map() {
 }
 
 ForceMIDIToMap::ForceMIDIToMap(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ForceMIDIToMap /* 53 */) {
@@ -6737,6 +7049,9 @@ ForceMIDIToMap::ForceMIDIToMap(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
     MidiID = buffer->ReadByte();
     Map = buffer->ReadInteger();
 
+}
+
+ForceMIDIToMap::ForceMIDIToMap(std::uint8_t MidiID_, std::int16_t Map_) : ClientGMPacket(ClientGMPacketID_ForceMIDIToMap /* 53 */), MidiID(MidiID_), Map(Map_) {
 }
 
 void ForceMIDIToMap::serialize(clsByteQueue* buffer) const {
@@ -6751,7 +7066,7 @@ void ForceMIDIToMap::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleForceMIDIToMap(this);
 }
 
-ForceWAVEToMap::ForceWAVEToMap() : ClientGMPacket(ClientGMPacketID_ForceWAVEToMap /* 54 */) {
+ForceWAVEToMap::ForceWAVEToMap() : ClientGMPacket(ClientGMPacketID_ForceWAVEToMap /* 54 */), Wave(), Map(), X(), Y() {
 }
 
 ForceWAVEToMap::ForceWAVEToMap(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ForceWAVEToMap /* 54 */) {
@@ -6761,6 +7076,9 @@ ForceWAVEToMap::ForceWAVEToMap(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
     X = buffer->ReadByte();
     Y = buffer->ReadByte();
 
+}
+
+ForceWAVEToMap::ForceWAVEToMap(std::uint8_t Wave_, std::int16_t Map_, std::uint8_t X_, std::uint8_t Y_) : ClientGMPacket(ClientGMPacketID_ForceWAVEToMap /* 54 */), Wave(Wave_), Map(Map_), X(X_), Y(Y_) {
 }
 
 void ForceWAVEToMap::serialize(clsByteQueue* buffer) const {
@@ -6777,13 +7095,16 @@ void ForceWAVEToMap::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleForceWAVEToMap(this);
 }
 
-RoyalArmyMessage::RoyalArmyMessage() : ClientGMPacket(ClientGMPacketID_RoyalArmyMessage /* 55 */) {
+RoyalArmyMessage::RoyalArmyMessage() : ClientGMPacket(ClientGMPacketID_RoyalArmyMessage /* 55 */), Message() {
 }
 
 RoyalArmyMessage::RoyalArmyMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RoyalArmyMessage /* 55 */) {
     buffer->ReadByte(); /* PacketID */
     Message = buffer->ReadUnicodeString();
 
+}
+
+RoyalArmyMessage::RoyalArmyMessage(const std::string& Message_) : ClientGMPacket(ClientGMPacketID_RoyalArmyMessage /* 55 */), Message(Message_) {
 }
 
 void RoyalArmyMessage::serialize(clsByteQueue* buffer) const {
@@ -6797,13 +7118,16 @@ void RoyalArmyMessage::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRoyalArmyMessage(this);
 }
 
-ChaosLegionMessage::ChaosLegionMessage() : ClientGMPacket(ClientGMPacketID_ChaosLegionMessage /* 56 */) {
+ChaosLegionMessage::ChaosLegionMessage() : ClientGMPacket(ClientGMPacketID_ChaosLegionMessage /* 56 */), Message() {
 }
 
 ChaosLegionMessage::ChaosLegionMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChaosLegionMessage /* 56 */) {
     buffer->ReadByte(); /* PacketID */
     Message = buffer->ReadUnicodeString();
 
+}
+
+ChaosLegionMessage::ChaosLegionMessage(const std::string& Message_) : ClientGMPacket(ClientGMPacketID_ChaosLegionMessage /* 56 */), Message(Message_) {
 }
 
 void ChaosLegionMessage::serialize(clsByteQueue* buffer) const {
@@ -6817,13 +7141,16 @@ void ChaosLegionMessage::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChaosLegionMessage(this);
 }
 
-CitizenMessage::CitizenMessage() : ClientGMPacket(ClientGMPacketID_CitizenMessage /* 57 */) {
+CitizenMessage::CitizenMessage() : ClientGMPacket(ClientGMPacketID_CitizenMessage /* 57 */), Message() {
 }
 
 CitizenMessage::CitizenMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_CitizenMessage /* 57 */) {
     buffer->ReadByte(); /* PacketID */
     Message = buffer->ReadUnicodeString();
 
+}
+
+CitizenMessage::CitizenMessage(const std::string& Message_) : ClientGMPacket(ClientGMPacketID_CitizenMessage /* 57 */), Message(Message_) {
 }
 
 void CitizenMessage::serialize(clsByteQueue* buffer) const {
@@ -6837,13 +7164,16 @@ void CitizenMessage::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleCitizenMessage(this);
 }
 
-CriminalMessage::CriminalMessage() : ClientGMPacket(ClientGMPacketID_CriminalMessage /* 58 */) {
+CriminalMessage::CriminalMessage() : ClientGMPacket(ClientGMPacketID_CriminalMessage /* 58 */), Message() {
 }
 
 CriminalMessage::CriminalMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_CriminalMessage /* 58 */) {
     buffer->ReadByte(); /* PacketID */
     Message = buffer->ReadUnicodeString();
 
+}
+
+CriminalMessage::CriminalMessage(const std::string& Message_) : ClientGMPacket(ClientGMPacketID_CriminalMessage /* 58 */), Message(Message_) {
 }
 
 void CriminalMessage::serialize(clsByteQueue* buffer) const {
@@ -6857,13 +7187,16 @@ void CriminalMessage::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleCriminalMessage(this);
 }
 
-TalkAsNPC::TalkAsNPC() : ClientGMPacket(ClientGMPacketID_TalkAsNPC /* 59 */) {
+TalkAsNPC::TalkAsNPC() : ClientGMPacket(ClientGMPacketID_TalkAsNPC /* 59 */), Message() {
 }
 
 TalkAsNPC::TalkAsNPC(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_TalkAsNPC /* 59 */) {
     buffer->ReadByte(); /* PacketID */
     Message = buffer->ReadUnicodeString();
 
+}
+
+TalkAsNPC::TalkAsNPC(const std::string& Message_) : ClientGMPacket(ClientGMPacketID_TalkAsNPC /* 59 */), Message(Message_) {
 }
 
 void TalkAsNPC::serialize(clsByteQueue* buffer) const {
@@ -6895,13 +7228,16 @@ void DestroyAllItemsInArea::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleDestroyAllItemsInArea(this);
 }
 
-AcceptRoyalCouncilMember::AcceptRoyalCouncilMember() : ClientGMPacket(ClientGMPacketID_AcceptRoyalCouncilMember /* 61 */) {
+AcceptRoyalCouncilMember::AcceptRoyalCouncilMember() : ClientGMPacket(ClientGMPacketID_AcceptRoyalCouncilMember /* 61 */), UserName() {
 }
 
 AcceptRoyalCouncilMember::AcceptRoyalCouncilMember(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_AcceptRoyalCouncilMember /* 61 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+AcceptRoyalCouncilMember::AcceptRoyalCouncilMember(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_AcceptRoyalCouncilMember /* 61 */), UserName(UserName_) {
 }
 
 void AcceptRoyalCouncilMember::serialize(clsByteQueue* buffer) const {
@@ -6915,13 +7251,16 @@ void AcceptRoyalCouncilMember::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleAcceptRoyalCouncilMember(this);
 }
 
-AcceptChaosCouncilMember::AcceptChaosCouncilMember() : ClientGMPacket(ClientGMPacketID_AcceptChaosCouncilMember /* 62 */) {
+AcceptChaosCouncilMember::AcceptChaosCouncilMember() : ClientGMPacket(ClientGMPacketID_AcceptChaosCouncilMember /* 62 */), UserName() {
 }
 
 AcceptChaosCouncilMember::AcceptChaosCouncilMember(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_AcceptChaosCouncilMember /* 62 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+AcceptChaosCouncilMember::AcceptChaosCouncilMember(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_AcceptChaosCouncilMember /* 62 */), UserName(UserName_) {
 }
 
 void AcceptChaosCouncilMember::serialize(clsByteQueue* buffer) const {
@@ -6953,13 +7292,16 @@ void ItemsInTheFloor::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleItemsInTheFloor(this);
 }
 
-MakeDumb::MakeDumb() : ClientGMPacket(ClientGMPacketID_MakeDumb /* 64 */) {
+MakeDumb::MakeDumb() : ClientGMPacket(ClientGMPacketID_MakeDumb /* 64 */), UserName() {
 }
 
 MakeDumb::MakeDumb(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_MakeDumb /* 64 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+MakeDumb::MakeDumb(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_MakeDumb /* 64 */), UserName(UserName_) {
 }
 
 void MakeDumb::serialize(clsByteQueue* buffer) const {
@@ -6973,13 +7315,16 @@ void MakeDumb::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleMakeDumb(this);
 }
 
-MakeDumbNoMore::MakeDumbNoMore() : ClientGMPacket(ClientGMPacketID_MakeDumbNoMore /* 65 */) {
+MakeDumbNoMore::MakeDumbNoMore() : ClientGMPacket(ClientGMPacketID_MakeDumbNoMore /* 65 */), UserName() {
 }
 
 MakeDumbNoMore::MakeDumbNoMore(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_MakeDumbNoMore /* 65 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+MakeDumbNoMore::MakeDumbNoMore(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_MakeDumbNoMore /* 65 */), UserName(UserName_) {
 }
 
 void MakeDumbNoMore::serialize(clsByteQueue* buffer) const {
@@ -7011,13 +7356,16 @@ void DumpIPTables::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleDumpIPTables(this);
 }
 
-CouncilKick::CouncilKick() : ClientGMPacket(ClientGMPacketID_CouncilKick /* 67 */) {
+CouncilKick::CouncilKick() : ClientGMPacket(ClientGMPacketID_CouncilKick /* 67 */), UserName() {
 }
 
 CouncilKick::CouncilKick(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_CouncilKick /* 67 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+CouncilKick::CouncilKick(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_CouncilKick /* 67 */), UserName(UserName_) {
 }
 
 void CouncilKick::serialize(clsByteQueue* buffer) const {
@@ -7031,13 +7379,16 @@ void CouncilKick::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleCouncilKick(this);
 }
 
-SetTrigger::SetTrigger() : ClientGMPacket(ClientGMPacketID_SetTrigger /* 68 */) {
+SetTrigger::SetTrigger() : ClientGMPacket(ClientGMPacketID_SetTrigger /* 68 */), Trigger() {
 }
 
 SetTrigger::SetTrigger(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SetTrigger /* 68 */) {
     buffer->ReadByte(); /* PacketID */
     Trigger = buffer->ReadByte();
 
+}
+
+SetTrigger::SetTrigger(std::uint8_t Trigger_) : ClientGMPacket(ClientGMPacketID_SetTrigger /* 68 */), Trigger(Trigger_) {
 }
 
 void SetTrigger::serialize(clsByteQueue* buffer) const {
@@ -7105,13 +7456,16 @@ void BannedIPReload::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleBannedIPReload(this);
 }
 
-GuildMemberList::GuildMemberList() : ClientGMPacket(ClientGMPacketID_GuildMemberList /* 72 */) {
+GuildMemberList::GuildMemberList() : ClientGMPacket(ClientGMPacketID_GuildMemberList /* 72 */), GuildName() {
 }
 
 GuildMemberList::GuildMemberList(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_GuildMemberList /* 72 */) {
     buffer->ReadByte(); /* PacketID */
     GuildName = buffer->ReadUnicodeString();
 
+}
+
+GuildMemberList::GuildMemberList(const std::string& GuildName_) : ClientGMPacket(ClientGMPacketID_GuildMemberList /* 72 */), GuildName(GuildName_) {
 }
 
 void GuildMemberList::serialize(clsByteQueue* buffer) const {
@@ -7125,13 +7479,16 @@ void GuildMemberList::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleGuildMemberList(this);
 }
 
-GuildBan::GuildBan() : ClientGMPacket(ClientGMPacketID_GuildBan /* 73 */) {
+GuildBan::GuildBan() : ClientGMPacket(ClientGMPacketID_GuildBan /* 73 */), GuildName() {
 }
 
 GuildBan::GuildBan(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_GuildBan /* 73 */) {
     buffer->ReadByte(); /* PacketID */
     GuildName = buffer->ReadUnicodeString();
 
+}
+
+GuildBan::GuildBan(const std::string& GuildName_) : ClientGMPacket(ClientGMPacketID_GuildBan /* 73 */), GuildName(GuildName_) {
 }
 
 void GuildBan::serialize(clsByteQueue* buffer) const {
@@ -7145,7 +7502,7 @@ void GuildBan::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleGuildBan(this);
 }
 
-BanIP::BanIP() : ClientGMPacket(ClientGMPacketID_BanIP /* 74 */) {
+BanIP::BanIP() : ClientGMPacket(ClientGMPacketID_BanIP /* 74 */), IP(), Reason() {
 }
 
 BanIP::BanIP(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_BanIP /* 74 */) {
@@ -7153,6 +7510,9 @@ BanIP::BanIP(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_BanIP /* 74
     IP = buffer->ReadUnicodeString();
     Reason = buffer->ReadUnicodeString();
 
+}
+
+BanIP::BanIP(const std::string& IP_, const std::string& Reason_) : ClientGMPacket(ClientGMPacketID_BanIP /* 74 */), IP(IP_), Reason(Reason_) {
 }
 
 void BanIP::serialize(clsByteQueue* buffer) const {
@@ -7167,13 +7527,16 @@ void BanIP::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleBanIP(this);
 }
 
-UnbanIP::UnbanIP() : ClientGMPacket(ClientGMPacketID_UnbanIP /* 75 */) {
+UnbanIP::UnbanIP() : ClientGMPacket(ClientGMPacketID_UnbanIP /* 75 */), IP() {
 }
 
 UnbanIP::UnbanIP(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_UnbanIP /* 75 */) {
     buffer->ReadByte(); /* PacketID */
     IP = buffer->ReadUnicodeString();
 
+}
+
+UnbanIP::UnbanIP(const std::string& IP_) : ClientGMPacket(ClientGMPacketID_UnbanIP /* 75 */), IP(IP_) {
 }
 
 void UnbanIP::serialize(clsByteQueue* buffer) const {
@@ -7187,13 +7550,16 @@ void UnbanIP::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleUnbanIP(this);
 }
 
-CreateItem::CreateItem() : ClientGMPacket(ClientGMPacketID_CreateItem /* 76 */) {
+CreateItem::CreateItem() : ClientGMPacket(ClientGMPacketID_CreateItem /* 76 */), Item() {
 }
 
 CreateItem::CreateItem(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_CreateItem /* 76 */) {
     buffer->ReadByte(); /* PacketID */
     Item = buffer->ReadInteger();
 
+}
+
+CreateItem::CreateItem(std::int16_t Item_) : ClientGMPacket(ClientGMPacketID_CreateItem /* 76 */), Item(Item_) {
 }
 
 void CreateItem::serialize(clsByteQueue* buffer) const {
@@ -7225,7 +7591,7 @@ void DestroyItems::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleDestroyItems(this);
 }
 
-ChaosLegionKick::ChaosLegionKick() : ClientGMPacket(ClientGMPacketID_ChaosLegionKick /* 78 */) {
+ChaosLegionKick::ChaosLegionKick() : ClientGMPacket(ClientGMPacketID_ChaosLegionKick /* 78 */), UserName(), Reason() {
 }
 
 ChaosLegionKick::ChaosLegionKick(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChaosLegionKick /* 78 */) {
@@ -7233,6 +7599,9 @@ ChaosLegionKick::ChaosLegionKick(clsByteQueue* buffer) : ClientGMPacket(ClientGM
     UserName = buffer->ReadUnicodeString();
     Reason = buffer->ReadUnicodeString();
 
+}
+
+ChaosLegionKick::ChaosLegionKick(const std::string& UserName_, const std::string& Reason_) : ClientGMPacket(ClientGMPacketID_ChaosLegionKick /* 78 */), UserName(UserName_), Reason(Reason_) {
 }
 
 void ChaosLegionKick::serialize(clsByteQueue* buffer) const {
@@ -7247,7 +7616,7 @@ void ChaosLegionKick::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChaosLegionKick(this);
 }
 
-RoyalArmyKick::RoyalArmyKick() : ClientGMPacket(ClientGMPacketID_RoyalArmyKick /* 79 */) {
+RoyalArmyKick::RoyalArmyKick() : ClientGMPacket(ClientGMPacketID_RoyalArmyKick /* 79 */), UserName(), Reason() {
 }
 
 RoyalArmyKick::RoyalArmyKick(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RoyalArmyKick /* 79 */) {
@@ -7255,6 +7624,9 @@ RoyalArmyKick::RoyalArmyKick(clsByteQueue* buffer) : ClientGMPacket(ClientGMPack
     UserName = buffer->ReadUnicodeString();
     Reason = buffer->ReadUnicodeString();
 
+}
+
+RoyalArmyKick::RoyalArmyKick(const std::string& UserName_, const std::string& Reason_) : ClientGMPacket(ClientGMPacketID_RoyalArmyKick /* 79 */), UserName(UserName_), Reason(Reason_) {
 }
 
 void RoyalArmyKick::serialize(clsByteQueue* buffer) const {
@@ -7269,13 +7641,16 @@ void RoyalArmyKick::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRoyalArmyKick(this);
 }
 
-ForceMIDIAll::ForceMIDIAll() : ClientGMPacket(ClientGMPacketID_ForceMIDIAll /* 80 */) {
+ForceMIDIAll::ForceMIDIAll() : ClientGMPacket(ClientGMPacketID_ForceMIDIAll /* 80 */), MidiID() {
 }
 
 ForceMIDIAll::ForceMIDIAll(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ForceMIDIAll /* 80 */) {
     buffer->ReadByte(); /* PacketID */
     MidiID = buffer->ReadByte();
 
+}
+
+ForceMIDIAll::ForceMIDIAll(std::uint8_t MidiID_) : ClientGMPacket(ClientGMPacketID_ForceMIDIAll /* 80 */), MidiID(MidiID_) {
 }
 
 void ForceMIDIAll::serialize(clsByteQueue* buffer) const {
@@ -7289,13 +7664,16 @@ void ForceMIDIAll::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleForceMIDIAll(this);
 }
 
-ForceWAVEAll::ForceWAVEAll() : ClientGMPacket(ClientGMPacketID_ForceWAVEAll /* 81 */) {
+ForceWAVEAll::ForceWAVEAll() : ClientGMPacket(ClientGMPacketID_ForceWAVEAll /* 81 */), WaveID() {
 }
 
 ForceWAVEAll::ForceWAVEAll(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ForceWAVEAll /* 81 */) {
     buffer->ReadByte(); /* PacketID */
     WaveID = buffer->ReadByte();
 
+}
+
+ForceWAVEAll::ForceWAVEAll(std::uint8_t WaveID_) : ClientGMPacket(ClientGMPacketID_ForceWAVEAll /* 81 */), WaveID(WaveID_) {
 }
 
 void ForceWAVEAll::serialize(clsByteQueue* buffer) const {
@@ -7309,7 +7687,7 @@ void ForceWAVEAll::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleForceWAVEAll(this);
 }
 
-RemovePunishment::RemovePunishment() : ClientGMPacket(ClientGMPacketID_RemovePunishment /* 82 */) {
+RemovePunishment::RemovePunishment() : ClientGMPacket(ClientGMPacketID_RemovePunishment /* 82 */), UserName(), Punishment(), NewText() {
 }
 
 RemovePunishment::RemovePunishment(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RemovePunishment /* 82 */) {
@@ -7318,6 +7696,9 @@ RemovePunishment::RemovePunishment(clsByteQueue* buffer) : ClientGMPacket(Client
     Punishment = buffer->ReadByte();
     NewText = buffer->ReadUnicodeString();
 
+}
+
+RemovePunishment::RemovePunishment(const std::string& UserName_, std::uint8_t Punishment_, const std::string& NewText_) : ClientGMPacket(ClientGMPacketID_RemovePunishment /* 82 */), UserName(UserName_), Punishment(Punishment_), NewText(NewText_) {
 }
 
 void RemovePunishment::serialize(clsByteQueue* buffer) const {
@@ -7387,13 +7768,16 @@ void KillAllNearbyNPCs::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleKillAllNearbyNPCs(this);
 }
 
-LastIP::LastIP() : ClientGMPacket(ClientGMPacketID_LastIP /* 86 */) {
+LastIP::LastIP() : ClientGMPacket(ClientGMPacketID_LastIP /* 86 */), UserName() {
 }
 
 LastIP::LastIP(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_LastIP /* 86 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+LastIP::LastIP(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_LastIP /* 86 */), UserName(UserName_) {
 }
 
 void LastIP::serialize(clsByteQueue* buffer) const {
@@ -7425,13 +7809,16 @@ void ChangeMOTD::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChangeMOTD(this);
 }
 
-SetMOTD::SetMOTD() : ClientGMPacket(ClientGMPacketID_SetMOTD /* 88 */) {
+SetMOTD::SetMOTD() : ClientGMPacket(ClientGMPacketID_SetMOTD /* 88 */), Motd() {
 }
 
 SetMOTD::SetMOTD(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SetMOTD /* 88 */) {
     buffer->ReadByte(); /* PacketID */
     Motd = buffer->ReadUnicodeString();
 
+}
+
+SetMOTD::SetMOTD(const std::string& Motd_) : ClientGMPacket(ClientGMPacketID_SetMOTD /* 88 */), Motd(Motd_) {
 }
 
 void SetMOTD::serialize(clsByteQueue* buffer) const {
@@ -7445,13 +7832,16 @@ void SetMOTD::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleSetMOTD(this);
 }
 
-SystemMessage::SystemMessage() : ClientGMPacket(ClientGMPacketID_SystemMessage /* 89 */) {
+SystemMessage::SystemMessage() : ClientGMPacket(ClientGMPacketID_SystemMessage /* 89 */), Message() {
 }
 
 SystemMessage::SystemMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SystemMessage /* 89 */) {
     buffer->ReadByte(); /* PacketID */
     Message = buffer->ReadUnicodeString();
 
+}
+
+SystemMessage::SystemMessage(const std::string& Message_) : ClientGMPacket(ClientGMPacketID_SystemMessage /* 89 */), Message(Message_) {
 }
 
 void SystemMessage::serialize(clsByteQueue* buffer) const {
@@ -7465,13 +7855,16 @@ void SystemMessage::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleSystemMessage(this);
 }
 
-CreateNPC::CreateNPC() : ClientGMPacket(ClientGMPacketID_CreateNPC /* 90 */) {
+CreateNPC::CreateNPC() : ClientGMPacket(ClientGMPacketID_CreateNPC /* 90 */), NpcIndex() {
 }
 
 CreateNPC::CreateNPC(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_CreateNPC /* 90 */) {
     buffer->ReadByte(); /* PacketID */
     NpcIndex = buffer->ReadInteger();
 
+}
+
+CreateNPC::CreateNPC(std::int16_t NpcIndex_) : ClientGMPacket(ClientGMPacketID_CreateNPC /* 90 */), NpcIndex(NpcIndex_) {
 }
 
 void CreateNPC::serialize(clsByteQueue* buffer) const {
@@ -7485,13 +7878,16 @@ void CreateNPC::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleCreateNPC(this);
 }
 
-CreateNPCWithRespawn::CreateNPCWithRespawn() : ClientGMPacket(ClientGMPacketID_CreateNPCWithRespawn /* 91 */) {
+CreateNPCWithRespawn::CreateNPCWithRespawn() : ClientGMPacket(ClientGMPacketID_CreateNPCWithRespawn /* 91 */), NpcIndex() {
 }
 
 CreateNPCWithRespawn::CreateNPCWithRespawn(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_CreateNPCWithRespawn /* 91 */) {
     buffer->ReadByte(); /* PacketID */
     NpcIndex = buffer->ReadInteger();
 
+}
+
+CreateNPCWithRespawn::CreateNPCWithRespawn(std::int16_t NpcIndex_) : ClientGMPacket(ClientGMPacketID_CreateNPCWithRespawn /* 91 */), NpcIndex(NpcIndex_) {
 }
 
 void CreateNPCWithRespawn::serialize(clsByteQueue* buffer) const {
@@ -7505,7 +7901,7 @@ void CreateNPCWithRespawn::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleCreateNPCWithRespawn(this);
 }
 
-ImperialArmour::ImperialArmour() : ClientGMPacket(ClientGMPacketID_ImperialArmour /* 92 */) {
+ImperialArmour::ImperialArmour() : ClientGMPacket(ClientGMPacketID_ImperialArmour /* 92 */), Index(), ObjIndex() {
 }
 
 ImperialArmour::ImperialArmour(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ImperialArmour /* 92 */) {
@@ -7513,6 +7909,9 @@ ImperialArmour::ImperialArmour(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
     Index = buffer->ReadByte();
     ObjIndex = buffer->ReadInteger();
 
+}
+
+ImperialArmour::ImperialArmour(std::uint8_t Index_, std::int16_t ObjIndex_) : ClientGMPacket(ClientGMPacketID_ImperialArmour /* 92 */), Index(Index_), ObjIndex(ObjIndex_) {
 }
 
 void ImperialArmour::serialize(clsByteQueue* buffer) const {
@@ -7527,7 +7926,7 @@ void ImperialArmour::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleImperialArmour(this);
 }
 
-ChaosArmour::ChaosArmour() : ClientGMPacket(ClientGMPacketID_ChaosArmour /* 93 */) {
+ChaosArmour::ChaosArmour() : ClientGMPacket(ClientGMPacketID_ChaosArmour /* 93 */), Index(), ObjIndex() {
 }
 
 ChaosArmour::ChaosArmour(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChaosArmour /* 93 */) {
@@ -7535,6 +7934,9 @@ ChaosArmour::ChaosArmour(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID
     Index = buffer->ReadByte();
     ObjIndex = buffer->ReadInteger();
 
+}
+
+ChaosArmour::ChaosArmour(std::uint8_t Index_, std::int16_t ObjIndex_) : ClientGMPacket(ClientGMPacketID_ChaosArmour /* 93 */), Index(Index_), ObjIndex(ObjIndex_) {
 }
 
 void ChaosArmour::serialize(clsByteQueue* buffer) const {
@@ -7603,13 +8005,16 @@ void TurnOffServer::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleTurnOffServer(this);
 }
 
-TurnCriminal::TurnCriminal() : ClientGMPacket(ClientGMPacketID_TurnCriminal /* 97 */) {
+TurnCriminal::TurnCriminal() : ClientGMPacket(ClientGMPacketID_TurnCriminal /* 97 */), UserName() {
 }
 
 TurnCriminal::TurnCriminal(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_TurnCriminal /* 97 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+TurnCriminal::TurnCriminal(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_TurnCriminal /* 97 */), UserName(UserName_) {
 }
 
 void TurnCriminal::serialize(clsByteQueue* buffer) const {
@@ -7623,13 +8028,16 @@ void TurnCriminal::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleTurnCriminal(this);
 }
 
-ResetFactions::ResetFactions() : ClientGMPacket(ClientGMPacketID_ResetFactions /* 98 */) {
+ResetFactions::ResetFactions() : ClientGMPacket(ClientGMPacketID_ResetFactions /* 98 */), UserName() {
 }
 
 ResetFactions::ResetFactions(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ResetFactions /* 98 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+ResetFactions::ResetFactions(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_ResetFactions /* 98 */), UserName(UserName_) {
 }
 
 void ResetFactions::serialize(clsByteQueue* buffer) const {
@@ -7643,13 +8051,16 @@ void ResetFactions::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleResetFactions(this);
 }
 
-RemoveCharFromGuild::RemoveCharFromGuild() : ClientGMPacket(ClientGMPacketID_RemoveCharFromGuild /* 99 */) {
+RemoveCharFromGuild::RemoveCharFromGuild() : ClientGMPacket(ClientGMPacketID_RemoveCharFromGuild /* 99 */), UserName() {
 }
 
 RemoveCharFromGuild::RemoveCharFromGuild(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RemoveCharFromGuild /* 99 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+RemoveCharFromGuild::RemoveCharFromGuild(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_RemoveCharFromGuild /* 99 */), UserName(UserName_) {
 }
 
 void RemoveCharFromGuild::serialize(clsByteQueue* buffer) const {
@@ -7663,13 +8074,16 @@ void RemoveCharFromGuild::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRemoveCharFromGuild(this);
 }
 
-RequestCharMail::RequestCharMail() : ClientGMPacket(ClientGMPacketID_RequestCharMail /* 100 */) {
+RequestCharMail::RequestCharMail() : ClientGMPacket(ClientGMPacketID_RequestCharMail /* 100 */), UserName() {
 }
 
 RequestCharMail::RequestCharMail(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RequestCharMail /* 100 */) {
     buffer->ReadByte(); /* PacketID */
     UserName = buffer->ReadUnicodeString();
 
+}
+
+RequestCharMail::RequestCharMail(const std::string& UserName_) : ClientGMPacket(ClientGMPacketID_RequestCharMail /* 100 */), UserName(UserName_) {
 }
 
 void RequestCharMail::serialize(clsByteQueue* buffer) const {
@@ -7683,7 +8097,7 @@ void RequestCharMail::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRequestCharMail(this);
 }
 
-AlterPassword::AlterPassword() : ClientGMPacket(ClientGMPacketID_AlterPassword /* 101 */) {
+AlterPassword::AlterPassword() : ClientGMPacket(ClientGMPacketID_AlterPassword /* 101 */), UserName(), CopyFrom() {
 }
 
 AlterPassword::AlterPassword(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_AlterPassword /* 101 */) {
@@ -7691,6 +8105,9 @@ AlterPassword::AlterPassword(clsByteQueue* buffer) : ClientGMPacket(ClientGMPack
     UserName = buffer->ReadUnicodeString();
     CopyFrom = buffer->ReadUnicodeString();
 
+}
+
+AlterPassword::AlterPassword(const std::string& UserName_, const std::string& CopyFrom_) : ClientGMPacket(ClientGMPacketID_AlterPassword /* 101 */), UserName(UserName_), CopyFrom(CopyFrom_) {
 }
 
 void AlterPassword::serialize(clsByteQueue* buffer) const {
@@ -7705,7 +8122,7 @@ void AlterPassword::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleAlterPassword(this);
 }
 
-AlterMail::AlterMail() : ClientGMPacket(ClientGMPacketID_AlterMail /* 102 */) {
+AlterMail::AlterMail() : ClientGMPacket(ClientGMPacketID_AlterMail /* 102 */), UserName(), NewMail() {
 }
 
 AlterMail::AlterMail(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_AlterMail /* 102 */) {
@@ -7713,6 +8130,9 @@ AlterMail::AlterMail(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Alt
     UserName = buffer->ReadUnicodeString();
     NewMail = buffer->ReadUnicodeString();
 
+}
+
+AlterMail::AlterMail(const std::string& UserName_, const std::string& NewMail_) : ClientGMPacket(ClientGMPacketID_AlterMail /* 102 */), UserName(UserName_), NewMail(NewMail_) {
 }
 
 void AlterMail::serialize(clsByteQueue* buffer) const {
@@ -7727,7 +8147,7 @@ void AlterMail::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleAlterMail(this);
 }
 
-AlterName::AlterName() : ClientGMPacket(ClientGMPacketID_AlterName /* 103 */) {
+AlterName::AlterName() : ClientGMPacket(ClientGMPacketID_AlterName /* 103 */), UserName(), NewName() {
 }
 
 AlterName::AlterName(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_AlterName /* 103 */) {
@@ -7735,6 +8155,9 @@ AlterName::AlterName(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Alt
     UserName = buffer->ReadUnicodeString();
     NewName = buffer->ReadUnicodeString();
 
+}
+
+AlterName::AlterName(const std::string& UserName_, const std::string& NewName_) : ClientGMPacket(ClientGMPacketID_AlterName /* 103 */), UserName(UserName_), NewName(NewName_) {
 }
 
 void AlterName::serialize(clsByteQueue* buffer) const {
@@ -7785,13 +8208,16 @@ void DoBackUp::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleDoBackUp(this);
 }
 
-ShowGuildMessages::ShowGuildMessages() : ClientGMPacket(ClientGMPacketID_ShowGuildMessages /* 106 */) {
+ShowGuildMessages::ShowGuildMessages() : ClientGMPacket(ClientGMPacketID_ShowGuildMessages /* 106 */), GuildName() {
 }
 
 ShowGuildMessages::ShowGuildMessages(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ShowGuildMessages /* 106 */) {
     buffer->ReadByte(); /* PacketID */
     GuildName = buffer->ReadUnicodeString();
 
+}
+
+ShowGuildMessages::ShowGuildMessages(const std::string& GuildName_) : ClientGMPacket(ClientGMPacketID_ShowGuildMessages /* 106 */), GuildName(GuildName_) {
 }
 
 void ShowGuildMessages::serialize(clsByteQueue* buffer) const {
@@ -7823,13 +8249,16 @@ void SaveMap::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleSaveMap(this);
 }
 
-ChangeMapInfoPK::ChangeMapInfoPK() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoPK /* 108 */) {
+ChangeMapInfoPK::ChangeMapInfoPK() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoPK /* 108 */), Pk() {
 }
 
 ChangeMapInfoPK::ChangeMapInfoPK(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoPK /* 108 */) {
     buffer->ReadByte(); /* PacketID */
     Pk = buffer->ReadBoolean();
 
+}
+
+ChangeMapInfoPK::ChangeMapInfoPK(bool Pk_) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoPK /* 108 */), Pk(Pk_) {
 }
 
 void ChangeMapInfoPK::serialize(clsByteQueue* buffer) const {
@@ -7843,13 +8272,16 @@ void ChangeMapInfoPK::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChangeMapInfoPK(this);
 }
 
-ChangeMapInfoBackup::ChangeMapInfoBackup() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoBackup /* 109 */) {
+ChangeMapInfoBackup::ChangeMapInfoBackup() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoBackup /* 109 */), Backup() {
 }
 
 ChangeMapInfoBackup::ChangeMapInfoBackup(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoBackup /* 109 */) {
     buffer->ReadByte(); /* PacketID */
     Backup = buffer->ReadBoolean();
 
+}
+
+ChangeMapInfoBackup::ChangeMapInfoBackup(bool Backup_) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoBackup /* 109 */), Backup(Backup_) {
 }
 
 void ChangeMapInfoBackup::serialize(clsByteQueue* buffer) const {
@@ -7863,13 +8295,16 @@ void ChangeMapInfoBackup::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChangeMapInfoBackup(this);
 }
 
-ChangeMapInfoRestricted::ChangeMapInfoRestricted() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoRestricted /* 110 */) {
+ChangeMapInfoRestricted::ChangeMapInfoRestricted() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoRestricted /* 110 */), RestrictedTo() {
 }
 
 ChangeMapInfoRestricted::ChangeMapInfoRestricted(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoRestricted /* 110 */) {
     buffer->ReadByte(); /* PacketID */
     RestrictedTo = buffer->ReadUnicodeString();
 
+}
+
+ChangeMapInfoRestricted::ChangeMapInfoRestricted(const std::string& RestrictedTo_) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoRestricted /* 110 */), RestrictedTo(RestrictedTo_) {
 }
 
 void ChangeMapInfoRestricted::serialize(clsByteQueue* buffer) const {
@@ -7883,13 +8318,16 @@ void ChangeMapInfoRestricted::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChangeMapInfoRestricted(this);
 }
 
-ChangeMapInfoNoMagic::ChangeMapInfoNoMagic() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoMagic /* 111 */) {
+ChangeMapInfoNoMagic::ChangeMapInfoNoMagic() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoMagic /* 111 */), NoMagic() {
 }
 
 ChangeMapInfoNoMagic::ChangeMapInfoNoMagic(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoMagic /* 111 */) {
     buffer->ReadByte(); /* PacketID */
     NoMagic = buffer->ReadBoolean();
 
+}
+
+ChangeMapInfoNoMagic::ChangeMapInfoNoMagic(bool NoMagic_) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoMagic /* 111 */), NoMagic(NoMagic_) {
 }
 
 void ChangeMapInfoNoMagic::serialize(clsByteQueue* buffer) const {
@@ -7903,13 +8341,16 @@ void ChangeMapInfoNoMagic::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChangeMapInfoNoMagic(this);
 }
 
-ChangeMapInfoNoInvi::ChangeMapInfoNoInvi() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoInvi /* 112 */) {
+ChangeMapInfoNoInvi::ChangeMapInfoNoInvi() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoInvi /* 112 */), NoInvi() {
 }
 
 ChangeMapInfoNoInvi::ChangeMapInfoNoInvi(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoInvi /* 112 */) {
     buffer->ReadByte(); /* PacketID */
     NoInvi = buffer->ReadBoolean();
 
+}
+
+ChangeMapInfoNoInvi::ChangeMapInfoNoInvi(bool NoInvi_) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoInvi /* 112 */), NoInvi(NoInvi_) {
 }
 
 void ChangeMapInfoNoInvi::serialize(clsByteQueue* buffer) const {
@@ -7923,13 +8364,16 @@ void ChangeMapInfoNoInvi::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChangeMapInfoNoInvi(this);
 }
 
-ChangeMapInfoNoResu::ChangeMapInfoNoResu() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoResu /* 113 */) {
+ChangeMapInfoNoResu::ChangeMapInfoNoResu() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoResu /* 113 */), NoResu() {
 }
 
 ChangeMapInfoNoResu::ChangeMapInfoNoResu(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoResu /* 113 */) {
     buffer->ReadByte(); /* PacketID */
     NoResu = buffer->ReadBoolean();
 
+}
+
+ChangeMapInfoNoResu::ChangeMapInfoNoResu(bool NoResu_) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoResu /* 113 */), NoResu(NoResu_) {
 }
 
 void ChangeMapInfoNoResu::serialize(clsByteQueue* buffer) const {
@@ -7943,13 +8387,16 @@ void ChangeMapInfoNoResu::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChangeMapInfoNoResu(this);
 }
 
-ChangeMapInfoLand::ChangeMapInfoLand() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoLand /* 114 */) {
+ChangeMapInfoLand::ChangeMapInfoLand() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoLand /* 114 */), Data() {
 }
 
 ChangeMapInfoLand::ChangeMapInfoLand(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoLand /* 114 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+ChangeMapInfoLand::ChangeMapInfoLand(const std::string& Data_) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoLand /* 114 */), Data(Data_) {
 }
 
 void ChangeMapInfoLand::serialize(clsByteQueue* buffer) const {
@@ -7963,13 +8410,16 @@ void ChangeMapInfoLand::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChangeMapInfoLand(this);
 }
 
-ChangeMapInfoZone::ChangeMapInfoZone() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoZone /* 115 */) {
+ChangeMapInfoZone::ChangeMapInfoZone() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoZone /* 115 */), Data() {
 }
 
 ChangeMapInfoZone::ChangeMapInfoZone(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoZone /* 115 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+ChangeMapInfoZone::ChangeMapInfoZone(const std::string& Data_) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoZone /* 115 */), Data(Data_) {
 }
 
 void ChangeMapInfoZone::serialize(clsByteQueue* buffer) const {
@@ -7983,13 +8433,16 @@ void ChangeMapInfoZone::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChangeMapInfoZone(this);
 }
 
-ChangeMapInfoStealNpc::ChangeMapInfoStealNpc() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoStealNpc /* 116 */) {
+ChangeMapInfoStealNpc::ChangeMapInfoStealNpc() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoStealNpc /* 116 */), RoboNpc() {
 }
 
 ChangeMapInfoStealNpc::ChangeMapInfoStealNpc(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoStealNpc /* 116 */) {
     buffer->ReadByte(); /* PacketID */
     RoboNpc = buffer->ReadBoolean();
 
+}
+
+ChangeMapInfoStealNpc::ChangeMapInfoStealNpc(bool RoboNpc_) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoStealNpc /* 116 */), RoboNpc(RoboNpc_) {
 }
 
 void ChangeMapInfoStealNpc::serialize(clsByteQueue* buffer) const {
@@ -8003,13 +8456,16 @@ void ChangeMapInfoStealNpc::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChangeMapInfoStealNpc(this);
 }
 
-ChangeMapInfoNoOcultar::ChangeMapInfoNoOcultar() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoOcultar /* 117 */) {
+ChangeMapInfoNoOcultar::ChangeMapInfoNoOcultar() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoOcultar /* 117 */), NoOcultar() {
 }
 
 ChangeMapInfoNoOcultar::ChangeMapInfoNoOcultar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoOcultar /* 117 */) {
     buffer->ReadByte(); /* PacketID */
     NoOcultar = buffer->ReadBoolean();
 
+}
+
+ChangeMapInfoNoOcultar::ChangeMapInfoNoOcultar(bool NoOcultar_) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoOcultar /* 117 */), NoOcultar(NoOcultar_) {
 }
 
 void ChangeMapInfoNoOcultar::serialize(clsByteQueue* buffer) const {
@@ -8023,13 +8479,16 @@ void ChangeMapInfoNoOcultar::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleChangeMapInfoNoOcultar(this);
 }
 
-ChangeMapInfoNoInvocar::ChangeMapInfoNoInvocar() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoInvocar /* 118 */) {
+ChangeMapInfoNoInvocar::ChangeMapInfoNoInvocar() : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoInvocar /* 118 */), NoInvocar() {
 }
 
 ChangeMapInfoNoInvocar::ChangeMapInfoNoInvocar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoInvocar /* 118 */) {
     buffer->ReadByte(); /* PacketID */
     NoInvocar = buffer->ReadBoolean();
 
+}
+
+ChangeMapInfoNoInvocar::ChangeMapInfoNoInvocar(bool NoInvocar_) : ClientGMPacket(ClientGMPacketID_ChangeMapInfoNoInvocar /* 118 */), NoInvocar(NoInvocar_) {
 }
 
 void ChangeMapInfoNoInvocar::serialize(clsByteQueue* buffer) const {
@@ -8241,7 +8700,7 @@ void ResetAutoUpdate::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleResetAutoUpdate(this);
 }
 
-ChatColor::ChatColor() : ClientGMPacket(ClientGMPacketID_ChatColor /* 130 */) {
+ChatColor::ChatColor() : ClientGMPacket(ClientGMPacketID_ChatColor /* 130 */), R(), G(), B() {
 }
 
 ChatColor::ChatColor(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_ChatColor /* 130 */) {
@@ -8250,6 +8709,9 @@ ChatColor::ChatColor(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Cha
     G = buffer->ReadByte();
     B = buffer->ReadByte();
 
+}
+
+ChatColor::ChatColor(std::uint8_t R_, std::uint8_t G_, std::uint8_t B_) : ClientGMPacket(ClientGMPacketID_ChatColor /* 130 */), R(R_), G(G_), B(B_) {
 }
 
 void ChatColor::serialize(clsByteQueue* buffer) const {
@@ -8283,7 +8745,7 @@ void Ignored::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleIgnored(this);
 }
 
-CheckSlot::CheckSlot() : ClientGMPacket(ClientGMPacketID_CheckSlot /* 132 */) {
+CheckSlot::CheckSlot() : ClientGMPacket(ClientGMPacketID_CheckSlot /* 132 */), UserName(), Slot() {
 }
 
 CheckSlot::CheckSlot(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_CheckSlot /* 132 */) {
@@ -8291,6 +8753,9 @@ CheckSlot::CheckSlot(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Che
     UserName = buffer->ReadUnicodeString();
     Slot = buffer->ReadByte();
 
+}
+
+CheckSlot::CheckSlot(const std::string& UserName_, std::uint8_t Slot_) : ClientGMPacket(ClientGMPacketID_CheckSlot /* 132 */), UserName(UserName_), Slot(Slot_) {
 }
 
 void CheckSlot::serialize(clsByteQueue* buffer) const {
@@ -8305,7 +8770,7 @@ void CheckSlot::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleCheckSlot(this);
 }
 
-SetIniVar::SetIniVar() : ClientGMPacket(ClientGMPacketID_SetIniVar /* 133 */) {
+SetIniVar::SetIniVar() : ClientGMPacket(ClientGMPacketID_SetIniVar /* 133 */), Seccion(), Clave(), Valor() {
 }
 
 SetIniVar::SetIniVar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SetIniVar /* 133 */) {
@@ -8314,6 +8779,9 @@ SetIniVar::SetIniVar(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Set
     Clave = buffer->ReadUnicodeString();
     Valor = buffer->ReadUnicodeString();
 
+}
+
+SetIniVar::SetIniVar(const std::string& Seccion_, const std::string& Clave_, const std::string& Valor_) : ClientGMPacket(ClientGMPacketID_SetIniVar /* 133 */), Seccion(Seccion_), Clave(Clave_), Valor(Valor_) {
 }
 
 void SetIniVar::serialize(clsByteQueue* buffer) const {
@@ -8329,7 +8797,7 @@ void SetIniVar::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleSetIniVar(this);
 }
 
-CreatePretorianClan::CreatePretorianClan() : ClientGMPacket(ClientGMPacketID_CreatePretorianClan /* 134 */) {
+CreatePretorianClan::CreatePretorianClan() : ClientGMPacket(ClientGMPacketID_CreatePretorianClan /* 134 */), Map(), X(), Y() {
 }
 
 CreatePretorianClan::CreatePretorianClan(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_CreatePretorianClan /* 134 */) {
@@ -8338,6 +8806,9 @@ CreatePretorianClan::CreatePretorianClan(clsByteQueue* buffer) : ClientGMPacket(
     X = buffer->ReadByte();
     Y = buffer->ReadByte();
 
+}
+
+CreatePretorianClan::CreatePretorianClan(std::int16_t Map_, std::uint8_t X_, std::uint8_t Y_) : ClientGMPacket(ClientGMPacketID_CreatePretorianClan /* 134 */), Map(Map_), X(X_), Y(Y_) {
 }
 
 void CreatePretorianClan::serialize(clsByteQueue* buffer) const {
@@ -8353,13 +8824,16 @@ void CreatePretorianClan::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleCreatePretorianClan(this);
 }
 
-RemovePretorianClan::RemovePretorianClan() : ClientGMPacket(ClientGMPacketID_RemovePretorianClan /* 135 */) {
+RemovePretorianClan::RemovePretorianClan() : ClientGMPacket(ClientGMPacketID_RemovePretorianClan /* 135 */), Map() {
 }
 
 RemovePretorianClan::RemovePretorianClan(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RemovePretorianClan /* 135 */) {
     buffer->ReadByte(); /* PacketID */
     Map = buffer->ReadInteger();
 
+}
+
+RemovePretorianClan::RemovePretorianClan(std::int16_t Map_) : ClientGMPacket(ClientGMPacketID_RemovePretorianClan /* 135 */), Map(Map_) {
 }
 
 void RemovePretorianClan::serialize(clsByteQueue* buffer) const {
@@ -8409,13 +8883,16 @@ void ShowDenouncesList::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleShowDenouncesList(this);
 }
 
-MapMessage::MapMessage() : ClientGMPacket(ClientGMPacketID_MapMessage /* 138 */) {
+MapMessage::MapMessage() : ClientGMPacket(ClientGMPacketID_MapMessage /* 138 */), Message() {
 }
 
 MapMessage::MapMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_MapMessage /* 138 */) {
     buffer->ReadByte(); /* PacketID */
     Message = buffer->ReadUnicodeString();
 
+}
+
+MapMessage::MapMessage(const std::string& Message_) : ClientGMPacket(ClientGMPacketID_MapMessage /* 138 */), Message(Message_) {
 }
 
 void MapMessage::serialize(clsByteQueue* buffer) const {
@@ -8429,13 +8906,16 @@ void MapMessage::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleMapMessage(this);
 }
 
-SetDialog::SetDialog() : ClientGMPacket(ClientGMPacketID_SetDialog /* 139 */) {
+SetDialog::SetDialog() : ClientGMPacket(ClientGMPacketID_SetDialog /* 139 */), Message() {
 }
 
 SetDialog::SetDialog(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_SetDialog /* 139 */) {
     buffer->ReadByte(); /* PacketID */
     Message = buffer->ReadUnicodeString();
 
+}
+
+SetDialog::SetDialog(const std::string& Message_) : ClientGMPacket(ClientGMPacketID_SetDialog /* 139 */), Message(Message_) {
 }
 
 void SetDialog::serialize(clsByteQueue* buffer) const {
@@ -8485,7 +8965,7 @@ void Imitate::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleImitate(this);
 }
 
-RecordAdd::RecordAdd() : ClientGMPacket(ClientGMPacketID_RecordAdd /* 142 */) {
+RecordAdd::RecordAdd() : ClientGMPacket(ClientGMPacketID_RecordAdd /* 142 */), UserName(), Reason() {
 }
 
 RecordAdd::RecordAdd(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RecordAdd /* 142 */) {
@@ -8493,6 +8973,9 @@ RecordAdd::RecordAdd(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_Rec
     UserName = buffer->ReadUnicodeString();
     Reason = buffer->ReadUnicodeString();
 
+}
+
+RecordAdd::RecordAdd(const std::string& UserName_, const std::string& Reason_) : ClientGMPacket(ClientGMPacketID_RecordAdd /* 142 */), UserName(UserName_), Reason(Reason_) {
 }
 
 void RecordAdd::serialize(clsByteQueue* buffer) const {
@@ -8507,13 +8990,16 @@ void RecordAdd::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRecordAdd(this);
 }
 
-RecordRemove::RecordRemove() : ClientGMPacket(ClientGMPacketID_RecordRemove /* 143 */) {
+RecordRemove::RecordRemove() : ClientGMPacket(ClientGMPacketID_RecordRemove /* 143 */), Index() {
 }
 
 RecordRemove::RecordRemove(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RecordRemove /* 143 */) {
     buffer->ReadByte(); /* PacketID */
     Index = buffer->ReadByte();
 
+}
+
+RecordRemove::RecordRemove(std::uint8_t Index_) : ClientGMPacket(ClientGMPacketID_RecordRemove /* 143 */), Index(Index_) {
 }
 
 void RecordRemove::serialize(clsByteQueue* buffer) const {
@@ -8527,7 +9013,7 @@ void RecordRemove::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRecordRemove(this);
 }
 
-RecordAddObs::RecordAddObs() : ClientGMPacket(ClientGMPacketID_RecordAddObs /* 144 */) {
+RecordAddObs::RecordAddObs() : ClientGMPacket(ClientGMPacketID_RecordAddObs /* 144 */), Index(), Obs() {
 }
 
 RecordAddObs::RecordAddObs(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RecordAddObs /* 144 */) {
@@ -8535,6 +9021,9 @@ RecordAddObs::RecordAddObs(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacket
     Index = buffer->ReadByte();
     Obs = buffer->ReadUnicodeString();
 
+}
+
+RecordAddObs::RecordAddObs(std::uint8_t Index_, const std::string& Obs_) : ClientGMPacket(ClientGMPacketID_RecordAddObs /* 144 */), Index(Index_), Obs(Obs_) {
 }
 
 void RecordAddObs::serialize(clsByteQueue* buffer) const {
@@ -8567,13 +9056,16 @@ void RecordListRequest::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRecordListRequest(this);
 }
 
-RecordDetailsRequest::RecordDetailsRequest() : ClientGMPacket(ClientGMPacketID_RecordDetailsRequest /* 146 */) {
+RecordDetailsRequest::RecordDetailsRequest() : ClientGMPacket(ClientGMPacketID_RecordDetailsRequest /* 146 */), Index() {
 }
 
 RecordDetailsRequest::RecordDetailsRequest(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_RecordDetailsRequest /* 146 */) {
     buffer->ReadByte(); /* PacketID */
     Index = buffer->ReadByte();
 
+}
+
+RecordDetailsRequest::RecordDetailsRequest(std::uint8_t Index_) : ClientGMPacket(ClientGMPacketID_RecordDetailsRequest /* 146 */), Index(Index_) {
 }
 
 void RecordDetailsRequest::serialize(clsByteQueue* buffer) const {
@@ -8587,7 +9079,7 @@ void RecordDetailsRequest::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleRecordDetailsRequest(this);
 }
 
-AlterGuildName::AlterGuildName() : ClientGMPacket(ClientGMPacketID_AlterGuildName /* 147 */) {
+AlterGuildName::AlterGuildName() : ClientGMPacket(ClientGMPacketID_AlterGuildName /* 147 */), OldGuildName(), NewGuildName() {
 }
 
 AlterGuildName::AlterGuildName(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_AlterGuildName /* 147 */) {
@@ -8595,6 +9087,9 @@ AlterGuildName::AlterGuildName(clsByteQueue* buffer) : ClientGMPacket(ClientGMPa
     OldGuildName = buffer->ReadUnicodeString();
     NewGuildName = buffer->ReadUnicodeString();
 
+}
+
+AlterGuildName::AlterGuildName(const std::string& OldGuildName_, const std::string& NewGuildName_) : ClientGMPacket(ClientGMPacketID_AlterGuildName /* 147 */), OldGuildName(OldGuildName_), NewGuildName(NewGuildName_) {
 }
 
 void AlterGuildName::serialize(clsByteQueue* buffer) const {
@@ -8609,13 +9104,16 @@ void AlterGuildName::dispatch(PacketHandler* d) {
     d->getPacketHandlerClientGMPacket()->handleAlterGuildName(this);
 }
 
-HigherAdminsMessage::HigherAdminsMessage() : ClientGMPacket(ClientGMPacketID_HigherAdminsMessage /* 148 */) {
+HigherAdminsMessage::HigherAdminsMessage() : ClientGMPacket(ClientGMPacketID_HigherAdminsMessage /* 148 */), Message() {
 }
 
 HigherAdminsMessage::HigherAdminsMessage(clsByteQueue* buffer) : ClientGMPacket(ClientGMPacketID_HigherAdminsMessage /* 148 */) {
     buffer->ReadByte(); /* PacketID */
     Message = buffer->ReadUnicodeString();
 
+}
+
+HigherAdminsMessage::HigherAdminsMessage(const std::string& Message_) : ClientGMPacket(ClientGMPacketID_HigherAdminsMessage /* 148 */), Message(Message_) {
 }
 
 void HigherAdminsMessage::serialize(clsByteQueue* buffer) const {
@@ -9987,13 +10485,16 @@ void ServerPacketDecodeAndDispatch(clsByteQueue* buffer, PacketHandler* handler)
     }
 }
 
-Logged::Logged() : ServerPacket(ServerPacketID_Logged /* 0 */) {
+Logged::Logged() : ServerPacket(ServerPacketID_Logged /* 0 */), Clase() {
 }
 
 Logged::Logged(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Logged /* 0 */) {
     buffer->ReadByte(); /* PacketID */
     Clase = buffer->ReadByte();
 
+}
+
+Logged::Logged(std::uint8_t Clase_) : ServerPacket(ServerPacketID_Logged /* 0 */), Clase(Clase_) {
 }
 
 void Logged::serialize(clsByteQueue* buffer) const {
@@ -10023,13 +10524,16 @@ void RemoveDialogs::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleRemoveDialogs(this);
 }
 
-RemoveCharDialog::RemoveCharDialog() : ServerPacket(ServerPacketID_RemoveCharDialog /* 2 */) {
+RemoveCharDialog::RemoveCharDialog() : ServerPacket(ServerPacketID_RemoveCharDialog /* 2 */), CharIndex() {
 }
 
 RemoveCharDialog::RemoveCharDialog(clsByteQueue* buffer) : ServerPacket(ServerPacketID_RemoveCharDialog /* 2 */) {
     buffer->ReadByte(); /* PacketID */
     CharIndex = buffer->ReadInteger();
 
+}
+
+RemoveCharDialog::RemoveCharDialog(std::int16_t CharIndex_) : ServerPacket(ServerPacketID_RemoveCharDialog /* 2 */), CharIndex(CharIndex_) {
 }
 
 void RemoveCharDialog::serialize(clsByteQueue* buffer) const {
@@ -10127,13 +10631,16 @@ void CommerceInit::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleCommerceInit(this);
 }
 
-BankInit::BankInit() : ServerPacket(ServerPacketID_BankInit /* 8 */) {
+BankInit::BankInit() : ServerPacket(ServerPacketID_BankInit /* 8 */), Banco() {
 }
 
 BankInit::BankInit(clsByteQueue* buffer) : ServerPacket(ServerPacketID_BankInit /* 8 */) {
     buffer->ReadByte(); /* PacketID */
     Banco = buffer->ReadLong();
 
+}
+
+BankInit::BankInit(std::int32_t Banco_) : ServerPacket(ServerPacketID_BankInit /* 8 */), Banco(Banco_) {
 }
 
 void BankInit::serialize(clsByteQueue* buffer) const {
@@ -10146,13 +10653,16 @@ void BankInit::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleBankInit(this);
 }
 
-UserCommerceInit::UserCommerceInit() : ServerPacket(ServerPacketID_UserCommerceInit /* 9 */) {
+UserCommerceInit::UserCommerceInit() : ServerPacket(ServerPacketID_UserCommerceInit /* 9 */), DestUserName() {
 }
 
 UserCommerceInit::UserCommerceInit(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UserCommerceInit /* 9 */) {
     buffer->ReadByte(); /* PacketID */
     DestUserName = buffer->ReadUnicodeString();
 
+}
+
+UserCommerceInit::UserCommerceInit(const std::string& DestUserName_) : ServerPacket(ServerPacketID_UserCommerceInit /* 9 */), DestUserName(DestUserName_) {
 }
 
 void UserCommerceInit::serialize(clsByteQueue* buffer) const {
@@ -10199,7 +10709,7 @@ void UserOfferConfirm::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUserOfferConfirm(this);
 }
 
-CommerceChat::CommerceChat() : ServerPacket(ServerPacketID_CommerceChat /* 12 */) {
+CommerceChat::CommerceChat() : ServerPacket(ServerPacketID_CommerceChat /* 12 */), Chat(), FontIndex() {
 }
 
 CommerceChat::CommerceChat(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CommerceChat /* 12 */) {
@@ -10207,6 +10717,9 @@ CommerceChat::CommerceChat(clsByteQueue* buffer) : ServerPacket(ServerPacketID_C
     Chat = buffer->ReadUnicodeString();
     FontIndex = buffer->ReadByte();
 
+}
+
+CommerceChat::CommerceChat(const std::string& Chat_, std::uint8_t FontIndex_) : ServerPacket(ServerPacketID_CommerceChat /* 12 */), Chat(Chat_), FontIndex(FontIndex_) {
 }
 
 void CommerceChat::serialize(clsByteQueue* buffer) const {
@@ -10254,13 +10767,16 @@ void ShowCarpenterForm::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleShowCarpenterForm(this);
 }
 
-UpdateSta::UpdateSta() : ServerPacket(ServerPacketID_UpdateSta /* 15 */) {
+UpdateSta::UpdateSta() : ServerPacket(ServerPacketID_UpdateSta /* 15 */), Value() {
 }
 
 UpdateSta::UpdateSta(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateSta /* 15 */) {
     buffer->ReadByte(); /* PacketID */
     Value = buffer->ReadInteger();
 
+}
+
+UpdateSta::UpdateSta(std::int16_t Value_) : ServerPacket(ServerPacketID_UpdateSta /* 15 */), Value(Value_) {
 }
 
 void UpdateSta::serialize(clsByteQueue* buffer) const {
@@ -10273,13 +10789,16 @@ void UpdateSta::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateSta(this);
 }
 
-UpdateMana::UpdateMana() : ServerPacket(ServerPacketID_UpdateMana /* 16 */) {
+UpdateMana::UpdateMana() : ServerPacket(ServerPacketID_UpdateMana /* 16 */), Value() {
 }
 
 UpdateMana::UpdateMana(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateMana /* 16 */) {
     buffer->ReadByte(); /* PacketID */
     Value = buffer->ReadInteger();
 
+}
+
+UpdateMana::UpdateMana(std::int16_t Value_) : ServerPacket(ServerPacketID_UpdateMana /* 16 */), Value(Value_) {
 }
 
 void UpdateMana::serialize(clsByteQueue* buffer) const {
@@ -10292,13 +10811,16 @@ void UpdateMana::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateMana(this);
 }
 
-UpdateHP::UpdateHP() : ServerPacket(ServerPacketID_UpdateHP /* 17 */) {
+UpdateHP::UpdateHP() : ServerPacket(ServerPacketID_UpdateHP /* 17 */), Value() {
 }
 
 UpdateHP::UpdateHP(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateHP /* 17 */) {
     buffer->ReadByte(); /* PacketID */
     Value = buffer->ReadInteger();
 
+}
+
+UpdateHP::UpdateHP(std::int16_t Value_) : ServerPacket(ServerPacketID_UpdateHP /* 17 */), Value(Value_) {
 }
 
 void UpdateHP::serialize(clsByteQueue* buffer) const {
@@ -10311,13 +10833,16 @@ void UpdateHP::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateHP(this);
 }
 
-UpdateGold::UpdateGold() : ServerPacket(ServerPacketID_UpdateGold /* 18 */) {
+UpdateGold::UpdateGold() : ServerPacket(ServerPacketID_UpdateGold /* 18 */), Value() {
 }
 
 UpdateGold::UpdateGold(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateGold /* 18 */) {
     buffer->ReadByte(); /* PacketID */
     Value = buffer->ReadLong();
 
+}
+
+UpdateGold::UpdateGold(std::int32_t Value_) : ServerPacket(ServerPacketID_UpdateGold /* 18 */), Value(Value_) {
 }
 
 void UpdateGold::serialize(clsByteQueue* buffer) const {
@@ -10330,13 +10855,16 @@ void UpdateGold::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateGold(this);
 }
 
-UpdateBankGold::UpdateBankGold() : ServerPacket(ServerPacketID_UpdateBankGold /* 19 */) {
+UpdateBankGold::UpdateBankGold() : ServerPacket(ServerPacketID_UpdateBankGold /* 19 */), Value() {
 }
 
 UpdateBankGold::UpdateBankGold(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateBankGold /* 19 */) {
     buffer->ReadByte(); /* PacketID */
     Value = buffer->ReadLong();
 
+}
+
+UpdateBankGold::UpdateBankGold(std::int32_t Value_) : ServerPacket(ServerPacketID_UpdateBankGold /* 19 */), Value(Value_) {
 }
 
 void UpdateBankGold::serialize(clsByteQueue* buffer) const {
@@ -10349,13 +10877,16 @@ void UpdateBankGold::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateBankGold(this);
 }
 
-UpdateExp::UpdateExp() : ServerPacket(ServerPacketID_UpdateExp /* 20 */) {
+UpdateExp::UpdateExp() : ServerPacket(ServerPacketID_UpdateExp /* 20 */), Value() {
 }
 
 UpdateExp::UpdateExp(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateExp /* 20 */) {
     buffer->ReadByte(); /* PacketID */
     Value = buffer->ReadLong();
 
+}
+
+UpdateExp::UpdateExp(std::int32_t Value_) : ServerPacket(ServerPacketID_UpdateExp /* 20 */), Value(Value_) {
 }
 
 void UpdateExp::serialize(clsByteQueue* buffer) const {
@@ -10368,7 +10899,7 @@ void UpdateExp::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateExp(this);
 }
 
-ChangeMap::ChangeMap() : ServerPacket(ServerPacketID_ChangeMap /* 21 */) {
+ChangeMap::ChangeMap() : ServerPacket(ServerPacketID_ChangeMap /* 21 */), Map(), Version() {
 }
 
 ChangeMap::ChangeMap(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ChangeMap /* 21 */) {
@@ -10376,6 +10907,9 @@ ChangeMap::ChangeMap(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ChangeM
     Map = buffer->ReadInteger();
     Version = buffer->ReadInteger();
 
+}
+
+ChangeMap::ChangeMap(std::int16_t Map_, std::int16_t Version_) : ServerPacket(ServerPacketID_ChangeMap /* 21 */), Map(Map_), Version(Version_) {
 }
 
 void ChangeMap::serialize(clsByteQueue* buffer) const {
@@ -10389,7 +10923,7 @@ void ChangeMap::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleChangeMap(this);
 }
 
-PosUpdate::PosUpdate() : ServerPacket(ServerPacketID_PosUpdate /* 22 */) {
+PosUpdate::PosUpdate() : ServerPacket(ServerPacketID_PosUpdate /* 22 */), X(), Y() {
 }
 
 PosUpdate::PosUpdate(clsByteQueue* buffer) : ServerPacket(ServerPacketID_PosUpdate /* 22 */) {
@@ -10397,6 +10931,9 @@ PosUpdate::PosUpdate(clsByteQueue* buffer) : ServerPacket(ServerPacketID_PosUpda
     X = buffer->ReadByte();
     Y = buffer->ReadByte();
 
+}
+
+PosUpdate::PosUpdate(std::uint8_t X_, std::uint8_t Y_) : ServerPacket(ServerPacketID_PosUpdate /* 22 */), X(X_), Y(Y_) {
 }
 
 void PosUpdate::serialize(clsByteQueue* buffer) const {
@@ -10410,7 +10947,7 @@ void PosUpdate::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handlePosUpdate(this);
 }
 
-ChatOverHead::ChatOverHead() : ServerPacket(ServerPacketID_ChatOverHead /* 23 */) {
+ChatOverHead::ChatOverHead() : ServerPacket(ServerPacketID_ChatOverHead /* 23 */), Chat(), CharIndex(), R(), G(), B() {
 }
 
 ChatOverHead::ChatOverHead(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ChatOverHead /* 23 */) {
@@ -10421,6 +10958,9 @@ ChatOverHead::ChatOverHead(clsByteQueue* buffer) : ServerPacket(ServerPacketID_C
     G = buffer->ReadByte();
     B = buffer->ReadByte();
 
+}
+
+ChatOverHead::ChatOverHead(const std::string& Chat_, std::int16_t CharIndex_, std::uint8_t R_, std::uint8_t G_, std::uint8_t B_) : ServerPacket(ServerPacketID_ChatOverHead /* 23 */), Chat(Chat_), CharIndex(CharIndex_), R(R_), G(G_), B(B_) {
 }
 
 void ChatOverHead::serialize(clsByteQueue* buffer) const {
@@ -10437,20 +10977,23 @@ void ChatOverHead::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleChatOverHead(this);
 }
 
-ConsoleMsg::ConsoleMsg() : ServerPacket(ServerPacketID_ConsoleMsg /* 24 */) {
+ConsoleMsg::ConsoleMsg() : ServerPacket(ServerPacketID_ConsoleMsg /* 24 */), Chat(), FontIndex() {
 }
 
 ConsoleMsg::ConsoleMsg(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ConsoleMsg /* 24 */) {
     buffer->ReadByte(); /* PacketID */
     Chat = buffer->ReadUnicodeString();
-    FontIndex = buffer->ReadByte();
+    FontIndex = buffer->ReadInteger();
 
+}
+
+ConsoleMsg::ConsoleMsg(const std::string& Chat_, std::int16_t FontIndex_) : ServerPacket(ServerPacketID_ConsoleMsg /* 24 */), Chat(Chat_), FontIndex(FontIndex_) {
 }
 
 void ConsoleMsg::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ConsoleMsg); /* PacketID: 24 */
     buffer->WriteUnicodeString(Chat);
-    buffer->WriteByte(FontIndex);
+    buffer->WriteInteger(FontIndex);
 
 }
 
@@ -10458,13 +11001,16 @@ void ConsoleMsg::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleConsoleMsg(this);
 }
 
-GuildChat::GuildChat() : ServerPacket(ServerPacketID_GuildChat /* 25 */) {
+GuildChat::GuildChat() : ServerPacket(ServerPacketID_GuildChat /* 25 */), Chat() {
 }
 
 GuildChat::GuildChat(clsByteQueue* buffer) : ServerPacket(ServerPacketID_GuildChat /* 25 */) {
     buffer->ReadByte(); /* PacketID */
     Chat = buffer->ReadUnicodeString();
 
+}
+
+GuildChat::GuildChat(const std::string& Chat_) : ServerPacket(ServerPacketID_GuildChat /* 25 */), Chat(Chat_) {
 }
 
 void GuildChat::serialize(clsByteQueue* buffer) const {
@@ -10477,13 +11023,16 @@ void GuildChat::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleGuildChat(this);
 }
 
-ShowMessageBox::ShowMessageBox() : ServerPacket(ServerPacketID_ShowMessageBox /* 26 */) {
+ShowMessageBox::ShowMessageBox() : ServerPacket(ServerPacketID_ShowMessageBox /* 26 */), Chat() {
 }
 
 ShowMessageBox::ShowMessageBox(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ShowMessageBox /* 26 */) {
     buffer->ReadByte(); /* PacketID */
     Chat = buffer->ReadUnicodeString();
 
+}
+
+ShowMessageBox::ShowMessageBox(const std::string& Chat_) : ServerPacket(ServerPacketID_ShowMessageBox /* 26 */), Chat(Chat_) {
 }
 
 void ShowMessageBox::serialize(clsByteQueue* buffer) const {
@@ -10496,13 +11045,16 @@ void ShowMessageBox::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleShowMessageBox(this);
 }
 
-UserIndexInServer::UserIndexInServer() : ServerPacket(ServerPacketID_UserIndexInServer /* 27 */) {
+UserIndexInServer::UserIndexInServer() : ServerPacket(ServerPacketID_UserIndexInServer /* 27 */), UserIndex() {
 }
 
 UserIndexInServer::UserIndexInServer(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UserIndexInServer /* 27 */) {
     buffer->ReadByte(); /* PacketID */
     UserIndex = buffer->ReadInteger();
 
+}
+
+UserIndexInServer::UserIndexInServer(std::int16_t UserIndex_) : ServerPacket(ServerPacketID_UserIndexInServer /* 27 */), UserIndex(UserIndex_) {
 }
 
 void UserIndexInServer::serialize(clsByteQueue* buffer) const {
@@ -10515,13 +11067,16 @@ void UserIndexInServer::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUserIndexInServer(this);
 }
 
-UserCharIndexInServer::UserCharIndexInServer() : ServerPacket(ServerPacketID_UserCharIndexInServer /* 28 */) {
+UserCharIndexInServer::UserCharIndexInServer() : ServerPacket(ServerPacketID_UserCharIndexInServer /* 28 */), CharIndex() {
 }
 
 UserCharIndexInServer::UserCharIndexInServer(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UserCharIndexInServer /* 28 */) {
     buffer->ReadByte(); /* PacketID */
     CharIndex = buffer->ReadInteger();
 
+}
+
+UserCharIndexInServer::UserCharIndexInServer(std::int16_t CharIndex_) : ServerPacket(ServerPacketID_UserCharIndexInServer /* 28 */), CharIndex(CharIndex_) {
 }
 
 void UserCharIndexInServer::serialize(clsByteQueue* buffer) const {
@@ -10534,7 +11089,7 @@ void UserCharIndexInServer::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUserCharIndexInServer(this);
 }
 
-CharacterCreate::CharacterCreate() : ServerPacket(ServerPacketID_CharacterCreate /* 29 */) {
+CharacterCreate::CharacterCreate() : ServerPacket(ServerPacketID_CharacterCreate /* 29 */), CharIndex(), Body(), Head(), Heading(), X(), Y(), Weapon(), Shield(), Helmet(), FX(), FXLoops(), Name(), NickColor(), Privileges() {
 }
 
 CharacterCreate::CharacterCreate(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CharacterCreate /* 29 */) {
@@ -10554,6 +11109,9 @@ CharacterCreate::CharacterCreate(clsByteQueue* buffer) : ServerPacket(ServerPack
     NickColor = buffer->ReadByte();
     Privileges = buffer->ReadByte();
 
+}
+
+CharacterCreate::CharacterCreate(std::int16_t CharIndex_, std::int16_t Body_, std::int16_t Head_, std::uint8_t Heading_, std::uint8_t X_, std::uint8_t Y_, std::int16_t Weapon_, std::int16_t Shield_, std::int16_t Helmet_, std::int16_t FX_, std::int16_t FXLoops_, const std::string& Name_, std::uint8_t NickColor_, std::uint8_t Privileges_) : ServerPacket(ServerPacketID_CharacterCreate /* 29 */), CharIndex(CharIndex_), Body(Body_), Head(Head_), Heading(Heading_), X(X_), Y(Y_), Weapon(Weapon_), Shield(Shield_), Helmet(Helmet_), FX(FX_), FXLoops(FXLoops_), Name(Name_), NickColor(NickColor_), Privileges(Privileges_) {
 }
 
 void CharacterCreate::serialize(clsByteQueue* buffer) const {
@@ -10579,13 +11137,16 @@ void CharacterCreate::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleCharacterCreate(this);
 }
 
-CharacterRemove::CharacterRemove() : ServerPacket(ServerPacketID_CharacterRemove /* 30 */) {
+CharacterRemove::CharacterRemove() : ServerPacket(ServerPacketID_CharacterRemove /* 30 */), CharIndex() {
 }
 
 CharacterRemove::CharacterRemove(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CharacterRemove /* 30 */) {
     buffer->ReadByte(); /* PacketID */
     CharIndex = buffer->ReadInteger();
 
+}
+
+CharacterRemove::CharacterRemove(std::int16_t CharIndex_) : ServerPacket(ServerPacketID_CharacterRemove /* 30 */), CharIndex(CharIndex_) {
 }
 
 void CharacterRemove::serialize(clsByteQueue* buffer) const {
@@ -10598,7 +11159,7 @@ void CharacterRemove::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleCharacterRemove(this);
 }
 
-CharacterChangeNick::CharacterChangeNick() : ServerPacket(ServerPacketID_CharacterChangeNick /* 31 */) {
+CharacterChangeNick::CharacterChangeNick() : ServerPacket(ServerPacketID_CharacterChangeNick /* 31 */), CharIndex(), NewName() {
 }
 
 CharacterChangeNick::CharacterChangeNick(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CharacterChangeNick /* 31 */) {
@@ -10606,6 +11167,9 @@ CharacterChangeNick::CharacterChangeNick(clsByteQueue* buffer) : ServerPacket(Se
     CharIndex = buffer->ReadInteger();
     NewName = buffer->ReadUnicodeString();
 
+}
+
+CharacterChangeNick::CharacterChangeNick(std::int16_t CharIndex_, const std::string& NewName_) : ServerPacket(ServerPacketID_CharacterChangeNick /* 31 */), CharIndex(CharIndex_), NewName(NewName_) {
 }
 
 void CharacterChangeNick::serialize(clsByteQueue* buffer) const {
@@ -10619,7 +11183,7 @@ void CharacterChangeNick::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleCharacterChangeNick(this);
 }
 
-CharacterMove::CharacterMove() : ServerPacket(ServerPacketID_CharacterMove /* 32 */) {
+CharacterMove::CharacterMove() : ServerPacket(ServerPacketID_CharacterMove /* 32 */), CharIndex(), X(), Y() {
 }
 
 CharacterMove::CharacterMove(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CharacterMove /* 32 */) {
@@ -10628,6 +11192,9 @@ CharacterMove::CharacterMove(clsByteQueue* buffer) : ServerPacket(ServerPacketID
     X = buffer->ReadByte();
     Y = buffer->ReadByte();
 
+}
+
+CharacterMove::CharacterMove(std::int16_t CharIndex_, std::uint8_t X_, std::uint8_t Y_) : ServerPacket(ServerPacketID_CharacterMove /* 32 */), CharIndex(CharIndex_), X(X_), Y(Y_) {
 }
 
 void CharacterMove::serialize(clsByteQueue* buffer) const {
@@ -10642,13 +11209,16 @@ void CharacterMove::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleCharacterMove(this);
 }
 
-ForceCharMove::ForceCharMove() : ServerPacket(ServerPacketID_ForceCharMove /* 33 */) {
+ForceCharMove::ForceCharMove() : ServerPacket(ServerPacketID_ForceCharMove /* 33 */), Direction() {
 }
 
 ForceCharMove::ForceCharMove(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ForceCharMove /* 33 */) {
     buffer->ReadByte(); /* PacketID */
     Direction = buffer->ReadByte();
 
+}
+
+ForceCharMove::ForceCharMove(std::uint8_t Direction_) : ServerPacket(ServerPacketID_ForceCharMove /* 33 */), Direction(Direction_) {
 }
 
 void ForceCharMove::serialize(clsByteQueue* buffer) const {
@@ -10661,7 +11231,7 @@ void ForceCharMove::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleForceCharMove(this);
 }
 
-CharacterChange::CharacterChange() : ServerPacket(ServerPacketID_CharacterChange /* 34 */) {
+CharacterChange::CharacterChange() : ServerPacket(ServerPacketID_CharacterChange /* 34 */), CharIndex(), Body(), Head(), Heading(), Weapon(), Shield(), Helmet(), FX(), FXLoops() {
 }
 
 CharacterChange::CharacterChange(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CharacterChange /* 34 */) {
@@ -10676,6 +11246,9 @@ CharacterChange::CharacterChange(clsByteQueue* buffer) : ServerPacket(ServerPack
     FX = buffer->ReadInteger();
     FXLoops = buffer->ReadInteger();
 
+}
+
+CharacterChange::CharacterChange(std::int16_t CharIndex_, std::int16_t Body_, std::int16_t Head_, std::uint8_t Heading_, std::int16_t Weapon_, std::int16_t Shield_, std::int16_t Helmet_, std::int16_t FX_, std::int16_t FXLoops_) : ServerPacket(ServerPacketID_CharacterChange /* 34 */), CharIndex(CharIndex_), Body(Body_), Head(Head_), Heading(Heading_), Weapon(Weapon_), Shield(Shield_), Helmet(Helmet_), FX(FX_), FXLoops(FXLoops_) {
 }
 
 void CharacterChange::serialize(clsByteQueue* buffer) const {
@@ -10696,7 +11269,7 @@ void CharacterChange::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleCharacterChange(this);
 }
 
-ObjectCreate::ObjectCreate() : ServerPacket(ServerPacketID_ObjectCreate /* 35 */) {
+ObjectCreate::ObjectCreate() : ServerPacket(ServerPacketID_ObjectCreate /* 35 */), X(), Y(), GrhIndex() {
 }
 
 ObjectCreate::ObjectCreate(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ObjectCreate /* 35 */) {
@@ -10705,6 +11278,9 @@ ObjectCreate::ObjectCreate(clsByteQueue* buffer) : ServerPacket(ServerPacketID_O
     Y = buffer->ReadByte();
     GrhIndex = buffer->ReadInteger();
 
+}
+
+ObjectCreate::ObjectCreate(std::uint8_t X_, std::uint8_t Y_, std::int16_t GrhIndex_) : ServerPacket(ServerPacketID_ObjectCreate /* 35 */), X(X_), Y(Y_), GrhIndex(GrhIndex_) {
 }
 
 void ObjectCreate::serialize(clsByteQueue* buffer) const {
@@ -10719,7 +11295,7 @@ void ObjectCreate::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleObjectCreate(this);
 }
 
-ObjectDelete::ObjectDelete() : ServerPacket(ServerPacketID_ObjectDelete /* 36 */) {
+ObjectDelete::ObjectDelete() : ServerPacket(ServerPacketID_ObjectDelete /* 36 */), X(), Y() {
 }
 
 ObjectDelete::ObjectDelete(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ObjectDelete /* 36 */) {
@@ -10727,6 +11303,9 @@ ObjectDelete::ObjectDelete(clsByteQueue* buffer) : ServerPacket(ServerPacketID_O
     X = buffer->ReadByte();
     Y = buffer->ReadByte();
 
+}
+
+ObjectDelete::ObjectDelete(std::uint8_t X_, std::uint8_t Y_) : ServerPacket(ServerPacketID_ObjectDelete /* 36 */), X(X_), Y(Y_) {
 }
 
 void ObjectDelete::serialize(clsByteQueue* buffer) const {
@@ -10740,7 +11319,7 @@ void ObjectDelete::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleObjectDelete(this);
 }
 
-BlockPosition::BlockPosition() : ServerPacket(ServerPacketID_BlockPosition /* 37 */) {
+BlockPosition::BlockPosition() : ServerPacket(ServerPacketID_BlockPosition /* 37 */), X(), Y(), Blocked() {
 }
 
 BlockPosition::BlockPosition(clsByteQueue* buffer) : ServerPacket(ServerPacketID_BlockPosition /* 37 */) {
@@ -10749,6 +11328,9 @@ BlockPosition::BlockPosition(clsByteQueue* buffer) : ServerPacket(ServerPacketID
     Y = buffer->ReadByte();
     Blocked = buffer->ReadBoolean();
 
+}
+
+BlockPosition::BlockPosition(std::uint8_t X_, std::uint8_t Y_, bool Blocked_) : ServerPacket(ServerPacketID_BlockPosition /* 37 */), X(X_), Y(Y_), Blocked(Blocked_) {
 }
 
 void BlockPosition::serialize(clsByteQueue* buffer) const {
@@ -10763,7 +11345,7 @@ void BlockPosition::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleBlockPosition(this);
 }
 
-PlayMidi::PlayMidi() : ServerPacket(ServerPacketID_PlayMidi /* 38 */) {
+PlayMidi::PlayMidi() : ServerPacket(ServerPacketID_PlayMidi /* 38 */), MidiID(), Loops() {
 }
 
 PlayMidi::PlayMidi(clsByteQueue* buffer) : ServerPacket(ServerPacketID_PlayMidi /* 38 */) {
@@ -10771,6 +11353,9 @@ PlayMidi::PlayMidi(clsByteQueue* buffer) : ServerPacket(ServerPacketID_PlayMidi 
     MidiID = buffer->ReadInteger();
     Loops = buffer->ReadInteger();
 
+}
+
+PlayMidi::PlayMidi(std::int16_t MidiID_, std::int16_t Loops_) : ServerPacket(ServerPacketID_PlayMidi /* 38 */), MidiID(MidiID_), Loops(Loops_) {
 }
 
 void PlayMidi::serialize(clsByteQueue* buffer) const {
@@ -10784,7 +11369,7 @@ void PlayMidi::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handlePlayMidi(this);
 }
 
-PlayWave::PlayWave() : ServerPacket(ServerPacketID_PlayWave /* 39 */) {
+PlayWave::PlayWave() : ServerPacket(ServerPacketID_PlayWave /* 39 */), WaveID(), X(), Y() {
 }
 
 PlayWave::PlayWave(clsByteQueue* buffer) : ServerPacket(ServerPacketID_PlayWave /* 39 */) {
@@ -10793,6 +11378,9 @@ PlayWave::PlayWave(clsByteQueue* buffer) : ServerPacket(ServerPacketID_PlayWave 
     X = buffer->ReadByte();
     Y = buffer->ReadByte();
 
+}
+
+PlayWave::PlayWave(std::uint8_t WaveID_, std::uint8_t X_, std::uint8_t Y_) : ServerPacket(ServerPacketID_PlayWave /* 39 */), WaveID(WaveID_), X(X_), Y(Y_) {
 }
 
 void PlayWave::serialize(clsByteQueue* buffer) const {
@@ -10807,13 +11395,16 @@ void PlayWave::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handlePlayWave(this);
 }
 
-GuildList::GuildList() : ServerPacket(ServerPacketID_GuildList /* 40 */) {
+GuildList::GuildList() : ServerPacket(ServerPacketID_GuildList /* 40 */), Data() {
 }
 
 GuildList::GuildList(clsByteQueue* buffer) : ServerPacket(ServerPacketID_GuildList /* 40 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+GuildList::GuildList(const std::string& Data_) : ServerPacket(ServerPacketID_GuildList /* 40 */), Data(Data_) {
 }
 
 void GuildList::serialize(clsByteQueue* buffer) const {
@@ -10826,7 +11417,7 @@ void GuildList::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleGuildList(this);
 }
 
-AreaChanged::AreaChanged() : ServerPacket(ServerPacketID_AreaChanged /* 41 */) {
+AreaChanged::AreaChanged() : ServerPacket(ServerPacketID_AreaChanged /* 41 */), X(), Y() {
 }
 
 AreaChanged::AreaChanged(clsByteQueue* buffer) : ServerPacket(ServerPacketID_AreaChanged /* 41 */) {
@@ -10834,6 +11425,9 @@ AreaChanged::AreaChanged(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Are
     X = buffer->ReadByte();
     Y = buffer->ReadByte();
 
+}
+
+AreaChanged::AreaChanged(std::uint8_t X_, std::uint8_t Y_) : ServerPacket(ServerPacketID_AreaChanged /* 41 */), X(X_), Y(Y_) {
 }
 
 void AreaChanged::serialize(clsByteQueue* buffer) const {
@@ -10881,7 +11475,7 @@ void RainToggle::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleRainToggle(this);
 }
 
-CreateFX::CreateFX() : ServerPacket(ServerPacketID_CreateFX /* 44 */) {
+CreateFX::CreateFX() : ServerPacket(ServerPacketID_CreateFX /* 44 */), CharIndex(), FX(), FXLoops() {
 }
 
 CreateFX::CreateFX(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CreateFX /* 44 */) {
@@ -10890,6 +11484,9 @@ CreateFX::CreateFX(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CreateFX 
     FX = buffer->ReadInteger();
     FXLoops = buffer->ReadInteger();
 
+}
+
+CreateFX::CreateFX(std::int16_t CharIndex_, std::int16_t FX_, std::int16_t FXLoops_) : ServerPacket(ServerPacketID_CreateFX /* 44 */), CharIndex(CharIndex_), FX(FX_), FXLoops(FXLoops_) {
 }
 
 void CreateFX::serialize(clsByteQueue* buffer) const {
@@ -10904,7 +11501,7 @@ void CreateFX::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleCreateFX(this);
 }
 
-UpdateUserStats::UpdateUserStats() : ServerPacket(ServerPacketID_UpdateUserStats /* 45 */) {
+UpdateUserStats::UpdateUserStats() : ServerPacket(ServerPacketID_UpdateUserStats /* 45 */), MaxHp(), MinHp(), MaxMan(), MinMan(), MaxSta(), MinSta(), Gld(), Elv(), Elu(), Exp() {
 }
 
 UpdateUserStats::UpdateUserStats(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateUserStats /* 45 */) {
@@ -10920,6 +11517,9 @@ UpdateUserStats::UpdateUserStats(clsByteQueue* buffer) : ServerPacket(ServerPack
     Elu = buffer->ReadLong();
     Exp = buffer->ReadLong();
 
+}
+
+UpdateUserStats::UpdateUserStats(std::int16_t MaxHp_, std::int16_t MinHp_, std::int16_t MaxMan_, std::int16_t MinMan_, std::int16_t MaxSta_, std::int16_t MinSta_, std::int32_t Gld_, std::uint8_t Elv_, std::int32_t Elu_, std::int32_t Exp_) : ServerPacket(ServerPacketID_UpdateUserStats /* 45 */), MaxHp(MaxHp_), MinHp(MinHp_), MaxMan(MaxMan_), MinMan(MinMan_), MaxSta(MaxSta_), MinSta(MinSta_), Gld(Gld_), Elv(Elv_), Elu(Elu_), Exp(Exp_) {
 }
 
 void UpdateUserStats::serialize(clsByteQueue* buffer) const {
@@ -10941,13 +11541,16 @@ void UpdateUserStats::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateUserStats(this);
 }
 
-WorkRequestTarget::WorkRequestTarget() : ServerPacket(ServerPacketID_WorkRequestTarget /* 46 */) {
+WorkRequestTarget::WorkRequestTarget() : ServerPacket(ServerPacketID_WorkRequestTarget /* 46 */), Skill() {
 }
 
 WorkRequestTarget::WorkRequestTarget(clsByteQueue* buffer) : ServerPacket(ServerPacketID_WorkRequestTarget /* 46 */) {
     buffer->ReadByte(); /* PacketID */
     Skill = buffer->ReadByte();
 
+}
+
+WorkRequestTarget::WorkRequestTarget(std::uint8_t Skill_) : ServerPacket(ServerPacketID_WorkRequestTarget /* 46 */), Skill(Skill_) {
 }
 
 void WorkRequestTarget::serialize(clsByteQueue* buffer) const {
@@ -10960,7 +11563,7 @@ void WorkRequestTarget::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleWorkRequestTarget(this);
 }
 
-ChangeInventorySlot::ChangeInventorySlot() : ServerPacket(ServerPacketID_ChangeInventorySlot /* 47 */) {
+ChangeInventorySlot::ChangeInventorySlot() : ServerPacket(ServerPacketID_ChangeInventorySlot /* 47 */), Slot(), ObjIndex(), ObjName(), Amount(), Equiped(), GrhIndex(), ObjType(), MaxHit(), MinHit(), MaxDef(), MinDef(), ObjSalePrice() {
 }
 
 ChangeInventorySlot::ChangeInventorySlot(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ChangeInventorySlot /* 47 */) {
@@ -10978,6 +11581,9 @@ ChangeInventorySlot::ChangeInventorySlot(clsByteQueue* buffer) : ServerPacket(Se
     MinDef = buffer->ReadInteger();
     ObjSalePrice = buffer->ReadSingle();
 
+}
+
+ChangeInventorySlot::ChangeInventorySlot(std::uint8_t Slot_, std::int16_t ObjIndex_, const std::string& ObjName_, std::int16_t Amount_, bool Equiped_, std::int16_t GrhIndex_, std::uint8_t ObjType_, std::int16_t MaxHit_, std::int16_t MinHit_, std::int16_t MaxDef_, std::int16_t MinDef_, float ObjSalePrice_) : ServerPacket(ServerPacketID_ChangeInventorySlot /* 47 */), Slot(Slot_), ObjIndex(ObjIndex_), ObjName(ObjName_), Amount(Amount_), Equiped(Equiped_), GrhIndex(GrhIndex_), ObjType(ObjType_), MaxHit(MaxHit_), MinHit(MinHit_), MaxDef(MaxDef_), MinDef(MinDef_), ObjSalePrice(ObjSalePrice_) {
 }
 
 void ChangeInventorySlot::serialize(clsByteQueue* buffer) const {
@@ -11001,7 +11607,7 @@ void ChangeInventorySlot::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleChangeInventorySlot(this);
 }
 
-ChangeBankSlot::ChangeBankSlot() : ServerPacket(ServerPacketID_ChangeBankSlot /* 48 */) {
+ChangeBankSlot::ChangeBankSlot() : ServerPacket(ServerPacketID_ChangeBankSlot /* 48 */), Slot(), ObjIndex(), ObjName(), Amount(), GrhIndex(), ObjType(), MaxHit(), MinHit(), MaxDef(), MinDef(), ObjSalePrice() {
 }
 
 ChangeBankSlot::ChangeBankSlot(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ChangeBankSlot /* 48 */) {
@@ -11018,6 +11624,9 @@ ChangeBankSlot::ChangeBankSlot(clsByteQueue* buffer) : ServerPacket(ServerPacket
     MinDef = buffer->ReadInteger();
     ObjSalePrice = buffer->ReadSingle();
 
+}
+
+ChangeBankSlot::ChangeBankSlot(std::uint8_t Slot_, std::int16_t ObjIndex_, const std::string& ObjName_, std::int16_t Amount_, std::int16_t GrhIndex_, std::uint8_t ObjType_, std::int16_t MaxHit_, std::int16_t MinHit_, std::int16_t MaxDef_, std::int16_t MinDef_, float ObjSalePrice_) : ServerPacket(ServerPacketID_ChangeBankSlot /* 48 */), Slot(Slot_), ObjIndex(ObjIndex_), ObjName(ObjName_), Amount(Amount_), GrhIndex(GrhIndex_), ObjType(ObjType_), MaxHit(MaxHit_), MinHit(MinHit_), MaxDef(MaxDef_), MinDef(MinDef_), ObjSalePrice(ObjSalePrice_) {
 }
 
 void ChangeBankSlot::serialize(clsByteQueue* buffer) const {
@@ -11040,7 +11649,7 @@ void ChangeBankSlot::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleChangeBankSlot(this);
 }
 
-ChangeSpellSlot::ChangeSpellSlot() : ServerPacket(ServerPacketID_ChangeSpellSlot /* 49 */) {
+ChangeSpellSlot::ChangeSpellSlot() : ServerPacket(ServerPacketID_ChangeSpellSlot /* 49 */), Slot(), SpellID(), Name() {
 }
 
 ChangeSpellSlot::ChangeSpellSlot(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ChangeSpellSlot /* 49 */) {
@@ -11049,6 +11658,9 @@ ChangeSpellSlot::ChangeSpellSlot(clsByteQueue* buffer) : ServerPacket(ServerPack
     SpellID = buffer->ReadInteger();
     Name = buffer->ReadUnicodeString();
 
+}
+
+ChangeSpellSlot::ChangeSpellSlot(std::uint8_t Slot_, std::int16_t SpellID_, const std::string& Name_) : ServerPacket(ServerPacketID_ChangeSpellSlot /* 49 */), Slot(Slot_), SpellID(SpellID_), Name(Name_) {
 }
 
 void ChangeSpellSlot::serialize(clsByteQueue* buffer) const {
@@ -11063,7 +11675,7 @@ void ChangeSpellSlot::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleChangeSpellSlot(this);
 }
 
-Atributes::Atributes() : ServerPacket(ServerPacketID_Atributes /* 50 */) {
+Atributes::Atributes() : ServerPacket(ServerPacketID_Atributes /* 50 */), Fuerza(), Agilidad(), Inteligencia(), Carisma(), Constitucion() {
 }
 
 Atributes::Atributes(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Atributes /* 50 */) {
@@ -11074,6 +11686,9 @@ Atributes::Atributes(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Atribut
     Carisma = buffer->ReadByte();
     Constitucion = buffer->ReadByte();
 
+}
+
+Atributes::Atributes(std::uint8_t Fuerza_, std::uint8_t Agilidad_, std::uint8_t Inteligencia_, std::uint8_t Carisma_, std::uint8_t Constitucion_) : ServerPacket(ServerPacketID_Atributes /* 50 */), Fuerza(Fuerza_), Agilidad(Agilidad_), Inteligencia(Inteligencia_), Carisma(Carisma_), Constitucion(Constitucion_) {
 }
 
 void Atributes::serialize(clsByteQueue* buffer) const {
@@ -11240,13 +11855,16 @@ void RestOK::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleRestOK(this);
 }
 
-ErrorMsg::ErrorMsg() : ServerPacket(ServerPacketID_ErrorMsg /* 55 */) {
+ErrorMsg::ErrorMsg() : ServerPacket(ServerPacketID_ErrorMsg /* 55 */), Message() {
 }
 
 ErrorMsg::ErrorMsg(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ErrorMsg /* 55 */) {
     buffer->ReadByte(); /* PacketID */
     Message = buffer->ReadUnicodeString();
 
+}
+
+ErrorMsg::ErrorMsg(const std::string& Message_) : ServerPacket(ServerPacketID_ErrorMsg /* 55 */), Message(Message_) {
 }
 
 void ErrorMsg::serialize(clsByteQueue* buffer) const {
@@ -11293,7 +11911,7 @@ void Dumb::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleDumb(this);
 }
 
-ShowSignal::ShowSignal() : ServerPacket(ServerPacketID_ShowSignal /* 58 */) {
+ShowSignal::ShowSignal() : ServerPacket(ServerPacketID_ShowSignal /* 58 */), Texto(), Grh() {
 }
 
 ShowSignal::ShowSignal(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ShowSignal /* 58 */) {
@@ -11301,6 +11919,9 @@ ShowSignal::ShowSignal(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ShowS
     Texto = buffer->ReadUnicodeString();
     Grh = buffer->ReadInteger();
 
+}
+
+ShowSignal::ShowSignal(const std::string& Texto_, std::int16_t Grh_) : ServerPacket(ServerPacketID_ShowSignal /* 58 */), Texto(Texto_), Grh(Grh_) {
 }
 
 void ShowSignal::serialize(clsByteQueue* buffer) const {
@@ -11314,7 +11935,7 @@ void ShowSignal::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleShowSignal(this);
 }
 
-ChangeNPCInventorySlot::ChangeNPCInventorySlot() : ServerPacket(ServerPacketID_ChangeNPCInventorySlot /* 59 */) {
+ChangeNPCInventorySlot::ChangeNPCInventorySlot() : ServerPacket(ServerPacketID_ChangeNPCInventorySlot /* 59 */), Slot(), ObjName(), Amount(), Price(), GrhIndex(), ObjIndex(), ObjType(), MaxHit(), MinHit(), MaxDef(), MinDef() {
 }
 
 ChangeNPCInventorySlot::ChangeNPCInventorySlot(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ChangeNPCInventorySlot /* 59 */) {
@@ -11331,6 +11952,9 @@ ChangeNPCInventorySlot::ChangeNPCInventorySlot(clsByteQueue* buffer) : ServerPac
     MaxDef = buffer->ReadInteger();
     MinDef = buffer->ReadInteger();
 
+}
+
+ChangeNPCInventorySlot::ChangeNPCInventorySlot(std::uint8_t Slot_, const std::string& ObjName_, std::int16_t Amount_, float Price_, std::int16_t GrhIndex_, std::int16_t ObjIndex_, std::uint8_t ObjType_, std::int16_t MaxHit_, std::int16_t MinHit_, std::int16_t MaxDef_, std::int16_t MinDef_) : ServerPacket(ServerPacketID_ChangeNPCInventorySlot /* 59 */), Slot(Slot_), ObjName(ObjName_), Amount(Amount_), Price(Price_), GrhIndex(GrhIndex_), ObjIndex(ObjIndex_), ObjType(ObjType_), MaxHit(MaxHit_), MinHit(MinHit_), MaxDef(MaxDef_), MinDef(MinDef_) {
 }
 
 void ChangeNPCInventorySlot::serialize(clsByteQueue* buffer) const {
@@ -11353,7 +11977,7 @@ void ChangeNPCInventorySlot::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleChangeNPCInventorySlot(this);
 }
 
-UpdateHungerAndThirst::UpdateHungerAndThirst() : ServerPacket(ServerPacketID_UpdateHungerAndThirst /* 60 */) {
+UpdateHungerAndThirst::UpdateHungerAndThirst() : ServerPacket(ServerPacketID_UpdateHungerAndThirst /* 60 */), MaxAgu(), MinAgu(), MaxHam(), MinHam() {
 }
 
 UpdateHungerAndThirst::UpdateHungerAndThirst(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateHungerAndThirst /* 60 */) {
@@ -11363,6 +11987,9 @@ UpdateHungerAndThirst::UpdateHungerAndThirst(clsByteQueue* buffer) : ServerPacke
     MaxHam = buffer->ReadByte();
     MinHam = buffer->ReadByte();
 
+}
+
+UpdateHungerAndThirst::UpdateHungerAndThirst(std::uint8_t MaxAgu_, std::uint8_t MinAgu_, std::uint8_t MaxHam_, std::uint8_t MinHam_) : ServerPacket(ServerPacketID_UpdateHungerAndThirst /* 60 */), MaxAgu(MaxAgu_), MinAgu(MinAgu_), MaxHam(MaxHam_), MinHam(MinHam_) {
 }
 
 void UpdateHungerAndThirst::serialize(clsByteQueue* buffer) const {
@@ -11378,7 +12005,7 @@ void UpdateHungerAndThirst::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateHungerAndThirst(this);
 }
 
-Fame::Fame() : ServerPacket(ServerPacketID_Fame /* 61 */) {
+Fame::Fame() : ServerPacket(ServerPacketID_Fame /* 61 */), Asesino(), Bandido(), Burgues(), Ladron(), Noble(), Plebe(), Promedio() {
 }
 
 Fame::Fame(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Fame /* 61 */) {
@@ -11391,6 +12018,9 @@ Fame::Fame(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Fame /* 61 */) {
     Plebe = buffer->ReadLong();
     Promedio = buffer->ReadLong();
 
+}
+
+Fame::Fame(std::int32_t Asesino_, std::int32_t Bandido_, std::int32_t Burgues_, std::int32_t Ladron_, std::int32_t Noble_, std::int32_t Plebe_, std::int32_t Promedio_) : ServerPacket(ServerPacketID_Fame /* 61 */), Asesino(Asesino_), Bandido(Bandido_), Burgues(Burgues_), Ladron(Ladron_), Noble(Noble_), Plebe(Plebe_), Promedio(Promedio_) {
 }
 
 void Fame::serialize(clsByteQueue* buffer) const {
@@ -11409,7 +12039,7 @@ void Fame::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleFame(this);
 }
 
-MiniStats::MiniStats() : ServerPacket(ServerPacketID_MiniStats /* 62 */) {
+MiniStats::MiniStats() : ServerPacket(ServerPacketID_MiniStats /* 62 */), CiudadanosMatados(), CriminalesMatados(), UsuariosMatados(), NpcsMuertos(), Clase(), Pena() {
 }
 
 MiniStats::MiniStats(clsByteQueue* buffer) : ServerPacket(ServerPacketID_MiniStats /* 62 */) {
@@ -11421,6 +12051,9 @@ MiniStats::MiniStats(clsByteQueue* buffer) : ServerPacket(ServerPacketID_MiniSta
     Clase = buffer->ReadByte();
     Pena = buffer->ReadLong();
 
+}
+
+MiniStats::MiniStats(std::int32_t CiudadanosMatados_, std::int32_t CriminalesMatados_, std::int32_t UsuariosMatados_, std::int16_t NpcsMuertos_, std::uint8_t Clase_, std::int32_t Pena_) : ServerPacket(ServerPacketID_MiniStats /* 62 */), CiudadanosMatados(CiudadanosMatados_), CriminalesMatados(CriminalesMatados_), UsuariosMatados(UsuariosMatados_), NpcsMuertos(NpcsMuertos_), Clase(Clase_), Pena(Pena_) {
 }
 
 void MiniStats::serialize(clsByteQueue* buffer) const {
@@ -11438,13 +12071,16 @@ void MiniStats::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleMiniStats(this);
 }
 
-LevelUp::LevelUp() : ServerPacket(ServerPacketID_LevelUp /* 63 */) {
+LevelUp::LevelUp() : ServerPacket(ServerPacketID_LevelUp /* 63 */), SkillPoints() {
 }
 
 LevelUp::LevelUp(clsByteQueue* buffer) : ServerPacket(ServerPacketID_LevelUp /* 63 */) {
     buffer->ReadByte(); /* PacketID */
     SkillPoints = buffer->ReadInteger();
 
+}
+
+LevelUp::LevelUp(std::int16_t SkillPoints_) : ServerPacket(ServerPacketID_LevelUp /* 63 */), SkillPoints(SkillPoints_) {
 }
 
 void LevelUp::serialize(clsByteQueue* buffer) const {
@@ -11457,7 +12093,7 @@ void LevelUp::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleLevelUp(this);
 }
 
-AddForumMsg::AddForumMsg() : ServerPacket(ServerPacketID_AddForumMsg /* 64 */) {
+AddForumMsg::AddForumMsg() : ServerPacket(ServerPacketID_AddForumMsg /* 64 */), ForumType(), Title(), Author(), Message() {
 }
 
 AddForumMsg::AddForumMsg(clsByteQueue* buffer) : ServerPacket(ServerPacketID_AddForumMsg /* 64 */) {
@@ -11467,6 +12103,9 @@ AddForumMsg::AddForumMsg(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Add
     Author = buffer->ReadUnicodeString();
     Message = buffer->ReadUnicodeString();
 
+}
+
+AddForumMsg::AddForumMsg(std::int32_t ForumType_, const std::string& Title_, const std::string& Author_, const std::string& Message_) : ServerPacket(ServerPacketID_AddForumMsg /* 64 */), ForumType(ForumType_), Title(Title_), Author(Author_), Message(Message_) {
 }
 
 void AddForumMsg::serialize(clsByteQueue* buffer) const {
@@ -11482,7 +12121,7 @@ void AddForumMsg::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleAddForumMsg(this);
 }
 
-ShowForumForm::ShowForumForm() : ServerPacket(ServerPacketID_ShowForumForm /* 65 */) {
+ShowForumForm::ShowForumForm() : ServerPacket(ServerPacketID_ShowForumForm /* 65 */), Visibilidad(), CanMakeSticky() {
 }
 
 ShowForumForm::ShowForumForm(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ShowForumForm /* 65 */) {
@@ -11490,6 +12129,9 @@ ShowForumForm::ShowForumForm(clsByteQueue* buffer) : ServerPacket(ServerPacketID
     Visibilidad = buffer->ReadByte();
     CanMakeSticky = buffer->ReadByte();
 
+}
+
+ShowForumForm::ShowForumForm(std::uint8_t Visibilidad_, std::uint8_t CanMakeSticky_) : ServerPacket(ServerPacketID_ShowForumForm /* 65 */), Visibilidad(Visibilidad_), CanMakeSticky(CanMakeSticky_) {
 }
 
 void ShowForumForm::serialize(clsByteQueue* buffer) const {
@@ -11503,7 +12145,7 @@ void ShowForumForm::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleShowForumForm(this);
 }
 
-SetInvisible::SetInvisible() : ServerPacket(ServerPacketID_SetInvisible /* 66 */) {
+SetInvisible::SetInvisible() : ServerPacket(ServerPacketID_SetInvisible /* 66 */), charIndex(), invisible() {
 }
 
 SetInvisible::SetInvisible(clsByteQueue* buffer) : ServerPacket(ServerPacketID_SetInvisible /* 66 */) {
@@ -11511,6 +12153,9 @@ SetInvisible::SetInvisible(clsByteQueue* buffer) : ServerPacket(ServerPacketID_S
     charIndex = buffer->ReadInteger();
     invisible = buffer->ReadBoolean();
 
+}
+
+SetInvisible::SetInvisible(std::int16_t charIndex_, bool invisible_) : ServerPacket(ServerPacketID_SetInvisible /* 66 */), charIndex(charIndex_), invisible(invisible_) {
 }
 
 void SetInvisible::serialize(clsByteQueue* buffer) const {
@@ -11524,7 +12169,7 @@ void SetInvisible::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleSetInvisible(this);
 }
 
-DiceRoll::DiceRoll() : ServerPacket(ServerPacketID_DiceRoll /* 67 */) {
+DiceRoll::DiceRoll() : ServerPacket(ServerPacketID_DiceRoll /* 67 */), Fuerza(), Agilidad(), Inteligencia(), Carisma(), Constitucion() {
 }
 
 DiceRoll::DiceRoll(clsByteQueue* buffer) : ServerPacket(ServerPacketID_DiceRoll /* 67 */) {
@@ -11535,6 +12180,9 @@ DiceRoll::DiceRoll(clsByteQueue* buffer) : ServerPacket(ServerPacketID_DiceRoll 
     Carisma = buffer->ReadByte();
     Constitucion = buffer->ReadByte();
 
+}
+
+DiceRoll::DiceRoll(std::uint8_t Fuerza_, std::uint8_t Agilidad_, std::uint8_t Inteligencia_, std::uint8_t Carisma_, std::uint8_t Constitucion_) : ServerPacket(ServerPacketID_DiceRoll /* 67 */), Fuerza(Fuerza_), Agilidad(Agilidad_), Inteligencia(Inteligencia_), Carisma(Carisma_), Constitucion(Constitucion_) {
 }
 
 void DiceRoll::serialize(clsByteQueue* buffer) const {
@@ -11602,13 +12250,16 @@ void DumbNoMore::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleDumbNoMore(this);
 }
 
-SendSkills::SendSkills() : ServerPacket(ServerPacketID_SendSkills /* 71 */) {
+SendSkills::SendSkills() : ServerPacket(ServerPacketID_SendSkills /* 71 */), Skills() {
 }
 
 SendSkills::SendSkills(clsByteQueue* buffer) : ServerPacket(ServerPacketID_SendSkills /* 71 */) {
     buffer->ReadByte(); /* PacketID */
     { int i; Skills.resize(40); for (i=0; i<40; ++i) Skills[i] = buffer->ReadByte(); }
 
+}
+
+SendSkills::SendSkills(std::vector<std::uint8_t> Skills_ ) : ServerPacket(ServerPacketID_SendSkills /* 71 */), Skills(Skills_) {
 }
 
 void SendSkills::serialize(clsByteQueue* buffer) const {
@@ -11621,13 +12272,16 @@ void SendSkills::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleSendSkills(this);
 }
 
-TrainerCreatureList::TrainerCreatureList() : ServerPacket(ServerPacketID_TrainerCreatureList /* 72 */) {
+TrainerCreatureList::TrainerCreatureList() : ServerPacket(ServerPacketID_TrainerCreatureList /* 72 */), Data() {
 }
 
 TrainerCreatureList::TrainerCreatureList(clsByteQueue* buffer) : ServerPacket(ServerPacketID_TrainerCreatureList /* 72 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+TrainerCreatureList::TrainerCreatureList(const std::string& Data_) : ServerPacket(ServerPacketID_TrainerCreatureList /* 72 */), Data(Data_) {
 }
 
 void TrainerCreatureList::serialize(clsByteQueue* buffer) const {
@@ -11640,7 +12294,7 @@ void TrainerCreatureList::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleTrainerCreatureList(this);
 }
 
-GuildNews::GuildNews() : ServerPacket(ServerPacketID_GuildNews /* 73 */) {
+GuildNews::GuildNews() : ServerPacket(ServerPacketID_GuildNews /* 73 */), News(), EnemiesList(), AlliesList() {
 }
 
 GuildNews::GuildNews(clsByteQueue* buffer) : ServerPacket(ServerPacketID_GuildNews /* 73 */) {
@@ -11649,6 +12303,9 @@ GuildNews::GuildNews(clsByteQueue* buffer) : ServerPacket(ServerPacketID_GuildNe
     EnemiesList = buffer->ReadUnicodeString();
     AlliesList = buffer->ReadUnicodeString();
 
+}
+
+GuildNews::GuildNews(const std::string& News_, const std::string& EnemiesList_, const std::string& AlliesList_) : ServerPacket(ServerPacketID_GuildNews /* 73 */), News(News_), EnemiesList(EnemiesList_), AlliesList(AlliesList_) {
 }
 
 void GuildNews::serialize(clsByteQueue* buffer) const {
@@ -11663,13 +12320,16 @@ void GuildNews::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleGuildNews(this);
 }
 
-OfferDetails::OfferDetails() : ServerPacket(ServerPacketID_OfferDetails /* 74 */) {
+OfferDetails::OfferDetails() : ServerPacket(ServerPacketID_OfferDetails /* 74 */), Details() {
 }
 
 OfferDetails::OfferDetails(clsByteQueue* buffer) : ServerPacket(ServerPacketID_OfferDetails /* 74 */) {
     buffer->ReadByte(); /* PacketID */
     Details = buffer->ReadUnicodeString();
 
+}
+
+OfferDetails::OfferDetails(const std::string& Details_) : ServerPacket(ServerPacketID_OfferDetails /* 74 */), Details(Details_) {
 }
 
 void OfferDetails::serialize(clsByteQueue* buffer) const {
@@ -11682,13 +12342,16 @@ void OfferDetails::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleOfferDetails(this);
 }
 
-AlianceProposalsList::AlianceProposalsList() : ServerPacket(ServerPacketID_AlianceProposalsList /* 75 */) {
+AlianceProposalsList::AlianceProposalsList() : ServerPacket(ServerPacketID_AlianceProposalsList /* 75 */), Data() {
 }
 
 AlianceProposalsList::AlianceProposalsList(clsByteQueue* buffer) : ServerPacket(ServerPacketID_AlianceProposalsList /* 75 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+AlianceProposalsList::AlianceProposalsList(const std::string& Data_) : ServerPacket(ServerPacketID_AlianceProposalsList /* 75 */), Data(Data_) {
 }
 
 void AlianceProposalsList::serialize(clsByteQueue* buffer) const {
@@ -11701,13 +12364,16 @@ void AlianceProposalsList::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleAlianceProposalsList(this);
 }
 
-PeaceProposalsList::PeaceProposalsList() : ServerPacket(ServerPacketID_PeaceProposalsList /* 76 */) {
+PeaceProposalsList::PeaceProposalsList() : ServerPacket(ServerPacketID_PeaceProposalsList /* 76 */), Data() {
 }
 
 PeaceProposalsList::PeaceProposalsList(clsByteQueue* buffer) : ServerPacket(ServerPacketID_PeaceProposalsList /* 76 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+PeaceProposalsList::PeaceProposalsList(const std::string& Data_) : ServerPacket(ServerPacketID_PeaceProposalsList /* 76 */), Data(Data_) {
 }
 
 void PeaceProposalsList::serialize(clsByteQueue* buffer) const {
@@ -11720,7 +12386,7 @@ void PeaceProposalsList::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handlePeaceProposalsList(this);
 }
 
-CharacterInfo::CharacterInfo() : ServerPacket(ServerPacketID_CharacterInfo /* 77 */) {
+CharacterInfo::CharacterInfo() : ServerPacket(ServerPacketID_CharacterInfo /* 77 */), CharName(), Race(), Class(), Gender(), Level(), Gold(), Bank(), Reputation(), PreviousPetitions(), CurrentGuild(), PreviousGuilds(), RoyalArmy(), ChaosLegion(), CiudadanosMatados(), CriminalesMatados() {
 }
 
 CharacterInfo::CharacterInfo(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CharacterInfo /* 77 */) {
@@ -11741,6 +12407,9 @@ CharacterInfo::CharacterInfo(clsByteQueue* buffer) : ServerPacket(ServerPacketID
     CiudadanosMatados = buffer->ReadLong();
     CriminalesMatados = buffer->ReadLong();
 
+}
+
+CharacterInfo::CharacterInfo(const std::string& CharName_, std::uint8_t Race_, std::uint8_t Class_, std::uint8_t Gender_, std::uint8_t Level_, std::int32_t Gold_, std::int32_t Bank_, std::int32_t Reputation_, const std::string& PreviousPetitions_, const std::string& CurrentGuild_, const std::string& PreviousGuilds_, bool RoyalArmy_, bool ChaosLegion_, std::int32_t CiudadanosMatados_, std::int32_t CriminalesMatados_) : ServerPacket(ServerPacketID_CharacterInfo /* 77 */), CharName(CharName_), Race(Race_), Class(Class_), Gender(Gender_), Level(Level_), Gold(Gold_), Bank(Bank_), Reputation(Reputation_), PreviousPetitions(PreviousPetitions_), CurrentGuild(CurrentGuild_), PreviousGuilds(PreviousGuilds_), RoyalArmy(RoyalArmy_), ChaosLegion(ChaosLegion_), CiudadanosMatados(CiudadanosMatados_), CriminalesMatados(CriminalesMatados_) {
 }
 
 void CharacterInfo::serialize(clsByteQueue* buffer) const {
@@ -11767,7 +12436,7 @@ void CharacterInfo::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleCharacterInfo(this);
 }
 
-GuildLeaderInfo::GuildLeaderInfo() : ServerPacket(ServerPacketID_GuildLeaderInfo /* 78 */) {
+GuildLeaderInfo::GuildLeaderInfo() : ServerPacket(ServerPacketID_GuildLeaderInfo /* 78 */), GuildList(), MemberList(), GuildNews(), JoinRequests() {
 }
 
 GuildLeaderInfo::GuildLeaderInfo(clsByteQueue* buffer) : ServerPacket(ServerPacketID_GuildLeaderInfo /* 78 */) {
@@ -11777,6 +12446,9 @@ GuildLeaderInfo::GuildLeaderInfo(clsByteQueue* buffer) : ServerPacket(ServerPack
     GuildNews = buffer->ReadUnicodeString();
     JoinRequests = buffer->ReadUnicodeString();
 
+}
+
+GuildLeaderInfo::GuildLeaderInfo(const std::string& GuildList_, const std::string& MemberList_, const std::string& GuildNews_, const std::string& JoinRequests_) : ServerPacket(ServerPacketID_GuildLeaderInfo /* 78 */), GuildList(GuildList_), MemberList(MemberList_), GuildNews(GuildNews_), JoinRequests(JoinRequests_) {
 }
 
 void GuildLeaderInfo::serialize(clsByteQueue* buffer) const {
@@ -11792,7 +12464,7 @@ void GuildLeaderInfo::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleGuildLeaderInfo(this);
 }
 
-GuildMemberInfo::GuildMemberInfo() : ServerPacket(ServerPacketID_GuildMemberInfo /* 79 */) {
+GuildMemberInfo::GuildMemberInfo() : ServerPacket(ServerPacketID_GuildMemberInfo /* 79 */), GuildList(), MemberList() {
 }
 
 GuildMemberInfo::GuildMemberInfo(clsByteQueue* buffer) : ServerPacket(ServerPacketID_GuildMemberInfo /* 79 */) {
@@ -11800,6 +12472,9 @@ GuildMemberInfo::GuildMemberInfo(clsByteQueue* buffer) : ServerPacket(ServerPack
     GuildList = buffer->ReadUnicodeString();
     MemberList = buffer->ReadUnicodeString();
 
+}
+
+GuildMemberInfo::GuildMemberInfo(const std::string& GuildList_, const std::string& MemberList_) : ServerPacket(ServerPacketID_GuildMemberInfo /* 79 */), GuildList(GuildList_), MemberList(MemberList_) {
 }
 
 void GuildMemberInfo::serialize(clsByteQueue* buffer) const {
@@ -11813,7 +12488,7 @@ void GuildMemberInfo::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleGuildMemberInfo(this);
 }
 
-GuildDetails::GuildDetails() : ServerPacket(ServerPacketID_GuildDetails /* 80 */) {
+GuildDetails::GuildDetails() : ServerPacket(ServerPacketID_GuildDetails /* 80 */), GuildName(), Founder(), FoundationDate(), Leader(), URL(), MemberCount(), ElectionsOpen(), Aligment(), EnemiesCount(), AlliesCount(), AntifactionPoints(), Codex(), GuildDesc() {
 }
 
 GuildDetails::GuildDetails(clsByteQueue* buffer) : ServerPacket(ServerPacketID_GuildDetails /* 80 */) {
@@ -11832,6 +12507,9 @@ GuildDetails::GuildDetails(clsByteQueue* buffer) : ServerPacket(ServerPacketID_G
     Codex = buffer->ReadUnicodeString();
     GuildDesc = buffer->ReadUnicodeString();
 
+}
+
+GuildDetails::GuildDetails(const std::string& GuildName_, const std::string& Founder_, const std::string& FoundationDate_, const std::string& Leader_, const std::string& URL_, std::int16_t MemberCount_, bool ElectionsOpen_, const std::string& Aligment_, std::int16_t EnemiesCount_, std::int16_t AlliesCount_, const std::string& AntifactionPoints_, const std::string& Codex_, const std::string& GuildDesc_) : ServerPacket(ServerPacketID_GuildDetails /* 80 */), GuildName(GuildName_), Founder(Founder_), FoundationDate(FoundationDate_), Leader(Leader_), URL(URL_), MemberCount(MemberCount_), ElectionsOpen(ElectionsOpen_), Aligment(Aligment_), EnemiesCount(EnemiesCount_), AlliesCount(AlliesCount_), AntifactionPoints(AntifactionPoints_), Codex(Codex_), GuildDesc(GuildDesc_) {
 }
 
 void GuildDetails::serialize(clsByteQueue* buffer) const {
@@ -11890,13 +12568,16 @@ void ParalizeOK::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleParalizeOK(this);
 }
 
-ShowUserRequest::ShowUserRequest() : ServerPacket(ServerPacketID_ShowUserRequest /* 83 */) {
+ShowUserRequest::ShowUserRequest() : ServerPacket(ServerPacketID_ShowUserRequest /* 83 */), Details() {
 }
 
 ShowUserRequest::ShowUserRequest(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ShowUserRequest /* 83 */) {
     buffer->ReadByte(); /* PacketID */
     Details = buffer->ReadUnicodeString();
 
+}
+
+ShowUserRequest::ShowUserRequest(const std::string& Details_) : ServerPacket(ServerPacketID_ShowUserRequest /* 83 */), Details(Details_) {
 }
 
 void ShowUserRequest::serialize(clsByteQueue* buffer) const {
@@ -11943,7 +12624,7 @@ void BankOK::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleBankOK(this);
 }
 
-ChangeUserTradeSlot::ChangeUserTradeSlot() : ServerPacket(ServerPacketID_ChangeUserTradeSlot /* 86 */) {
+ChangeUserTradeSlot::ChangeUserTradeSlot() : ServerPacket(ServerPacketID_ChangeUserTradeSlot /* 86 */), OfferSlot(), ObjIndex(), Amount(), GrhIndex(), ObjType(), MaxHit(), MinHit(), MaxDef(), MinDef(), Price(), ObjName() {
 }
 
 ChangeUserTradeSlot::ChangeUserTradeSlot(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ChangeUserTradeSlot /* 86 */) {
@@ -11960,6 +12641,9 @@ ChangeUserTradeSlot::ChangeUserTradeSlot(clsByteQueue* buffer) : ServerPacket(Se
     Price = buffer->ReadLong();
     ObjName = buffer->ReadUnicodeString();
 
+}
+
+ChangeUserTradeSlot::ChangeUserTradeSlot(std::uint8_t OfferSlot_, std::int16_t ObjIndex_, std::int32_t Amount_, std::int16_t GrhIndex_, std::uint8_t ObjType_, std::int16_t MaxHit_, std::int16_t MinHit_, std::int16_t MaxDef_, std::int16_t MinDef_, std::int32_t Price_, const std::string& ObjName_) : ServerPacket(ServerPacketID_ChangeUserTradeSlot /* 86 */), OfferSlot(OfferSlot_), ObjIndex(ObjIndex_), Amount(Amount_), GrhIndex(GrhIndex_), ObjType(ObjType_), MaxHit(MaxHit_), MinHit(MinHit_), MaxDef(MaxDef_), MinDef(MinDef_), Price(Price_), ObjName(ObjName_) {
 }
 
 void ChangeUserTradeSlot::serialize(clsByteQueue* buffer) const {
@@ -11982,13 +12666,16 @@ void ChangeUserTradeSlot::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleChangeUserTradeSlot(this);
 }
 
-SendNight::SendNight() : ServerPacket(ServerPacketID_SendNight /* 87 */) {
+SendNight::SendNight() : ServerPacket(ServerPacketID_SendNight /* 87 */), Night() {
 }
 
 SendNight::SendNight(clsByteQueue* buffer) : ServerPacket(ServerPacketID_SendNight /* 87 */) {
     buffer->ReadByte(); /* PacketID */
     Night = buffer->ReadBoolean();
 
+}
+
+SendNight::SendNight(bool Night_) : ServerPacket(ServerPacketID_SendNight /* 87 */), Night(Night_) {
 }
 
 void SendNight::serialize(clsByteQueue* buffer) const {
@@ -12018,7 +12705,7 @@ void Pong::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handlePong(this);
 }
 
-UpdateTagAndStatus::UpdateTagAndStatus() : ServerPacket(ServerPacketID_UpdateTagAndStatus /* 89 */) {
+UpdateTagAndStatus::UpdateTagAndStatus() : ServerPacket(ServerPacketID_UpdateTagAndStatus /* 89 */), CharIndex(), NickColor(), Tag() {
 }
 
 UpdateTagAndStatus::UpdateTagAndStatus(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateTagAndStatus /* 89 */) {
@@ -12027,6 +12714,9 @@ UpdateTagAndStatus::UpdateTagAndStatus(clsByteQueue* buffer) : ServerPacket(Serv
     NickColor = buffer->ReadByte();
     Tag = buffer->ReadUnicodeString();
 
+}
+
+UpdateTagAndStatus::UpdateTagAndStatus(std::int16_t CharIndex_, std::uint8_t NickColor_, const std::string& Tag_) : ServerPacket(ServerPacketID_UpdateTagAndStatus /* 89 */), CharIndex(CharIndex_), NickColor(NickColor_), Tag(Tag_) {
 }
 
 void UpdateTagAndStatus::serialize(clsByteQueue* buffer) const {
@@ -12041,13 +12731,16 @@ void UpdateTagAndStatus::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateTagAndStatus(this);
 }
 
-SpawnList::SpawnList() : ServerPacket(ServerPacketID_SpawnList /* 90 */) {
+SpawnList::SpawnList() : ServerPacket(ServerPacketID_SpawnList /* 90 */), Data() {
 }
 
 SpawnList::SpawnList(clsByteQueue* buffer) : ServerPacket(ServerPacketID_SpawnList /* 90 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+SpawnList::SpawnList(const std::string& Data_) : ServerPacket(ServerPacketID_SpawnList /* 90 */), Data(Data_) {
 }
 
 void SpawnList::serialize(clsByteQueue* buffer) const {
@@ -12060,13 +12753,16 @@ void SpawnList::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleSpawnList(this);
 }
 
-ShowSOSForm::ShowSOSForm() : ServerPacket(ServerPacketID_ShowSOSForm /* 91 */) {
+ShowSOSForm::ShowSOSForm() : ServerPacket(ServerPacketID_ShowSOSForm /* 91 */), Data() {
 }
 
 ShowSOSForm::ShowSOSForm(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ShowSOSForm /* 91 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+ShowSOSForm::ShowSOSForm(const std::string& Data_) : ServerPacket(ServerPacketID_ShowSOSForm /* 91 */), Data(Data_) {
 }
 
 void ShowSOSForm::serialize(clsByteQueue* buffer) const {
@@ -12079,13 +12775,16 @@ void ShowSOSForm::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleShowSOSForm(this);
 }
 
-ShowMOTDEditionForm::ShowMOTDEditionForm() : ServerPacket(ServerPacketID_ShowMOTDEditionForm /* 92 */) {
+ShowMOTDEditionForm::ShowMOTDEditionForm() : ServerPacket(ServerPacketID_ShowMOTDEditionForm /* 92 */), Data() {
 }
 
 ShowMOTDEditionForm::ShowMOTDEditionForm(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ShowMOTDEditionForm /* 92 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+ShowMOTDEditionForm::ShowMOTDEditionForm(const std::string& Data_) : ServerPacket(ServerPacketID_ShowMOTDEditionForm /* 92 */), Data(Data_) {
 }
 
 void ShowMOTDEditionForm::serialize(clsByteQueue* buffer) const {
@@ -12115,13 +12814,16 @@ void ShowGMPanelForm::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleShowGMPanelForm(this);
 }
 
-UserNameList::UserNameList() : ServerPacket(ServerPacketID_UserNameList /* 94 */) {
+UserNameList::UserNameList() : ServerPacket(ServerPacketID_UserNameList /* 94 */), Data() {
 }
 
 UserNameList::UserNameList(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UserNameList /* 94 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+UserNameList::UserNameList(const std::string& Data_) : ServerPacket(ServerPacketID_UserNameList /* 94 */), Data(Data_) {
 }
 
 void UserNameList::serialize(clsByteQueue* buffer) const {
@@ -12134,13 +12836,16 @@ void UserNameList::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUserNameList(this);
 }
 
-ShowDenounces::ShowDenounces() : ServerPacket(ServerPacketID_ShowDenounces /* 95 */) {
+ShowDenounces::ShowDenounces() : ServerPacket(ServerPacketID_ShowDenounces /* 95 */), Data() {
 }
 
 ShowDenounces::ShowDenounces(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ShowDenounces /* 95 */) {
     buffer->ReadByte(); /* PacketID */
     Data = buffer->ReadUnicodeString();
 
+}
+
+ShowDenounces::ShowDenounces(const std::string& Data_) : ServerPacket(ServerPacketID_ShowDenounces /* 95 */), Data(Data_) {
 }
 
 void ShowDenounces::serialize(clsByteQueue* buffer) const {
@@ -12186,7 +12891,7 @@ void RecordList::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleRecordList(this);
 }
 
-RecordDetails::RecordDetails() : ServerPacket(ServerPacketID_RecordDetails /* 97 */) {
+RecordDetails::RecordDetails() : ServerPacket(ServerPacketID_RecordDetails /* 97 */), Creador(), Motivo(), Online(), IP(), OnlineTime(), Obs() {
 }
 
 RecordDetails::RecordDetails(clsByteQueue* buffer) : ServerPacket(ServerPacketID_RecordDetails /* 97 */) {
@@ -12198,6 +12903,9 @@ RecordDetails::RecordDetails(clsByteQueue* buffer) : ServerPacket(ServerPacketID
     OnlineTime = buffer->ReadUnicodeString();
     Obs = buffer->ReadUnicodeString();
 
+}
+
+RecordDetails::RecordDetails(const std::string& Creador_, const std::string& Motivo_, bool Online_, const std::string& IP_, const std::string& OnlineTime_, const std::string& Obs_) : ServerPacket(ServerPacketID_RecordDetails /* 97 */), Creador(Creador_), Motivo(Motivo_), Online(Online_), IP(IP_), OnlineTime(OnlineTime_), Obs(Obs_) {
 }
 
 void RecordDetails::serialize(clsByteQueue* buffer) const {
@@ -12232,7 +12940,7 @@ void ShowGuildAlign::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleShowGuildAlign(this);
 }
 
-ShowPartyForm::ShowPartyForm() : ServerPacket(ServerPacketID_ShowPartyForm /* 99 */) {
+ShowPartyForm::ShowPartyForm() : ServerPacket(ServerPacketID_ShowPartyForm /* 99 */), EsLider(), Data(), Exp() {
 }
 
 ShowPartyForm::ShowPartyForm(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ShowPartyForm /* 99 */) {
@@ -12241,6 +12949,9 @@ ShowPartyForm::ShowPartyForm(clsByteQueue* buffer) : ServerPacket(ServerPacketID
     Data = buffer->ReadUnicodeString();
     Exp = buffer->ReadLong();
 
+}
+
+ShowPartyForm::ShowPartyForm(std::uint8_t EsLider_, const std::string& Data_, std::int32_t Exp_) : ServerPacket(ServerPacketID_ShowPartyForm /* 99 */), EsLider(EsLider_), Data(Data_), Exp(Exp_) {
 }
 
 void ShowPartyForm::serialize(clsByteQueue* buffer) const {
@@ -12255,7 +12966,7 @@ void ShowPartyForm::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleShowPartyForm(this);
 }
 
-UpdateStrenghtAndDexterity::UpdateStrenghtAndDexterity() : ServerPacket(ServerPacketID_UpdateStrenghtAndDexterity /* 100 */) {
+UpdateStrenghtAndDexterity::UpdateStrenghtAndDexterity() : ServerPacket(ServerPacketID_UpdateStrenghtAndDexterity /* 100 */), Fuerza(), Agilidad() {
 }
 
 UpdateStrenghtAndDexterity::UpdateStrenghtAndDexterity(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateStrenghtAndDexterity /* 100 */) {
@@ -12263,6 +12974,9 @@ UpdateStrenghtAndDexterity::UpdateStrenghtAndDexterity(clsByteQueue* buffer) : S
     Fuerza = buffer->ReadByte();
     Agilidad = buffer->ReadByte();
 
+}
+
+UpdateStrenghtAndDexterity::UpdateStrenghtAndDexterity(std::uint8_t Fuerza_, std::uint8_t Agilidad_) : ServerPacket(ServerPacketID_UpdateStrenghtAndDexterity /* 100 */), Fuerza(Fuerza_), Agilidad(Agilidad_) {
 }
 
 void UpdateStrenghtAndDexterity::serialize(clsByteQueue* buffer) const {
@@ -12276,13 +12990,16 @@ void UpdateStrenghtAndDexterity::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateStrenghtAndDexterity(this);
 }
 
-UpdateStrenght::UpdateStrenght() : ServerPacket(ServerPacketID_UpdateStrenght /* 101 */) {
+UpdateStrenght::UpdateStrenght() : ServerPacket(ServerPacketID_UpdateStrenght /* 101 */), Fuerza() {
 }
 
 UpdateStrenght::UpdateStrenght(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateStrenght /* 101 */) {
     buffer->ReadByte(); /* PacketID */
     Fuerza = buffer->ReadByte();
 
+}
+
+UpdateStrenght::UpdateStrenght(std::uint8_t Fuerza_) : ServerPacket(ServerPacketID_UpdateStrenght /* 101 */), Fuerza(Fuerza_) {
 }
 
 void UpdateStrenght::serialize(clsByteQueue* buffer) const {
@@ -12295,13 +13012,16 @@ void UpdateStrenght::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateStrenght(this);
 }
 
-UpdateDexterity::UpdateDexterity() : ServerPacket(ServerPacketID_UpdateDexterity /* 102 */) {
+UpdateDexterity::UpdateDexterity() : ServerPacket(ServerPacketID_UpdateDexterity /* 102 */), Agilidad() {
 }
 
 UpdateDexterity::UpdateDexterity(clsByteQueue* buffer) : ServerPacket(ServerPacketID_UpdateDexterity /* 102 */) {
     buffer->ReadByte(); /* PacketID */
     Agilidad = buffer->ReadByte();
 
+}
+
+UpdateDexterity::UpdateDexterity(std::uint8_t Agilidad_) : ServerPacket(ServerPacketID_UpdateDexterity /* 102 */), Agilidad(Agilidad_) {
 }
 
 void UpdateDexterity::serialize(clsByteQueue* buffer) const {
@@ -12314,13 +13034,16 @@ void UpdateDexterity::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleUpdateDexterity(this);
 }
 
-AddSlots::AddSlots() : ServerPacket(ServerPacketID_AddSlots /* 103 */) {
+AddSlots::AddSlots() : ServerPacket(ServerPacketID_AddSlots /* 103 */), Mochila() {
 }
 
 AddSlots::AddSlots(clsByteQueue* buffer) : ServerPacket(ServerPacketID_AddSlots /* 103 */) {
     buffer->ReadByte(); /* PacketID */
     Mochila = buffer->ReadByte();
 
+}
+
+AddSlots::AddSlots(std::uint8_t Mochila_) : ServerPacket(ServerPacketID_AddSlots /* 103 */), Mochila(Mochila_) {
 }
 
 void AddSlots::serialize(clsByteQueue* buffer) const {
@@ -12367,13 +13090,16 @@ void StopWorking::dispatch(PacketHandler* d) {
     d->getPacketHandlerServerPacket()->handleStopWorking(this);
 }
 
-CancelOfferItem::CancelOfferItem() : ServerPacket(ServerPacketID_CancelOfferItem /* 106 */) {
+CancelOfferItem::CancelOfferItem() : ServerPacket(ServerPacketID_CancelOfferItem /* 106 */), Slot() {
 }
 
 CancelOfferItem::CancelOfferItem(clsByteQueue* buffer) : ServerPacket(ServerPacketID_CancelOfferItem /* 106 */) {
     buffer->ReadByte(); /* PacketID */
     Slot = buffer->ReadByte();
 
+}
+
+CancelOfferItem::CancelOfferItem(std::uint8_t Slot_) : ServerPacket(ServerPacketID_CancelOfferItem /* 106 */), Slot(Slot_) {
 }
 
 void CancelOfferItem::serialize(clsByteQueue* buffer) const {
