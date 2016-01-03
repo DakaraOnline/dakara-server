@@ -38,7 +38,7 @@ build_script:
   - cd build
   - cmake --version
   - cmake -G "Visual Studio 14 2015 Win64" ..
-  - cmake --build .
+  - cmake --build . --config Release
 
 build:
   parallel: true

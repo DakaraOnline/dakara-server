@@ -391,10 +391,12 @@ static void ssle_do_accept(evutil_socket_t listener, short event, void *arg) {
 static void ssle_readcb(struct bufferevent *bev, void *ctx) {
 	SocketLibEvent* s = reinterpret_cast<SocketLibEvent*>(ctx);
 	struct evbuffer *input = bufferevent_get_input(bev);
-
 	SocketEvents* sev = s->sl_->sev;
 
-	if (sev) {
+	if (s->closing_) {
+		auto n = evbuffer_get_length(input);
+		evbuffer_drain(input, n);
+	} else if (sev) {
 		const int num_of_vecs = 16;
 		evbuffer_iovec v[num_of_vecs];
 		while (evbuffer_get_length(input)) {

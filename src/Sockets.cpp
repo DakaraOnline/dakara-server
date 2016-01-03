@@ -213,7 +213,7 @@ void IniciaWsApi() {
 
 	DakaraSocketServer->addListener("0.0.0.0", Puerto, &sev);
 
-#if 0
+#if 1
 	DakaraSocketServer->addListener("127.0.0.1", Puerto + 1, &echosev);
 #endif
 }
