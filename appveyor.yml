@@ -16,6 +16,7 @@ environment:
     BUILD_TYPE: Release
     CMAKE_INCLUDE_PATH: C:/projects/dakara-server/deps/libevent_vc120/build/native/include
     CMAKE_LIBRARY_PATH: C:/projects/dakara-server/deps/libevent_vc120/build/native/bin
+    LIBEVENT_DLL_PATH: C:/projects/dakara-server/deps/libevent_vc120/build/native/bin
     DAKARA_ARTIFACT: dakara-server-%APPVEYOR_REPO_BRANCH%-%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_JOB_ID%.zip
 
 init:
@@ -45,6 +46,13 @@ build:
   verbosity: detailed
 
 after_build:
+#  - cp %LIBEVENT_DLL_PATH%/libevent-x64-v120-mt-2_1_4_0.dll %APPVEYOR_BUILD_FOLDER%/build/Release/
+  - cp %LIBEVENT_DLL_PATH%/libevent-x64-v120-mt-2_1_4_0.dll %APPVEYOR_BUILD_FOLDER%/build/Release/libevent.dll
+  - cp %BOOST_LIBRARYDIR%/boost_date_time-vc140-mt-1_59.dll %APPVEYOR_BUILD_FOLDER%/build/Release/
+  - cp %BOOST_LIBRARYDIR%/boost_filesystem-vc140-mt-1_59.dll %APPVEYOR_BUILD_FOLDER%/build/Release/
+  - cp %BOOST_LIBRARYDIR%/boost_system-vc140-mt-1_59.dll %APPVEYOR_BUILD_FOLDER%/build/Release/
+  - cp %BOOST_LIBRARYDIR%/boost_locale-vc140-mt-1_59.dll %APPVEYOR_BUILD_FOLDER%/build/Release/
+  - cp %BOOST_LIBRARYDIR%/boost_thread-vc140-mt-1_59.dll %APPVEYOR_BUILD_FOLDER%/build/Release/
   - 7z a -mx=9 -xr!.git -xr!dakaraserver.dir -xr!*.ilk -xr!*.pdb -xr!*.nupkg -xr!deps %DAKARA_ARTIFACT% %APPVEYOR_BUILD_FOLDER%
   - appveyor PushArtifact %DAKARA_ARTIFACT%
 
