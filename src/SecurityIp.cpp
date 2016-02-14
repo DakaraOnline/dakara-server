@@ -67,7 +67,7 @@ void IpRestarConexion(std::string ip) {
 	auto it = IpSecurityTable.find(ip);
 
 	if (it == IpSecurityTable.end()) {
-		std::string ss = "IpRestarConexion: it == IpSecurityTable.end(); ip=" + ip;
+		std::string ss = "IpRestarConexion: it == IpSecurityTable.end(); ip='" + ip + "'";
 		throw std::runtime_error(ss);
 	} else {
 		it->second -= 1;

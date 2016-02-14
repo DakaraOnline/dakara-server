@@ -69,6 +69,7 @@
 #include <vector>
 #include <deque>
 
+#define MAX_OUTPUT_BUFFER_SIZE (86000)
 
 namespace dakara {
 
@@ -288,15 +289,15 @@ void SocketLibEvent::write(const char* data, size_t data_len) {
 	auto output = bufferevent_get_output(bev_);
 	auto retval = evbuffer_add(output, data, data_len);
 
-	/*
-	if (evbuffer_get_length(output) > MAX_OUTPUT_BUFFER_SIZE) {
-        LogApiSock("WsApiEnviar MAX_OUTPUT_BUFFER_SIZE UserIndex=" + vb6::CStr(sctx->UserIndex()));
-		std::cerr << "WsApiEnviar MAX_OUTPUT_BUFFER_SIZE" << std::endl;
-		return 1;
-	}*/
-
 	if (retval != 0) {
 		onSocketClose(true);
+		return;
+	}
+
+	if (evbuffer_get_length(output) > MAX_OUTPUT_BUFFER_SIZE) {
+        LogApiSock("WsApiEnviar MAX_OUTPUT_BUFFER_SIZE UserIndex=" + vb6::CStr(sctx->UserIndex()));
+        onSocketClose(true);
+		return;
 	}
 }
 

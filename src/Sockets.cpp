@@ -144,6 +144,7 @@ void DakaraSocketEvents::onSocketNew(dakara::Socket* s) {
 		UserList[UserIndex].ConnIDValida = true;
 		UserList[UserIndex].ConnIgnoreIncomingData = false;
 		UserList[UserIndex].IncomingDataAvailable = false;
+		UserList[UserIndex].ip = ip;
 
 	} catch (std::exception& ex) {
 		s->close(true);
@@ -294,7 +295,7 @@ bool UserIndexSocketValido(int UserIndex) {
 void DakaraBeginCloseSocket(dakara::Socket* s) {
 	int UserIndex = s->userData;
 
-    if (UserIndex > 0) {
+    if (UserIndex > 0 && UserList[UserIndex].ConnIDValida) {
 	    IpRestarConexion (UserList[UserIndex].ip);
 
 		UserList[UserIndex].ConnID = -1;
