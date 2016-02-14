@@ -295,7 +295,7 @@ void SocketLibEvent::write(const char* data, size_t data_len) {
 	}
 
 	if (evbuffer_get_length(output) > MAX_OUTPUT_BUFFER_SIZE) {
-        LogApiSock("WsApiEnviar MAX_OUTPUT_BUFFER_SIZE UserIndex=" + vb6::CStr(sctx->UserIndex()));
+        LogApiSock("WsApiEnviar MAX_OUTPUT_BUFFER_SIZE");
         onSocketClose(true);
 		return;
 	}
