@@ -34,7 +34,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
@@ -44,6 +44,7 @@
 #define S_ISDIR(x) (((x) & S_IFMT) == S_IFDIR)
 #endif
 #else
+#include <arpa/inet.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <signal.h>
@@ -462,7 +463,9 @@ void SocketServerLibEvent::doAccept(evutil_socket_t listener, short event, Socke
 	SocketLibEvent* s = reinterpret_cast<SocketLibEvent*>( sockets[idx].get() );
 
 	struct sockaddr_in *sin = (struct sockaddr_in *)&ss;
-	s->ip_ = (inet_ntoa(sin->sin_addr));
+	char tmpipaddr[INET_ADDRSTRLEN];
+	//s->ip_ = (inet_ntoa(sin->sin_addr));
+	s->ip_ = inet_ntop(AF_INET, &(sin->sin_addr), tmpipaddr, INET_ADDRSTRLEN);
 
 	struct bufferevent *bev;
 	void *cbarg = reinterpret_cast<void*>( s );
@@ -482,7 +485,8 @@ void SocketServerLibEvent::doAccept(evutil_socket_t listener, short event, Socke
 void SocketServerLibEvent::addListener(std::string addr, int port, SocketEvents* sev) {
 
 	sockin.sin_family = AF_INET;
-	sockin.sin_addr.s_addr = inet_addr(addr.c_str());
+	//sockin.sin_addr.s_addr = inet_addr(addr.c_str());
+	inet_pton(AF_INET, addr.c_str(), &(sockin.sin_addr));
 	sockin.sin_port = htons(port);
 
 	listeners.push_back(std::unique_ptr<SocketListenerLibEvent>( new SocketListenerLibEvent() ));

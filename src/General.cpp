@@ -25,7 +25,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <unistd.h>
 #include <execinfo.h>
 #endif
@@ -34,7 +34,7 @@
 std::shared_ptr<clsIniManager> LeerNPCs;
 
 void dakara_print_backtrace() {
-#ifndef WIN32
+#ifndef _WIN32
 	void *trace_elems[20];
 	int trace_elem_count(backtrace(trace_elems, 20));
 	char **stack_syms(backtrace_symbols(trace_elems, trace_elem_count));

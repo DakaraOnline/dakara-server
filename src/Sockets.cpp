@@ -207,7 +207,7 @@ void IniciaWsApi() {
 
 	DakaraSocketServer = dakara::BuildSocketServer("libevent");
 
-#ifndef WIN32
+#ifndef _WIN32
 	DakaraSocketServer->addSignalHandler(SIGINT, break_signal_handler, 0);
 	DakaraSocketServer->addSignalHandler(SIGPIPE, signal_handler, 0);
 #endif

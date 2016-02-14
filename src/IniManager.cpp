@@ -15,13 +15,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS 1
+#endif
+
 #include "IniManager.h"
 #include "allheaders.h"
 
 #include <fstream>
 #include <boost/algorithm/string.hpp>
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <unistd.h>
 #endif
 
@@ -136,7 +140,7 @@ void clsIniManager::DumpFile(std::string File, bool sync_fs) {
 
 	if (fd) {
 		if (sync_fs) {
-#ifndef WIN32
+#ifndef _WIN32
 			int n = fileno(fd);
 			fsync(n);
 #endif

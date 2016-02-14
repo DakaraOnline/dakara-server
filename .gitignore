@@ -9,4 +9,5 @@ build
 *.pyc
 server-resources
 *.swp
+vc2015
 
