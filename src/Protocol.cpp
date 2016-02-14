@@ -2363,8 +2363,10 @@ void WritePong(int UserIndex) {
 void FlushBuffer(int UserIndex) {
 	if (UserList[UserIndex].sockctx) {
 		FlushBuffer(UserList[UserIndex].sockctx);
+		/*
 	} else {
 		throw std::runtime_error("integrity error: UserList[UserIndex].sockctx == nullptr UserIndex=" + vb6::CStr(UserIndex));
+		*/
 	}
 }
 
