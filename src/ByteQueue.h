@@ -218,8 +218,15 @@ private:
 	inline T PeekRaw() {
 		if (readPos + sizeof(T) > data.size())
 			throw insufficient_data_error();
+#if defined(BOOST_ARCH_X86) | defined(BOOST_ARCH_X86_64)
 		T* p = reinterpret_cast<T*>(data.data() + readPos);
 		return *p;
+#else
+		/* SIGBUS on ARM: for reading unaligned data should use memcpy() */
+		T p;
+		memcpy(&p, data.data() + readPos, sizeof(T));
+		return p;
+#endif
 	}
 
 };

@@ -45,7 +45,7 @@ void clsByteBuffer::initializeWriter() {
 //}
 
 int clsByteBuffer::getByte() {
-	int r = *static_cast<std::int8_t*>(data.data() + position);
+	int r = *reinterpret_cast<std::uint8_t*>(data.data() + position);
 	position += BYTE_SIZE;
 	return r;
 }
@@ -55,25 +55,45 @@ int clsByteBuffer::getByte() {
 //}
 
 int clsByteBuffer::getInteger() {
+#if defined(BOOST_ARCH_X86) | defined(BOOST_ARCH_X86_64)
 	int r = *reinterpret_cast<std::int16_t*>(data.data() + position);
+#else
+	std::int16_t r;
+	memcpy(&r, data.data() + position, INTEGER_SIZE);
+#endif
 	position += INTEGER_SIZE;
 	return r;
 }
 
 int clsByteBuffer::getLong() {
+#if defined(BOOST_ARCH_X86) | defined(BOOST_ARCH_X86_64)
 	int r = *reinterpret_cast<std::int32_t*>(data.data() + position);
+#else
+	std::int32_t r;
+	memcpy(&r, data.data() + position, LONG_SIZE);
+#endif
 	position += LONG_SIZE;
 	return r;
 }
 
 float clsByteBuffer::getSingle() {
+#if defined(BOOST_ARCH_X86) | defined(BOOST_ARCH_X86_64)
 	float r = *reinterpret_cast<float*>(data.data() + position);
+#else
+	float r;
+	memcpy(&r, data.data() + position, SINGLE_SIZE);
+#endif
 	position += SINGLE_SIZE;
 	return r;
 }
 
 double clsByteBuffer::getDouble() {
+#if defined(BOOST_ARCH_X86) | defined(BOOST_ARCH_X86_64)
 	double r = *reinterpret_cast<double*>(data.data() + position);
+#else
+	double r;
+	memcpy(&r, data.data() + position, DOUBLE_SIZE);
+#endif
 	position += DOUBLE_SIZE;
 	return r;
 }
@@ -94,7 +114,7 @@ std::string clsByteBuffer::getString(int length) {
 }
 
 void clsByteBuffer::putByte(int value) {
-	data.push_back(static_cast<std::int8_t>(value & 0xff));
+	data.push_back(static_cast<std::uint8_t>(value & 0xff));
 }
 
 //void clsByteBuffer::putBoolean(bool value) {
@@ -104,26 +124,46 @@ void clsByteBuffer::putByte(int value) {
 
 void clsByteBuffer::putInteger(int value) {
 	data.resize(data.size() + INTEGER_SIZE);
-	std::uint16_t* p = reinterpret_cast<std::uint16_t*>(data.data() + data.size() - INTEGER_SIZE);
+#if defined(BOOST_ARCH_X86) | defined(BOOST_ARCH_X86_64)
+	std::int16_t* p = reinterpret_cast<std::int16_t*>(data.data() + data.size() - INTEGER_SIZE);
 	*p = value & 0xffff;
+#else
+	std::int16_t p = value & 0xffff;
+	memcpy(data.data() + data.size() - INTEGER_SIZE, &p, INTEGER_SIZE);
+#endif
 }
 
 void clsByteBuffer::putLong(int value) {
 	data.resize(data.size() + LONG_SIZE);
-	std::uint32_t* p = reinterpret_cast<std::uint32_t*>(data.data() + data.size() - LONG_SIZE);
+#if defined(BOOST_ARCH_X86) | defined(BOOST_ARCH_X86_64)
+	std::int32_t* p = reinterpret_cast<std::int32_t*>(data.data() + data.size() - LONG_SIZE);
 	*p = value;
+#else
+	std::int32_t p = value;
+	memcpy(data.data() + data.size() - LONG_SIZE, &p, LONG_SIZE);
+#endif
 }
 
 void clsByteBuffer::putSingle(float value) {
 	data.resize(data.size() + SINGLE_SIZE);
+#if defined(BOOST_ARCH_X86) | defined(BOOST_ARCH_X86_64)
 	float* p = reinterpret_cast<float*>(data.data() + data.size() - SINGLE_SIZE);
 	*p = value;
+#else
+	float p = value;
+	memcpy(data.data() + data.size() - SINGLE_SIZE, &p, SINGLE_SIZE);
+#endif
 }
 
 void clsByteBuffer::putDouble(double value) {
 	data.resize(data.size() + DOUBLE_SIZE);
+#if defined(BOOST_ARCH_X86) | defined(BOOST_ARCH_X86_64)
 	double* p = reinterpret_cast<double*>(data.data() + data.size() - DOUBLE_SIZE);
 	*p = value;
+#else
+	double p = value;
+	memcpy(data.data() + data.size() - DOUBLE_SIZE, &p, DOUBLE_SIZE);
+#endif
 }
 
 void clsByteBuffer::putString(const std::string & str, bool withLength) {
