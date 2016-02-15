@@ -5589,7 +5589,7 @@ public:
     virtual void dispatch(PacketHandler* d);
 
     std::string Chat; 
-    std::int16_t FontIndex; 
+    std::int8_t FontIndex; 
 };
 
 inline ConsoleMsg BuildConsoleMsg(const std::string& Chat, std::int16_t FontIndex) {

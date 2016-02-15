@@ -10983,7 +10983,7 @@ ConsoleMsg::ConsoleMsg() : ServerPacket(ServerPacketID_ConsoleMsg /* 24 */), Cha
 ConsoleMsg::ConsoleMsg(clsByteQueue* buffer) : ServerPacket(ServerPacketID_ConsoleMsg /* 24 */) {
     buffer->ReadByte(); /* PacketID */
     Chat = buffer->ReadUnicodeString();
-    FontIndex = buffer->ReadInteger();
+    FontIndex = buffer->ReadByte();
 
 }
 
@@ -10993,7 +10993,7 @@ ConsoleMsg::ConsoleMsg(const std::string& Chat_, std::int16_t FontIndex_) : Serv
 void ConsoleMsg::serialize(clsByteQueue* buffer) const {
     buffer->WriteByte(ServerPacketID_ConsoleMsg); /* PacketID: 24 */
     buffer->WriteUnicodeString(Chat);
-    buffer->WriteInteger(FontIndex);
+    buffer->WriteByte(FontIndex);
 
 }
 
