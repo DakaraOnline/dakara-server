@@ -314,7 +314,7 @@ size_t SocketLibEvent::getOutputLength() {
 void SocketLibEvent::closeReal() {
 	if (bev_) {
 		/* FIXME: Gracefully shutdown(fd, SHUT_WR) the socket, unless forced or destroyed. */
-		evutil_closesocket(fd_);
+		/* evutil_closesocket(fd_); */
 		bufferevent_free(bev_);
 		bev_ = nullptr;
 	}
@@ -470,7 +470,7 @@ void SocketServerLibEvent::doAccept(evutil_socket_t listener, short event, Socke
 	struct bufferevent *bev;
 	void *cbarg = reinterpret_cast<void*>( s );
 
-	bev = bufferevent_socket_new(base, fd, 0); /* BEV_OPT_CLOSE_ON_FREE */
+	bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE); /*  */
 	bufferevent_setcb(bev, ssle_readcb, ssle_writecb, ssle_errorcb, cbarg);
 	// bufferevent_setwatermark(bev, EV_READ, 0, MAX_LINE);
 	bufferevent_enable(bev, EV_READ | EV_WRITE);
