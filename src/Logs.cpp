@@ -27,15 +27,18 @@
 
 void Logger::log(const std::string& file, const std::string& msg){
 
-	if ( logStreams.find( file ) == logStreams.end() ){
+	auto it = logStreams.find(file);
+
+	if ( it == logStreams.end() ){
 		std::shared_ptr< std::ofstream > f(new std::ofstream);
-		logStreams[file] = f;
+		auto res = logStreams.insert(std::make_pair(file, f));
+		it = res.first;
 		(*f).open(file, std::ios::app | std::ios::ate);
 		if ((*f).fail())
 			throw std::runtime_error("Archivo " + file + " No se puede abrir");
 	}
 
-	std::shared_ptr< std::ofstream > & fileStream = logStreams[file];
+	std::shared_ptr< std::ofstream > & fileStream = it->second;
 	(*fileStream) << msg;
 }
 
@@ -43,6 +46,15 @@ void Logger::flush(const std::string& file){
 	if ( logStreams.find( file ) == logStreams.end() )
 		throw std::runtime_error("Se trato de flushear " + file + " que no fue abierto");
 	(*logStreams[file]).flush();
+}
+
+void Logger::reset(const std::string& file) {
+	auto it = logStreams.find(file);
+	if (it != logStreams.end()) {
+		auto f = it->second;
+		f->close();
+		f->open(file, std::ios::app | std::ios::ate);
+	}
 }
 
 // Funcion llamada en el worldsave (tambien se flushean automaticamente por ofstream si alcanza un determinado tamaño,
@@ -96,9 +108,12 @@ void LogBackUp() {
 
 void LogNumUsers() {
 	std::stringstream f;
+	auto L = Logger::getInstance();
+	auto logFile = GetLogFileName("numusers");
 	f << vb6::Now() << " " << NumUsers << std::endl;
-	Logger::getInstance().log(GetLogFileName("numusers"),f.str());
-
+	L.reset(logFile);
+	L.log(logFile, f.str());
+	L.flush(logFile);
 }
 
 void LogCriticEvent(std::string desc) {

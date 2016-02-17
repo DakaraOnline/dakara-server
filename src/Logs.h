@@ -40,6 +40,7 @@ public:
 
 	void log(const std::string& file, const std::string& msg);
 	void flush(const std::string& file);
+	void reset(const std::string& file);
 	void flushAll();
 
 private:
