@@ -9811,11 +9811,13 @@ void DakaraClientPacketHandler::handleReloadServerIni(ReloadServerIni* p) { (voi
 		return;
 	}
 
-	LogGM(UserList[UserIndex].Name, UserList[UserIndex].Name + " ha recargado los INITs.");
+	LogGM(UserList[UserIndex].Name, UserList[UserIndex].Name + " ha recargado los INITs: Server.ini y MOTD");
 
 	LoadSini();
+	
+	LoadMotd();
 
-	WriteConsoleMsg(UserIndex, "Server.ini actualizado correctamente", FontTypeNames_FONTTYPE_INFO);
+	WriteConsoleMsg(UserIndex, "Server.ini y MOTD actualizado correctamente", FontTypeNames_FONTTYPE_INFO);
 }
 
 /* '' */
