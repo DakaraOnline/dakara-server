@@ -53,7 +53,7 @@ void Logger::reset(const std::string& file) {
 	if (it != logStreams.end()) {
 		auto f = it->second;
 		f->close();
-		f->open(file, std::ios::app | std::ios::ate);
+		f->open(file, std::ios::out | std::ios::trunc);
 	}
 }
 
