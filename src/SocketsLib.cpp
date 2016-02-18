@@ -436,7 +436,8 @@ static void ssle_errorcb(struct bufferevent *bev, short events, void *ctx) {
 	(void)bev;
 	(void)events;
 	SocketLibEvent* s = reinterpret_cast<SocketLibEvent*>(ctx);
-	if (events & (BEV_EVENT_ERROR|BEV_EVENT_EOF)) {
+	//if (events & (BEV_EVENT_ERROR|BEV_EVENT_EOF)) 
+	{
 		s->onSocketClose(true);
 	}
 }

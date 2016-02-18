@@ -158,7 +158,7 @@ void DakaraSocketEvents::onSocketNew(dakara::Socket* s) {
 }
 
 void DakaraSocketEvents::onSocketClose(dakara::Socket* s) {
-	CloseSocket(s);
+	CerrarUserIndex(s->userData);
 }
 
 
