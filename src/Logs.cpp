@@ -97,7 +97,10 @@ void LogMain(const std::string& s) {
 void LogConnect(int UserIndex, bool Join) {
 	std::stringstream f;
 	f << vb6::Now() << " " << UserList[UserIndex].Name << " ha " << (Join ? "entrado al" : "salido del") << " juego. NumUsers:" << NumUsers << " UserIndex:" << UserIndex << std::endl;
-	Logger::getInstance().log(GetLogFileName("connect"),f.str());
+	auto &L = Logger::getInstance();
+	auto logFile = GetLogFileName("connect");
+	L.log(logFile, f.str());
+	L.flush(logFile);
 }
 
 void LogBackUp() {
@@ -108,7 +111,7 @@ void LogBackUp() {
 
 void LogNumUsers() {
 	std::stringstream f;
-	auto L = Logger::getInstance();
+	auto &L = Logger::getInstance();
 	auto logFile = GetLogFileName("numusers");
 	f << vb6::Now() << " " << NumUsers << std::endl;
 	L.reset(logFile);

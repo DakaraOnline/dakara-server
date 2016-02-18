@@ -29,9 +29,14 @@
 
 class Logger {
 public:
+	Logger() {}
+
 	~Logger() {
 		this->closeAll();
 	}
+
+	Logger(const Logger&) = delete;
+	Logger& operator=(const Logger&) = delete;
 
 	static Logger& getInstance() {
 		static Logger instance;
