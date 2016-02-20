@@ -10987,7 +10987,7 @@ ConsoleMsg::ConsoleMsg(clsByteQueue* buffer) : ServerPacket(ServerPacketID_Conso
 
 }
 
-ConsoleMsg::ConsoleMsg(const std::string& Chat_, std::int16_t FontIndex_) : ServerPacket(ServerPacketID_ConsoleMsg /* 24 */), Chat(Chat_), FontIndex(FontIndex_) {
+ConsoleMsg::ConsoleMsg(const std::string& Chat_, std::uint8_t FontIndex_) : ServerPacket(ServerPacketID_ConsoleMsg /* 24 */), Chat(Chat_), FontIndex(FontIndex_) {
 }
 
 void ConsoleMsg::serialize(clsByteQueue* buffer) const {

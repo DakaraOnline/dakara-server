@@ -5583,16 +5583,16 @@ class ConsoleMsg : public ServerPacket {
 public:
     ConsoleMsg();
     ConsoleMsg(clsByteQueue* buffer);
-    ConsoleMsg(const std::string& Chat, std::int16_t FontIndex);
+    ConsoleMsg(const std::string& Chat, std::uint8_t FontIndex);
 
     virtual void serialize(clsByteQueue* buffer) const;
     virtual void dispatch(PacketHandler* d);
 
     std::string Chat; 
-    std::int8_t FontIndex; 
+    std::uint8_t FontIndex; 
 };
 
-inline ConsoleMsg BuildConsoleMsg(const std::string& Chat, std::int16_t FontIndex) {
+inline ConsoleMsg BuildConsoleMsg(const std::string& Chat, std::uint8_t FontIndex) {
     return ConsoleMsg(Chat, FontIndex);
 }
 
