@@ -1241,6 +1241,18 @@ void LoadOBJData() {
 		throw std::runtime_error("La daga newbie no apuniala, VERIFICAR QUE EL OBJ.DAT *NO* TENGA ENIES");
 	}
 
+	bool algunoApunala = false;
+
+	for (Object = 1; Object <= NumObjDatas && !algunoApunala; ++Object) {
+		if (ObjData[Object].Apunala) {
+			algunoApunala = true;
+		}
+	}
+
+	if (!algunoApunala) {
+		throw std::runtime_error("Ningun objeto en OBJ.DAT apuniala, VERIFICAR QUE EL OBJ.DAT *NO* TENGA ENIES");
+	}
+
 	/* ' Inicializo los foros faccionarios */
 	AddForum(FORO_CAOS_ID);
 	AddForum(FORO_REAL_ID);
