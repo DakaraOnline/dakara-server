@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "TCP.h"
-#include "allheaders.h"
 #include <fstream>
 #include "Crypto.h"
 
@@ -523,7 +524,7 @@ void CloseSocket(int UserIndex) {
 	
 	// std::cerr << "CloseSocket" << std::endl;
 	
-	if (UserList[UserIndex].ConnID != -1) {
+	if (UserIndexSocketValido(UserIndex)) {
 		CloseSocketSL(UserIndex);
 	}
 
@@ -567,7 +568,7 @@ void CloseSocket(int UserIndex) {
 //	UserList[UserIndex].ConnIDValida = false;
 
 	if (UserIndex == LastUser) {
-		while (!(UserList[LastUser].ConnID != -1)) {
+		while (UserIndexSocketValido(UserIndex)) {
 			LastUser = LastUser - 1;
 			if (LastUser < 1) {
 				break;
@@ -578,9 +579,8 @@ void CloseSocket(int UserIndex) {
 
 /* '[Alejo-21-5]: Cierra un socket sin limpiar el slot */
 void CloseSocketSL(int UserIndex) {
-	if (UserList[UserIndex].ConnID != -1 && UserList[UserIndex].ConnIDValida) {
+	if (UserIndexSocketValido(UserIndex)) {
 		WSApiCloseSocket(UserIndex);
-		UserList[UserIndex].ConnIDValida = false;
 	}
 }
 
@@ -619,7 +619,7 @@ int EnviarDatosASlot(int UserIndex, const char* datos, std::size_t datos_len) {
 	/* '********************************************** */
 	/* # IF UsarQueSocket = 1 THEN */
 
-	if (!UserList[UserIndex].ConnIDValida) {
+	if (!UserIndexSocketValido(UserIndex)) {
 		return 0;
 	}
 
@@ -1529,9 +1529,6 @@ void ResetUserSlot(int UserIndex) {
 
 	int i;
 
-	UserList[UserIndex].ConnIDValida = false;
-	UserList[UserIndex].ConnID = -1;
-
 	LimpiarComercioSeguro(UserIndex);
 	ResetFacciones(UserIndex);
 	ResetContadores(UserIndex);
@@ -1712,7 +1709,7 @@ void EcharPjsNoPrivilegiados() {
 	int LoopC;
 
 	for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-		if (UserList[LoopC].flags.UserLogged && UserList[LoopC].ConnID >= 0 && UserList[LoopC].ConnIDValida) {
+		if (UserList[LoopC].flags.UserLogged) {
 			if (UserTienePrivilegio(LoopC, PlayerType_User)) {
 				CloseSocket(LoopC);
 			}

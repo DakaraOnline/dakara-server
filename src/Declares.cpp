@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
 
-#include "allheaders.h"
 #include "Declares.h"
 
 std::shared_ptr<clsAntiMassClon> aClon;

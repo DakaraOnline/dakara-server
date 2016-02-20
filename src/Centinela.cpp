@@ -15,8 +15,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "Centinela.h"
-#include "allheaders.h"
+
 /* [(0, 'ATTRIBUTE'), (1, 'VB_Name'), (5, '='), (4, '"modCentinela"')] */
 /* '***************************************************************** */
 /* 'modCentinela.bas - ImperiumAO - v1.2 */

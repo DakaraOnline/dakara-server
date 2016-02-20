@@ -1,6 +1,8 @@
 
 /* Automatically generated file */
 
+#include "stdafx.h"
+
 #include <sstream>
 
 #include "ProtocolNew.h"

@@ -1141,12 +1141,10 @@ struct User {
 
 	struct WorldPos Pos{};
 
-	bool ConnIDValida = false;
 	bool ConnIgnoreIncomingData = false;
 	bool IncomingDataAvailable = false;
 
 	/* 'ID */
-	int ConnID = -1;
 	class dakara::Socket* sockctx = 0;
 	std::shared_ptr<clsByteQueue> outgoingData;
 	std::shared_ptr<clsByteQueue> incomingData;

@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "InvNpcs.h"
-#include "allheaders.h"
 
 struct WorldPos TirarItemAlPiso(struct WorldPos Pos, struct Obj Obj, bool NotPirata) {
 	struct WorldPos retval;

@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "Acciones.h"
-#include "allheaders.h"
 
 /* '' */
 /* ' Modulo para manejar las acciones (doble click) de los carteles, foro, puerta, ramitas */

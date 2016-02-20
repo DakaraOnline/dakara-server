@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "Clanes.h"
-#include "allheaders.h"
 
 // static std::string GUILDINFOFILE;
 /* 'archivo .\guilds\guildinfo.ini o similar */

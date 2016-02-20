@@ -15,8 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#include "AntiMassClon.h"
-#include "allheaders.h"
+#include "stdafx.h"
 
 static const int MaximoPersonajesPorIP = 15;
 

@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "ByteQueue.h"
-#include "allheaders.h"
 
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #define BOOST_NO_SCOPED_ENUMS

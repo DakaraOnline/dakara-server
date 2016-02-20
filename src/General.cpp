@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "General.h"
-#include "allheaders.h"
 
 #include <iostream>
 #include <cstdio>
@@ -498,11 +499,9 @@ void ResetUsersConnections() {
 
 	int LoopC;
 	for (LoopC = (1); LoopC <= (MaxUsers); LoopC++) {
-		UserList[LoopC].ConnID = -1;
-		UserList[LoopC].ConnIDValida = false;
         UserList[LoopC].sockctx = nullptr;
-		//UserList[LoopC].sockctx->incomingData.reset();
-		//UserList[LoopC].sockctx->outgoingData.reset();
+		//UserList[LoopC].incomingData.reset(new clsByteQueue);
+		//UserList[LoopC].outgoingData.reset(new clsByteQueue);
 	}
 }
 
@@ -1286,18 +1285,16 @@ void PasarSegundo() {
 			if (UserList[i].Counters.Saliendo) {
 				UserList[i].Counters.Salir = UserList[i].Counters.Salir - 1;
 				if (UserList[i].Counters.Salir <= 0) {
-					if (UserList[i].ConnID != -1 && UserList[i].ConnIDValida && UserList[i].sockctx != nullptr) {
+					if (UserIndexSocketValido(i)) {
 						WriteConsoleMsg(i, "Gracias por jugar Argentum Online", FontTypeNames_FONTTYPE_INFO);
 						WriteDisconnect(i);
 						FlushBuffer(i);
-
 						CloseSocket(i);
 					}
 				}
 			}
 		}
 	}
-
 }
 
 #if 0

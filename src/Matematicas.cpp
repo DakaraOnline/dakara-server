@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "Matematicas.h"
-#include "allheaders.h"
 
 int Porcentaje(int Total, int Porc) {
 	int retval;

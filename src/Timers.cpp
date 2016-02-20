@@ -15,9 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
 
 #include "Timers.h"
-#include "allheaders.h"
 #include "SocketsLib.h"
 
 #include <iostream>
@@ -49,7 +49,7 @@ std::unique_ptr<dakara::Timer> timerHandleData;
 void TimerHandleData_Timer() {
 	int UserIndex;
 	for (UserIndex = (1); UserIndex <= (LastUser); UserIndex++) {
-		if (UserList[UserIndex].ConnIDValida && UserList[UserIndex].incomingData->length()) {
+		if (UserIndexSocketValido(UserIndex) && UserList[UserIndex].incomingData->length()) {
 			if (UserList[UserIndex].ConnIgnoreIncomingData && UserList[UserIndex].IncomingDataAvailable) {
 				try {
 					HandleIncomingData(UserIndex);
@@ -92,7 +92,7 @@ void CheckIdleUser() {
 
 	for (iUserIndex = (1); iUserIndex <= (MaxUsers); iUserIndex++) {
 		/* 'Conexion activa? y es un usuario loggeado? */
-		if (UserList[iUserIndex].ConnID != -1 && UserList[iUserIndex].flags.UserLogged) {
+		if (UserIndexSocketValido(iUserIndex) && UserList[iUserIndex].flags.UserLogged) {
 			/* 'Actualiza el contador de inactividad */
 			if (UserList[iUserIndex].flags.Traveling == 0) {
 				UserList[iUserIndex].Counters.IdleCount = UserList[iUserIndex].Counters.IdleCount + 1;
@@ -281,10 +281,10 @@ void GameTimer_Timer() {
 	/* 'LastUser */
 	for (iUserIndex = (1); iUserIndex <= (MaxUsers); iUserIndex++) {
 		/* 'Conexion activa? */
-		if (UserList[iUserIndex].ConnID != -1) {
+		if (UserIndexSocketValido(iUserIndex)) {
 			/* '¿User valido? */
 
-			if (UserList[iUserIndex].ConnIDValida && UserList[iUserIndex].flags.UserLogged) {
+			if (UserList[iUserIndex].flags.UserLogged) {
 
 				/* '[Alejo-18-5] */
 				bEnviarStats = false;
@@ -446,7 +446,7 @@ void GameTimer_Timer() {
 
 		}
 
-		if (UserList[iUserIndex].ConnID != -1) {
+		if (UserIndexSocketValido(iUserIndex)) {
 			/* 'If there is anything to be sent, we send it */
 			FlushBuffer(iUserIndex);
 		}

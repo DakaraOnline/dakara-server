@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "SendData.h"
-#include "allheaders.h"
 #include "ProtocolNew.h"
 
 
@@ -63,7 +64,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToAdmins:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if (UserList[LoopC].ConnID != -1) {
+			if (UserIndexSocketValido(LoopC)) {
 				if (UserTieneAlgunPrivilegios(LoopC, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios, PlayerType_Consejero)) {
 					/* ' Denounces can be desactivated */
 					if (IsDenounce) {
@@ -82,7 +83,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToAll:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if (UserList[LoopC].ConnID != -1) {
+			if (UserIndexSocketValido(LoopC)) {
 				/* 'Esta logeado como usuario? */
 				if (UserList[LoopC].flags.UserLogged) {
 					EnviarDatosASlot(LoopC, sndData);
@@ -95,7 +96,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToAllButIndex:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1) && (LoopC != sndIndex)) {
+			if (UserIndexSocketValido(LoopC) && (LoopC != sndIndex)) {
 				/* 'Esta logeado como usuario? */
 				if (UserList[LoopC].flags.UserLogged) {
 					EnviarDatosASlot(LoopC, sndData);
@@ -121,12 +122,12 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 	case SendTarget_ToGuildMembers:
 //  LoopC = m_Iterador_ProximoUserIndex(sndIndex);
 //   while (LoopC>0) {
-//    if ((UserList[LoopC].ConnID != -1)) {
+//    if ((UserIndexSocketValido(LoopC))) {
 //    EnviarDatosASlot(LoopC, sndData);
 //   }
 //   LoopC = m_Iterador_ProximoUserIndex(sndIndex);
 		for (auto LoopC : guild_Iterador_ProximoUserIndex(sndIndex)) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				EnviarDatosASlot(LoopC, sndData);
 			}
 		}
@@ -174,27 +175,27 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 	case SendTarget_ToDiosesYclan:
 		//	LoopC = m_Iterador_ProximoUserIndex(sndIndex);
 		//	while (LoopC > 0) {
-		//		if ((UserList[LoopC].ConnID != -1)) {
+		//		if ((UserIndexSocketValido(LoopC))) {
 		//			EnviarDatosASlot(LoopC, sndData);
 		//		}
 		//		LoopC = m_Iterador_ProximoUserIndex(sndIndex);
 		//	}
 		for (auto LoopC : guild_Iterador_ProximoUserIndex(sndIndex)) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				EnviarDatosASlot(LoopC, sndData);
 			}
 		}
 
 //		LoopC = Iterador_ProximoGM(sndIndex);
 //		while (LoopC > 0) {
-//			if ((UserList[LoopC].ConnID != -1)) {
+//			if ((UserIndexSocketValido(LoopC))) {
 //				EnviarDatosASlot(LoopC, sndData);
 //			}
 //			LoopC = Iterador_ProximoGM(sndIndex);
 //		}
 
 		for (auto LoopC : guild_Iterador_ProximoGM(sndIndex)) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				EnviarDatosASlot(LoopC, sndData);
 			}
 		}
@@ -205,7 +206,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToConsejo:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (UserTienePrivilegio(LoopC, PlayerType_RoyalCouncil)) {
 					EnviarDatosASlot(LoopC, sndData);
 				}
@@ -217,7 +218,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToConsejoCaos:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (UserTienePrivilegio(LoopC, PlayerType_ChaosCouncil)) {
 					EnviarDatosASlot(LoopC, sndData);
 				}
@@ -229,7 +230,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToRolesMasters:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (UserTienePrivilegio(LoopC, PlayerType_RoleMaster)) {
 					EnviarDatosASlot(LoopC, sndData);
 				}
@@ -241,7 +242,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToCiudadanos:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (!criminal(LoopC)) {
 					EnviarDatosASlot(LoopC, sndData);
 				}
@@ -253,7 +254,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToCriminales:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (criminal(LoopC)) {
 					EnviarDatosASlot(LoopC, sndData);
 				}
@@ -265,7 +266,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToReal:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (UserList[LoopC].Faccion.ArmadaReal == 1) {
 					EnviarDatosASlot(LoopC, sndData);
 				}
@@ -277,7 +278,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToCaos:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (UserList[LoopC].Faccion.FuerzasCaos == 1) {
 					EnviarDatosASlot(LoopC, sndData);
 				}
@@ -289,7 +290,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToCiudadanosYRMs:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (!criminal(LoopC) || UserTienePrivilegio(LoopC, PlayerType_RoleMaster)) {
 					EnviarDatosASlot(LoopC, sndData);
 				}
@@ -301,7 +302,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToCriminalesYRMs:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (criminal(LoopC) || UserTienePrivilegio(LoopC, PlayerType_RoleMaster)) {
 					EnviarDatosASlot(LoopC, sndData);
 				}
@@ -313,7 +314,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToRealYRMs:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (UserList[LoopC].Faccion.ArmadaReal == 1
 						|| UserTienePrivilegio(LoopC, PlayerType_RoleMaster)) {
 					EnviarDatosASlot(LoopC, sndData);
@@ -326,7 +327,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToCaosYRMs:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (UserList[LoopC].Faccion.FuerzasCaos == 1
 						|| UserTienePrivilegio(LoopC, PlayerType_RoleMaster)) {
 					EnviarDatosASlot(LoopC, sndData);
@@ -339,7 +340,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToHigherAdmins:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if (UserList[LoopC].ConnID != -1) {
+			if (UserIndexSocketValido(LoopC)) {
 				if (UserTieneAlgunPrivilegios(LoopC, PlayerType_Admin, PlayerType_Dios)) {
 					EnviarDatosASlot(LoopC, sndData);
 				}
@@ -369,7 +370,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToAdminsButCounselors:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if (UserList[LoopC].ConnID != -1) {
+			if (UserIndexSocketValido(LoopC)) {
 				if (UserTieneAlgunPrivilegios(LoopC, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios, PlayerType_RoleMaster)
 						&& !UserTieneAlgunPrivilegios(LoopC, PlayerType_Consejero)) {
 					EnviarDatosASlot(LoopC, sndData);
@@ -382,7 +383,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToAdminsButCounselorsAndRms:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if (UserList[LoopC].ConnID != -1) {
+			if (UserIndexSocketValido(LoopC)) {
 				if (UserTieneAlgunPrivilegios(LoopC, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios)
 						&& !UserTieneAlgunPrivilegios(LoopC, PlayerType_Consejero, PlayerType_RoleMaster)) {
 						EnviarDatosASlot(LoopC, sndData);
@@ -395,7 +396,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToHigherAdminsButRMs:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if (UserList[LoopC].ConnID != -1) {
+			if (UserIndexSocketValido(LoopC)) {
 				if (UserTieneAlgunPrivilegios(LoopC, PlayerType_Admin, PlayerType_Dios)
 						&& !UserTieneAlgunPrivilegios(LoopC, PlayerType_RoleMaster)) {
 						EnviarDatosASlot(LoopC, sndData);
@@ -408,7 +409,7 @@ void SendData(SendTarget sndRoute, int sndIndex, std::string sndData, bool IsDen
 
 	case SendTarget_ToRMsAndHigherAdmins:
 		for (LoopC = (1); LoopC <= (LastUser); LoopC++) {
-			if ((UserList[LoopC].ConnID != -1)) {
+			if ((UserIndexSocketValido(LoopC))) {
 				if (UserTieneAlgunPrivilegios(LoopC, PlayerType_RoleMaster, PlayerType_Admin, PlayerType_Dios)) {
 					EnviarDatosASlot(LoopC, sndData);
 				}
@@ -454,7 +455,7 @@ void SendToUserArea(int UserIndex, std::string sdData) {
 		/* 'Esta en el area? */
 		if (UserList[tempIndex].AreasInfo.AreaReciveX && AreaX) {
 			if (UserList[tempIndex].AreasInfo.AreaReciveY && AreaY) {
-				if (UserList[tempIndex].ConnIDValida) {
+				if (UserIndexSocketValido(tempIndex)) {
 					EnviarDatosASlot(tempIndex, sdData);
 				}
 			}
@@ -493,7 +494,7 @@ void SendToUserAreaButindex(int UserIndex, std::string sdData) {
 			TempInt = UserList[tempIndex].AreasInfo.AreaReciveY && AreaY;
 			if (TempInt) {
 				if (tempIndex != UserIndex) {
-					if (UserList[tempIndex].ConnIDValida) {
+					if (UserIndexSocketValido(tempIndex)) {
 						EnviarDatosASlot(tempIndex, sdData);
 					}
 				}
@@ -530,7 +531,7 @@ void SendToDeadUserArea(int UserIndex, std::string sdData) {
 		if (UserList[tempIndex].AreasInfo.AreaReciveX && AreaX) {
 			if (UserList[tempIndex].AreasInfo.AreaReciveY && AreaY) {
 				/* 'Dead and admins read */
-				if (UserList[tempIndex].ConnIDValida == true
+				if (UserIndexSocketValido(tempIndex) == true
 						&& (UserList[tempIndex].flags.Muerto == 1
 								|| UserTieneAlgunPrivilegios(tempIndex, PlayerType_Admin, PlayerType_Dios, PlayerType_SemiDios, PlayerType_Consejero))) {
 					EnviarDatosASlot(tempIndex, sdData);
@@ -571,7 +572,7 @@ void SendToUserGuildArea(int UserIndex, std::string sdData) {
 		/* 'Esta en el area? */
 		if (UserList[tempIndex].AreasInfo.AreaReciveX && AreaX) {
 			if (UserList[tempIndex].AreasInfo.AreaReciveY && AreaY) {
-				if (UserList[tempIndex].ConnIDValida
+				if (UserIndexSocketValido(tempIndex)
 						&& (UserList[tempIndex].GuildIndex == UserList[UserIndex].GuildIndex
 								|| (UserTienePrivilegio(tempIndex, PlayerType_Dios) && !UserTienePrivilegio(tempIndex, PlayerType_RoleMaster)))) {
 					EnviarDatosASlot(tempIndex, sdData);
@@ -612,7 +613,7 @@ void SendToUserPartyArea(int UserIndex, std::string sdData) {
 		/* 'Esta en el area? */
 		if (UserList[tempIndex].AreasInfo.AreaReciveX && AreaX) {
 			if (UserList[tempIndex].AreasInfo.AreaReciveY && AreaY) {
-				if (UserList[tempIndex].ConnIDValida
+				if (UserIndexSocketValido(tempIndex)
 						&& UserList[tempIndex].PartyIndex == UserList[UserIndex].PartyIndex) {
 					EnviarDatosASlot(tempIndex, sdData);
 				}
@@ -648,7 +649,7 @@ void SendToAdminsButConsejerosArea(int UserIndex, std::string sdData) {
 		/* 'Esta en el area? */
 		if (UserList[tempIndex].AreasInfo.AreaReciveX && AreaX) {
 			if (UserList[tempIndex].AreasInfo.AreaReciveY && AreaY) {
-				if (UserList[tempIndex].ConnIDValida) {
+				if (UserIndexSocketValido(tempIndex)) {
 					if (UserTieneAlgunPrivilegios(tempIndex, PlayerType_SemiDios, PlayerType_Dios, PlayerType_Admin)) {
 						EnviarDatosASlot(tempIndex, sdData);
 					}
@@ -688,7 +689,7 @@ void SendToNpcArea(int NpcIndex, std::string sdData) {
 		if (TempInt) {
 			TempInt = UserList[tempIndex].AreasInfo.AreaReciveY && AreaY;
 			if (TempInt) {
-				if (UserList[tempIndex].ConnIDValida) {
+				if (UserIndexSocketValido(tempIndex)) {
 					EnviarDatosASlot(tempIndex, sdData);
 				}
 			}
@@ -721,7 +722,7 @@ void SendToAreaByPos(int Map, int AreaX, int AreaY, std::string sdData) {
 		if (TempInt) {
 			TempInt = UserList[tempIndex].AreasInfo.AreaReciveY && AreaY;
 			if (TempInt) {
-				if (UserList[tempIndex].ConnIDValida) {
+				if (UserIndexSocketValido(tempIndex)) {
 					EnviarDatosASlot(tempIndex, sdData);
 				}
 			}
@@ -745,7 +746,7 @@ void SendToMap(int Map, std::string sdData) {
 	for (LoopC = (1); LoopC <= (ConnGroups[Map].CountEntrys); LoopC++) {
 		tempIndex = ConnGroups[Map].UserEntrys[LoopC];
 
-		if (UserList[tempIndex].ConnIDValida) {
+		if (UserIndexSocketValido(tempIndex)) {
 			EnviarDatosASlot(tempIndex, sdData);
 		}
 	}
@@ -770,7 +771,7 @@ void SendToMapButIndex(int UserIndex, std::string sdData) {
 	for (LoopC = (1); LoopC <= (ConnGroups[Map].CountEntrys); LoopC++) {
 		tempIndex = ConnGroups[Map].UserEntrys[LoopC];
 
-		if (tempIndex != UserIndex && UserList[tempIndex].ConnIDValida) {
+		if (tempIndex != UserIndex && UserIndexSocketValido(tempIndex)) {
 			EnviarDatosASlot(tempIndex, sdData);
 		}
 	}
@@ -804,7 +805,7 @@ void SendToGMsAreaButRmsOrCounselors(int UserIndex, std::string sdData) {
 		/* 'Esta en el area? */
 		if (UserList[tempIndex].AreasInfo.AreaReciveX && AreaX) {
 			if (UserList[tempIndex].AreasInfo.AreaReciveY && AreaY) {
-				if (UserList[tempIndex].ConnIDValida) {
+				if (UserIndexSocketValido(tempIndex)) {
 					/* ' Exclusivo para dioses, admins y gms */
 					if (EsGm(tempIndex)) {
 						EnviarDatosASlot(tempIndex, sdData);
@@ -842,7 +843,7 @@ void SendToUsersAreaButGMs(int UserIndex, std::string sdData) {
 		/* 'Esta en el area? */
 		if (UserList[tempIndex].AreasInfo.AreaReciveX && AreaX) {
 			if (UserList[tempIndex].AreasInfo.AreaReciveY && AreaY) {
-				if (UserList[tempIndex].ConnIDValida) {
+				if (UserIndexSocketValido(tempIndex)) {
 					if (UserTienePrivilegio(tempIndex, PlayerType_User)) {
 						EnviarDatosASlot(tempIndex, sdData);
 					}
@@ -879,7 +880,7 @@ void SendToUsersAndRmsAndCounselorsAreaButGMs(int UserIndex, std::string sdData)
 		/* 'Esta en el area? */
 		if (UserList[tempIndex].AreasInfo.AreaReciveX && AreaX) {
 			if (UserList[tempIndex].AreasInfo.AreaReciveY && AreaY) {
-				if (UserList[tempIndex].ConnIDValida) {
+				if (UserIndexSocketValido(tempIndex)) {
 					if (UserTieneAlgunPrivilegios (tempIndex, PlayerType_User, PlayerType_Consejero, PlayerType_RoleMaster)) {
 						EnviarDatosASlot(tempIndex, sdData);
 					}
@@ -915,7 +916,7 @@ void AlertarFaccionarios(int UserIndex) {
 	for (LoopC = (1); LoopC <= (ConnGroups[Map].CountEntrys); LoopC++) {
 		tempIndex = ConnGroups[Map].UserEntrys[LoopC];
 
-		if (UserList[tempIndex].ConnIDValida) {
+		if (UserIndexSocketValido(tempIndex)) {
 			if (tempIndex != UserIndex) {
 				/* ' Solo se envia a los de la misma faccion */
 				if (SameFaccion(UserIndex, tempIndex)) {

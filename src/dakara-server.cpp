@@ -23,11 +23,12 @@
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
+#include "stdafx.h"
+
 #include <iostream>
 
 #include "Declares.h"
 #include "General.h"
-#include "allheaders.h"
 
 #include <cstdlib>
 #include <iostream>

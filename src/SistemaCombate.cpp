@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "SistemaCombate.h"
-#include "allheaders.h"
 
 const int MAXDISTANCIAARCO = 18;
 const int MAXDISTANCIAMAGIA = 18;

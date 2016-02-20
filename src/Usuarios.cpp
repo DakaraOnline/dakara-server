@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "Usuarios.h"
-#include "allheaders.h"
 #include "boost/date_time/posix_time/posix_time.hpp"
 
 void ActStats(int VictimIndex, int AttackerIndex) {
@@ -985,7 +986,7 @@ std::size_t NextOpenUser() {
 		if (LoopC > MaxUsers) {
 			break;
 		}
-		if ((UserList[LoopC].ConnID == -1 && UserList[LoopC].flags.UserLogged == false)) {
+		if ((UserList[LoopC].sockctx == nullptr && UserList[LoopC].flags.UserLogged == false)) {
 			break;
 		}
 	}
@@ -2281,7 +2282,7 @@ void CancelExit(int UserIndex) {
 	/* '*************************************************** */
 	if (UserList[UserIndex].Counters.Saliendo) {
 		/* ' Is the user still connected? */
-		if (UserList[UserIndex].ConnIDValida) {
+		if (UserIndexSocketValido(UserIndex)) {
 			UserList[UserIndex].Counters.Saliendo = false;
 			UserList[UserIndex].Counters.Salir = 0;
 			WriteConsoleMsg(UserIndex, "/salir cancelado.", FontTypeNames_FONTTYPE_WARNING);

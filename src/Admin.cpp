@@ -15,7 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#include "allheaders.h"
+#include "stdafx.h"
+
 #include "Admin.h"
 
 #include <fstream>
@@ -178,8 +179,8 @@ void ServerShutdown() {
 //				PrepareMessageConsoleMsg("Servidor> Cerrando servidor...", FontTypeNames_FONTTYPE_SERVER));
 
 	for (int i = 1; i<LastUser; ++i) {
-		if (UserList[i].ConnIDValida) {
-			//FlushBuffer(i);
+		if (UserIndexSocketValido(i)) {
+			FlushBuffer(i);
 			CloseSocketSL(i);
 		}
 	}

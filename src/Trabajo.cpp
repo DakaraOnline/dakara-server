@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "Trabajo.h"
-#include "allheaders.h"
 
 static const int GASTO_ENERGIA_TRABAJADOR = 2;
 static const int GASTO_ENERGIA_NO_TRABAJADOR = 6;

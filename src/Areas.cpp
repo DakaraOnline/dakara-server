@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "Areas.h"
-#include "allheaders.h"
 
 /* ' Modulo de envio por areas compatible con la versión 9.10.x ... By DuNga */
 

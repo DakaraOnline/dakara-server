@@ -15,8 +15,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "Clan.h"
-#include "allheaders.h"
+
 #include "boost/date_time/posix_time/posix_time_types.hpp"
 
 static const int NEWSLENGTH = 1024;

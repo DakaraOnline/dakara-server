@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "Invisibles.h"
-#include "allheaders.h"
 
 /* ' 0 = viejo */
 /* ' 1 = nuevo */

@@ -22,6 +22,8 @@
  *      Author: ale
  */
 
+#include "stdafx.h"
+
 #include "Crypto.h"
 
 #include <random>

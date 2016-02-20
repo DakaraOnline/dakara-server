@@ -15,10 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include <cmath>
 
 #include "Party.h"
-#include "allheaders.h"
 
 clsParty::clsParty() {
 	p_expTotal = 0;

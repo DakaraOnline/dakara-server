@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "ComercioUsuario.h"
-#include "allheaders.h"
 
 /* '[Alejo] */
 

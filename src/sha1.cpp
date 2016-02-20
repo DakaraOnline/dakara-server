@@ -95,6 +95,7 @@ A million repetitions of "a"
 
 /* #define SHA1HANDSOFF  */
 
+#include "stdafx.h"
 
 #include <stdio.h>
 #define __STDC_WANT_LIB_EXT1__ 1

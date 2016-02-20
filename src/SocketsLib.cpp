@@ -25,7 +25,10 @@
  *
  * The backend strings are: "libevent".
  *
+ * FIXME: IMPLEMENT ASIO
  */
+
+#include "stdafx.h"
 
 #include "SocketsLib.h"
 

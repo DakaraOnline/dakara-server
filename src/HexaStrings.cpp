@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "HexaStrings.h"
-#include "allheaders.h"
 
 /* 'Modulo realizado por Gonzalo Larralde(CDT) <gonzalolarralde@yahoo.com.ar> */
 /* 'Para la conversion a caracteres de cadenas MD5 y de */

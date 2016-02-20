@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "Facciones.h"
-#include "allheaders.h"
 
 int ArmaduraImperial1;
 int ArmaduraImperial2;

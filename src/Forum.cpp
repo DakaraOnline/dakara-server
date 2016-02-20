@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "Forum.h"
-#include "allheaders.h"
 
 const int MAX_MENSAJES_FORO = 30;
 const int MAX_ANUNCIOS_FORO = 5;

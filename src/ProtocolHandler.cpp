@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include "ProtocolHandler.h"
-#include "allheaders.h"
 #include "enums.h"
 #include "vb6compat.h"
 #include "Crypto.h"
@@ -35,7 +36,7 @@ void HandleIncomingData(int UserIndex) {
 		try {
 			HandleIncomingDataOnePacket(UserIndex);
 			++k;
-			if (!UserList[UserIndex].ConnIDValida) {
+			if (!UserIndexSocketValido(UserIndex)) {
 				break;
 			}
 			lastvalidpos = UserList[UserIndex].incomingData->getReadPos();
@@ -51,7 +52,7 @@ void HandleIncomingData(int UserIndex) {
 		}
 	}
 
-	if (UserList[UserIndex].ConnIDValida) {
+	if (UserIndexSocketValido(UserIndex)) {
 		UserList[UserIndex].ConnIgnoreIncomingData = (UserList[UserIndex].incomingData->length() > 0 && k == MAX_PACKETS_PER_ITER);
 
 		if (lastvalidpos > 0) {
@@ -5474,7 +5475,7 @@ void DakaraClientPacketHandler::handleOnlineRoyalArmy(OnlineRoyalArmy* p) { (voi
 	}
 
 	for (i = (1); i <= (LastUser); i++) {
-		if (UserList[i].ConnID != -1) {
+		if (UserIndexSocketValido(i)) {
 			if (UserList[i].Faccion.ArmadaReal == 1) {
 				if (esgm || UserTieneAlgunPrivilegios(UserIndex, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios)) {
 					list = list + UserList[i].Name + ", ";
@@ -5519,7 +5520,7 @@ void DakaraClientPacketHandler::handleOnlineChaosLegion(OnlineChaosLegion* p) { 
 	}
 
 	for (i = (1); i <= (LastUser); i++) {
-		if (UserList[i].ConnID != -1) {
+		if (UserIndexSocketValido(i)) {
 			if (UserList[i].Faccion.FuerzasCaos == 1) {
 				if (UserTieneAlgunPrivilegios(i, PlayerType_User, PlayerType_Consejero, PlayerType_SemiDios) || esgm) {
 					list = list + UserList[i].Name + ", ";
@@ -9016,7 +9017,7 @@ void DakaraClientPacketHandler::handleBanIP(BanIP* p) { (void)p;
 
 				/* 'Find every player with that ip and ban him! */
 				for (i = (1); i <= (LastUser); i++) {
-					if (UserList[i].ConnIDValida) {
+					if (UserIndexSocketValido(i)) {
 						if (UserList[i].ip == bannedIP) {
 							BanCharacter(UserIndex, UserList[i].Name, "IP POR " + Reason);
 						}
@@ -9898,7 +9899,7 @@ void DakaraClientPacketHandler::handleNight(Night* p) { (void)p;
 	int i;
 
 	for (i = (1); i <= (NumUsers); i++) {
-		if (UserList[i].flags.UserLogged && UserList[i].ConnID > -1) {
+		if (UserList[i].flags.UserLogged && UserIndexSocketValido(i)) {
 			EnviarNoche(i);
 		}
 	}
@@ -11647,7 +11648,7 @@ void DakaraClientPacketHandler::handleAlterGuildName(AlterGuildName* p) { (void)
 
 					/* ' Actualiza todos los online del clan */
 					for (auto MemberIndex : guild_Iterador_ProximoUserIndex(GuildIndex)) {
-						if ((UserList[MemberIndex].ConnID != -1)) {
+						if ((UserIndexSocketValido(MemberIndex))) {
 							RefreshCharStatus(MemberIndex);
 						}
 					}

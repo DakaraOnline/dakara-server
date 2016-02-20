@@ -15,11 +15,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include "stdafx.h"
+
 #include <iostream>
 #include <signal.h>
 
 #include "Sockets.h"
-#include "allheaders.h"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -140,8 +141,6 @@ void DakaraSocketEvents::onSocketNew(dakara::Socket* s) {
 		UserList[UserIndex].incomingData.reset(new clsByteQueue());
 		UserList[UserIndex].outgoingData.reset(new clsByteQueue());
 		UserList[UserIndex].sockctx = s;
-		UserList[UserIndex].ConnID = 100;
-		UserList[UserIndex].ConnIDValida = true;
 		UserList[UserIndex].ConnIgnoreIncomingData = false;
 		UserList[UserIndex].IncomingDataAvailable = false;
 		UserList[UserIndex].ip = ip;
@@ -257,7 +256,7 @@ void CloseSocket(dakara::Socket* s) {
 }
 
 void WsApiEnviar(int UserIndex, const char* str, std::size_t str_len) {
-	if (!UserList[UserIndex].ConnIDValida) {
+	if (!UserIndexSocketValido(UserIndex)) {
 		throw std::runtime_error("WsApiEnviar: ConnIDValida = False, UserIndex = " + std::to_string(UserIndex));
 	}
 
@@ -290,17 +289,14 @@ void WSApiReiniciarSockets() {
 }
 
 bool UserIndexSocketValido(int UserIndex) {
-	return UserIndex >= 1 && UserIndex <= MaxUsers && UserList[UserIndex].ConnID != -1 && UserList[UserIndex].ConnIDValida && UserList[UserIndex].sockctx != nullptr;
+	return UserIndex >= 1 && UserIndex <= MaxUsers && UserList[UserIndex].sockctx != nullptr;
 }
 
 void DakaraBeginCloseSocket(dakara::Socket* s) {
 	int UserIndex = s->userData;
 
-    if (UserIndex > 0 && UserList[UserIndex].ConnIDValida) {
+    if (UserIndexSocketValido(UserIndex)) {
 	    IpRestarConexion (UserList[UserIndex].ip);
-
-		UserList[UserIndex].ConnID = -1;
-		UserList[UserIndex].ConnIDValida = false;
 		UserList[UserIndex].sockctx = nullptr;
     }
 
@@ -312,7 +308,7 @@ void DakaraRealCloseSocket(dakara::Socket* s) {
 }
 
 void WSApiCloseSocket(int UserIndex) {
-	if (!UserList[UserIndex].ConnIDValida) {
+	if (!UserIndexSocketValido(UserIndex)) {
 		throw std::runtime_error("WSApiCloseSocket: ConnIDValida = False, UserIndex = " + std::to_string(UserIndex));
 	}
 
