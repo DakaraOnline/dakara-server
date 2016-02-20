@@ -1289,8 +1289,8 @@ void PasarSegundo() {
 						WriteConsoleMsg(i, "Gracias por jugar Argentum Online", FontTypeNames_FONTTYPE_INFO);
 						WriteDisconnect(i);
 						FlushBuffer(i);
-						CloseSocket(i);
 					}
+					CloseSocket(i);
 				}
 			}
 		}
