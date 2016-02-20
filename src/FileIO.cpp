@@ -1234,6 +1234,13 @@ void LoadOBJData() {
 
 	Leer.reset();
 
+	/* Para evitar problemas con la EÑE en los dats */
+	/* El servidor espera que los DAT NO TENGAN EÑE */
+
+	if (!ObjData[460].Apunala) {
+		throw std::runtime_error("La daga newbie no apuniala, VERIFICAR QUE EL OBJ.DAT *NO* TENGA ENIES");
+	}
+
 	/* ' Inicializo los foros faccionarios */
 	AddForum(FORO_CAOS_ID);
 	AddForum(FORO_REAL_ID);
