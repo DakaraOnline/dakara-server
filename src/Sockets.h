@@ -42,10 +42,6 @@ inline void WsApiEnviar(dakara::Socket* sctx, std::vector<std::int8_t> data) {
 	return WsApiEnviar(sctx, reinterpret_cast<const char*>(data.data()), data.size());
 }
 
-inline void WsApiEnviar(dakara::Socket* sctx, std::vector<std::uint8_t> data) {
-	return WsApiEnviar(sctx, reinterpret_cast<const char*>(data.data()), data.size());
-}
-
 void WSApiReiniciarSockets();
 
 bool UserIndexSocketValido(int UserIndex);

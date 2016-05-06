@@ -172,13 +172,11 @@ public:
 	void closeReal();
 
 	void onSocketClose(bool error);
-	void fireCloseEvent();
 
 public:
 	evutil_socket_t fd_{0};
 	struct bufferevent *bev_{nullptr};
 	struct event *evclose_{nullptr};
-	bool evclosefired_{false};
 	bool closing_{false};
 	SocketListenerLibEvent* sl_{nullptr};
 	std::string ip_;
@@ -254,27 +252,6 @@ void TimerLibEvent::timerEvent() {
 	handler();
 }
 
-static void ssle_close_event(evutil_socket_t fd, short what, void *arg) {
-	(void)fd;
-	(void)what;
-
-	SocketLibEvent* s = reinterpret_cast<SocketLibEvent*>(arg);
-	auto sel = s->sl_->sev;
-
-	s->evclosefired_ = true;
-
-	if (sel) {
-		sel->onSocketClose(s);
-	}
-
-	event_del(s->evclose_);
-	s->evclose_ = nullptr;
-
-	s->closeReal();
-
-	s->sp_->freeSocketIndex(s->getId());
-}
-
 SocketLibEvent::SocketLibEvent(size_t idx, SocketListenerLibEvent* sl) : SocketBase(idx, sl->ssle), sl_(sl)
 {
 }
@@ -315,6 +292,14 @@ size_t SocketLibEvent::getOutputLength() {
 }
 
 void SocketLibEvent::closeReal() {
+
+	auto sel = sl_->sev;
+	if (sel) {
+		sel->onSocketClose(this);
+	}
+
+	sp_->freeSocketIndex(getId());
+
 	if (bev_) {
 		/* FIXME: Gracefully shutdown(fd, SHUT_WR) the socket, unless forced or destroyed. */
 		/* evutil_closesocket(fd_); */
@@ -327,33 +312,13 @@ void SocketLibEvent::onSocketClose(bool error) {
 	close(error);
 }
 
-void SocketLibEvent::fireCloseEvent() {
-	if (!evclosefired_) {
-		evclosefired_ = true;
-
-		/*
-		 * Postpone the closing event until the calling stack is clear.
-		 */
-
-		size_t outputLength = getOutputLength();
-		struct timeval close_timeout = { (outputLength ? 10 : 0), 0 };
-		auto p = (sl_->ssle);
-		evclose_ = event_new(p->base, -1, 0, ssle_close_event, reinterpret_cast<void*>(this));
-		event_add(evclose_, &close_timeout);
-
-		event_active(evclose_, 0, 0);
-	}
-}
 
 void SocketLibEvent::close(bool force) {
 	if (closing_) return;
 	closing_ = true;
 
-	if (force) {
+	if (force || getOutputLength() == 0) {
 		closeReal();
-		fireCloseEvent();
-	} else {
-		fireCloseEvent();
 	}
 }
 
@@ -430,7 +395,6 @@ static void ssle_writecb(struct bufferevent *bev, void *ctx) {
 	}
 
 	if (s->closing_ && s->getOutputLength() == 0) {
-		s->fireCloseEvent();
 		s->closeReal();
 	}
 }
