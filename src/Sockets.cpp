@@ -105,7 +105,6 @@ void DakaraSocketEvents::onSocketWrite(dakara::Socket* s) {
 }
 
 void DakaraSocketEvents::onSocketNew(dakara::Socket* s) {
-
 	try {
 		int UserIndex = NextOpenUser();
 
