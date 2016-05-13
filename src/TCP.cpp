@@ -568,11 +568,9 @@ void CloseSocket(int UserIndex) {
 //	UserList[UserIndex].ConnIDValida = false;
 
 	if (UserIndex == LastUser) {
-		while (UserIndexSocketValido(UserIndex)) {
+		LastUser--;
+		while (!UserIndexSocketValido(LastUser) && (LastUser >0)) {
 			LastUser = LastUser - 1;
-			if (LastUser < 1) {
-				break;
-			}
 		}
 	}
 }

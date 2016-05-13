@@ -176,8 +176,8 @@ public:
 public:
 	evutil_socket_t fd_{0};
 	struct bufferevent *bev_{nullptr};
-	struct event *evclose_{nullptr};
 	bool closing_{false};
+	bool closed_{false};
 	SocketListenerLibEvent* sl_{nullptr};
 	std::string ip_;
 };
@@ -257,10 +257,6 @@ SocketLibEvent::SocketLibEvent(size_t idx, SocketListenerLibEvent* sl) : SocketB
 }
 
 SocketLibEvent::~SocketLibEvent() {
-	if (evclose_) {
-		event_del(evclose_);
-		evclose_ = nullptr;
-	}
 	closeReal();
 }
 
@@ -292,6 +288,8 @@ size_t SocketLibEvent::getOutputLength() {
 }
 
 void SocketLibEvent::closeReal() {
+	if (closed_) return;
+    closed_ = true;
 
 	auto sel = sl_->sev;
 	if (sel) {
@@ -403,7 +401,7 @@ static void ssle_errorcb(struct bufferevent *bev, short events, void *ctx) {
 	(void)bev;
 	(void)events;
 	SocketLibEvent* s = reinterpret_cast<SocketLibEvent*>(ctx);
-	//if (events & (BEV_EVENT_ERROR|BEV_EVENT_EOF)) 
+	//if (events & (BEV_EVENT_ERROR|BEV_EVENT_EOF))
 	{
 		s->onSocketClose(true);
 	}
@@ -425,7 +423,6 @@ void SocketServerLibEvent::doAccept(evutil_socket_t listener, short event, Socke
 	evutil_make_socket_nonblocking(fd);
 
 	/* FIXME: <<< IP FILTERING HERE >>> */
-
 	size_t idx = getNextSocketIndex();
 	sockets[idx].reset( new SocketLibEvent(idx, sl) );
 	SocketLibEvent* s = reinterpret_cast<SocketLibEvent*>( sockets[idx].get() );
