@@ -6,7 +6,7 @@ Coverity: [![Coverity](https://scan.coverity.com/projects/5284/badge.svg)](https
 
 # Dakara Online Server (English)
 
-http://www.dakaraonline.org/
+http://www.dakara.com.ar
 
 By Alejandro Santos @alejolp, the Argentum Online, and the Dakara Online development teams.
 
