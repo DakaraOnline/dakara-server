@@ -8,6 +8,9 @@ import os, sys, multiprocessing, glob
 
 FILES = glob.glob("src/*.cpp")
 
+BOOST_LIBRARY = "C:/Users/ale/Downloads/boost_1_55_0/stage"
+LIBEVENT_LIBARY = "C:/Users/ale/Downloads/libevent-2.0.21-stable/include"
+
 if sys.platform == 'linux2':
     OBJ_DIR = 'bin'
     CC = 'g++'
@@ -21,9 +24,9 @@ elif sys.platform == 'win32':
     OBJ_DIR = 'bin'
     CC = 'g++'
     DEBUG = ' -g '
-    CFLAGS = ' -O2 -DWIN32 -MMD -Wall -Wno-unused-local-typedefs -Wextra -std=c++11 -fstack-protector -I"C:/Users/ale/Downloads/boost_1_55_0" -I"C:/Users/ale/Downloads/libevent-2.0.21-stable/include"' + DEBUG
+    CFLAGS = ' -O2 -DWIN32 -MMD -Wall -Wno-unused-local-typedefs -Wextra -std=c++11 -fstack-protector -I"' + BOOST_LIBRARY + '" -I"C:/Users/ale/Downloads/libevent-2.0.21-stable/include"' + DEBUG
     LDFLAGS = ' -static -fstack-protector ' + DEBUG
-    LDFLAGS2 = ' C:/Users/ale/Downloads/boost_1_55_0/stage/lib/libboost_locale-mgw48-mt-1_55.a C:/Users/ale/Downloads/boost_1_55_0/stage/lib/libboost_filesystem-mgw48-mt-1_55.a C:/Users/ale/Downloads/boost_1_55_0/stage/lib/libboost_system-mgw48-mt-1_55.a C:/Users/ale/Downloads/libevent-2.0.21-stable/.libs/libevent.a C:/Users/ale/Downloads/libevent-2.0.21-stable/.libs/libevent_core.a C:/Users/ale/Downloads/libevent-2.0.21-stable/.libs/libevent_extra.a -lws2_32  -liconv '
+    LDFLAGS2 = BOOST_LIBRARY + '/lib/libboost_locale-mgw48-mt-1_55.a ' + BOOST_LIBRARY + '/lib/libboost_filesystem-mgw48-mt-1_55.a ' + BOOST_LIBRARY + '/lib/libboost_system-mgw48-mt-1_55.a ' + LIBEVENT_LIBARY + '/.libs/libevent.a ' + LIBEVENT_LIBARY + '/.libs/libevent_core.a ' + LIBEVENT_LIBARY + '/.libs/libevent_extra.a -lws2_32  -liconv '
     EXECUTABLE = 'dakaraserver'
     JOBS_COUNT = multiprocessing.cpu_count()
 elif sys.platform == 'darwin':

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{CEFAAFC1-006A-4188-874F-A3A0D5620D26}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Acciones.cpp" />
+    <ClCompile Include="src\Admin.cpp" />
+    <ClCompile Include="src\AntiMassClon.cpp" />
+    <ClCompile Include="src\Areas.cpp" />
+    <ClCompile Include="src\Banco.cpp" />
+    <ClCompile Include="src\ByteBuffer.cpp" />
+    <ClCompile Include="src\ByteQueue.cpp" />
+    <ClCompile Include="src\Centinela.cpp" />
+    <ClCompile Include="src\Characters.cpp" />
+    <ClCompile Include="src\Clan.cpp" />
+    <ClCompile Include="src\Clanes.cpp" />
+    <ClCompile Include="src\ClanPretoriano.cpp" />
+    <ClCompile Include="src\Comercio.cpp" />
+    <ClCompile Include="src\ComercioUsuario.cpp" />
+    <ClCompile Include="src\ConsultasPopulares.cpp" />
+    <ClCompile Include="src\Crypto.cpp" />
+    <ClCompile Include="src\dakara-server.cpp" />
+    <ClCompile Include="src\Declares.cpp" />
+    <ClCompile Include="src\Facciones.cpp" />
+    <ClCompile Include="src\FileIO.cpp" />
+    <ClCompile Include="src\Forum.cpp" />
+    <ClCompile Include="src\GameLogic.cpp" />
+    <ClCompile Include="src\General.cpp" />
+    <ClCompile Include="src\Hechizos.cpp" />
+    <ClCompile Include="src\HexaStrings.cpp" />
+    <ClCompile Include="src\IniManager.cpp" />
+    <ClCompile Include="src\Invisibles.cpp" />
+    <ClCompile Include="src\InvNpcs.cpp" />
+    <ClCompile Include="src\InvUsuario.cpp" />
+    <ClCompile Include="src\Logs.cpp" />
+    <ClCompile Include="src\MapSoundManager.cpp" />
+    <ClCompile Include="src\Matematicas.cpp" />
+    <ClCompile Include="src\Npcs.cpp" />
+    <ClCompile Include="src\NpcsAI.cpp" />
+    <ClCompile Include="src\NuevoTimer.cpp" />
+    <ClCompile Include="src\Parties.cpp" />
+    <ClCompile Include="src\Party.cpp" />
+    <ClCompile Include="src\PathFinding.cpp" />
+    <ClCompile Include="src\praetorians.cpp" />
+    <ClCompile Include="src\Protocol.cpp" />
+    <ClCompile Include="src\ProtocolHandler.cpp" />
+    <ClCompile Include="src\ProtocolNew.cpp" />
+    <ClCompile Include="src\SecurityIp.cpp" />
+    <ClCompile Include="src\SendData.cpp" />
+    <ClCompile Include="src\sha1.cpp" />
+    <ClCompile Include="src\SistemaCombate.cpp" />
+    <ClCompile Include="src\Sockets.cpp" />
+    <ClCompile Include="src\SocketsLib.cpp" />
+    <ClCompile Include="src\Solicitud.cpp" />
+    <ClCompile Include="src\Statistics.cpp" />
+    <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\TCP.cpp" />
+    <ClCompile Include="src\Timers.cpp" />
+    <ClCompile Include="src\Trabajo.cpp" />
+    <ClCompile Include="src\UserRecords.cpp" />
+    <ClCompile Include="src\Usuarios.cpp" />
+    <ClCompile Include="src\vb6compat.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="out\build\x64-debug (predeterminado)\cmakefiles\showincludes\foo.h" />
+    <ClInclude Include="src\Acciones.h" />
+    <ClInclude Include="src\Admin.h" />
+    <ClInclude Include="src\allheaders.h" />
+    <ClInclude Include="src\AntiMassClon.h" />
+    <ClInclude Include="src\Areas.h" />
+    <ClInclude Include="src\Banco.h" />
+    <ClInclude Include="src\ByteBuffer.h" />
+    <ClInclude Include="src\ByteQueue.h" />
+    <ClInclude Include="src\Centinela.h" />
+    <ClInclude Include="src\Characters.h" />
+    <ClInclude Include="src\Clan.h" />
+    <ClInclude Include="src\Clanes.h" />
+    <ClInclude Include="src\ClanPretoriano.h" />
+    <ClInclude Include="src\Comercio.h" />
+    <ClInclude Include="src\ComercioUsuario.h" />
+    <ClInclude Include="src\ConsultasPopulares.h" />
+    <ClInclude Include="src\Crypto.h" />
+    <ClInclude Include="src\Declares.h" />
+    <ClInclude Include="src\enums.h" />
+    <ClInclude Include="src\Facciones.h" />
+    <ClInclude Include="src\FileIO.h" />
+    <ClInclude Include="src\Forum.h" />
+    <ClInclude Include="src\GameLogic.h" />
+    <ClInclude Include="src\General.h" />
+    <ClInclude Include="src\Hechizos.h" />
+    <ClInclude Include="src\HexaStrings.h" />
+    <ClInclude Include="src\IniManager.h" />
+    <ClInclude Include="src\Invisibles.h" />
+    <ClInclude Include="src\InvNpcs.h" />
+    <ClInclude Include="src\InvUsuario.h" />
+    <ClInclude Include="src\Logs.h" />
+    <ClInclude Include="src\MapSoundManager.h" />
+    <ClInclude Include="src\Matematicas.h" />
+    <ClInclude Include="src\Npcs.h" />
+    <ClInclude Include="src\NpcsAI.h" />
+    <ClInclude Include="src\NuevoTimer.h" />
+    <ClInclude Include="src\Parties.h" />
+    <ClInclude Include="src\Party.h" />
+    <ClInclude Include="src\PathFinding.h" />
+    <ClInclude Include="src\praetorians.h" />
+    <ClInclude Include="src\Protocol.h" />
+    <ClInclude Include="src\ProtocolHandler.h" />
+    <ClInclude Include="src\ProtocolNew.h" />
+    <ClInclude Include="src\SecurityIp.h" />
+    <ClInclude Include="src\SendData.h" />
+    <ClInclude Include="src\sha1.h" />
+    <ClInclude Include="src\SistemaCombate.h" />
+    <ClInclude Include="src\Sockets.h" />
+    <ClInclude Include="src\SocketsLib.h" />
+    <ClInclude Include="src\Solicitud.h" />
+    <ClInclude Include="src\Statistics.h" />
+    <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\TCP.h" />
+    <ClInclude Include="src\Timers.h" />
+    <ClInclude Include="src\Trabajo.h" />
+    <ClInclude Include="src\UserRecords.h" />
+    <ClInclude Include="src\Usuarios.h" />
+    <ClInclude Include="src\vb6compat.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="out\build\x64-debug (predeterminado)\cmakefiles\3.17.20032601-msvc_2\CMakeDetermineCompilerABI_C.bin" />
+    <None Include="out\build\x64-debug (predeterminado)\cmakefiles\3.17.20032601-msvc_2\CMakeDetermineCompilerABI_CXX.bin" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\boost.1.72.0.0\build\boost.targets" Condition="Exists('packages\boost.1.72.0.0\build\boost.targets')" />
+    <Import Project="packages\boost_date_time-vc142.1.72.0.0\build\boost_date_time-vc142.targets" Condition="Exists('packages\boost_date_time-vc142.1.72.0.0\build\boost_date_time-vc142.targets')" />
+    <Import Project="packages\boost_locale-vc142.1.72.0.0\build\boost_locale-vc142.targets" Condition="Exists('packages\boost_locale-vc142.1.72.0.0\build\boost_locale-vc142.targets')" />
+    <Import Project="packages\boost_filesystem-vc142.1.72.0.0\build\boost_filesystem-vc142.targets" Condition="Exists('packages\boost_filesystem-vc142.1.72.0.0\build\boost_filesystem-vc142.targets')" />
+    <Import Project="packages\boost_system-vc142.1.72.0.0\build\boost_system-vc142.targets" Condition="Exists('packages\boost_system-vc142.1.72.0.0\build\boost_system-vc142.targets')" />
+    <Import Project="packages\libevent2-vc142.2.1.8.1\build\native\libevent2-vc142.targets" Condition="Exists('packages\libevent2-vc142.2.1.8.1\build\native\libevent2-vc142.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\boost.1.72.0.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost.1.72.0.0\build\boost.targets'))" />
+    <Error Condition="!Exists('packages\boost_date_time-vc142.1.72.0.0\build\boost_date_time-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost_date_time-vc142.1.72.0.0\build\boost_date_time-vc142.targets'))" />
+    <Error Condition="!Exists('packages\boost_locale-vc142.1.72.0.0\build\boost_locale-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost_locale-vc142.1.72.0.0\build\boost_locale-vc142.targets'))" />
+    <Error Condition="!Exists('packages\boost_filesystem-vc142.1.72.0.0\build\boost_filesystem-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost_filesystem-vc142.1.72.0.0\build\boost_filesystem-vc142.targets'))" />
+    <Error Condition="!Exists('packages\boost_system-vc142.1.72.0.0\build\boost_system-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost_system-vc142.1.72.0.0\build\boost_system-vc142.targets'))" />
+    <Error Condition="!Exists('packages\libevent2-vc142.2.1.8.1\build\native\libevent2-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libevent2-vc142.2.1.8.1\build\native\libevent2-vc142.targets'))" />
+  </Target>
+</Project>
