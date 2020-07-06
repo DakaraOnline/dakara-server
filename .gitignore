@@ -1,16 +1,5 @@
-.project
-.cproject
-.settings
-bin
-Debug
-Release
-buildsettingslocal.py
-build
-*.pyc
-server-resources
-*.swp
-vc2015
-
+# CMake
+out
 
 # Created by https://www.toptal.com/developers/gitignore/api/c++,visualstudio
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,visualstudio
