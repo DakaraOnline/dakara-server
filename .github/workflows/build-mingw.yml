@@ -1,4 +1,4 @@
-name: Build for Windows MinGW
+name: Build for windows-MinGW
 
 on: [push]
 
