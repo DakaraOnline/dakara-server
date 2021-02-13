@@ -1,26 +1,38 @@
-cmake_minimum_required (VERSION 2.7)
+cmake_minimum_required (VERSION 3.4)
 project (dakaraserver)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+# Allow third-party CMake scripts to find modules.
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/Modules)
 
+# Version of C++ standard to use.
+set(CMAKE_CXX_STANDARD, 11)
+
+# Add compiler/linker flags depending of what compiler we're using
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -pedantic -std=c++11 -ggdb -fstack-protector -D_GLIBCXX_DEBUG")
+    string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra -Wconversion -pedantic -ggdb -fstack-protector -D_GLIBCXX_DEBUG")
 
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic -Wno-unused-local-typedefs")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ggdb -rdynamic -fstack-protector ")
+        string(APPEND CMAKE_CXX_FLAGS " -Wno-unused-local-typedefs")
+        string(APPEND CMAKE_EXE_LINKER_FLAGS " -ggdb -fstack-protector")
+        
+        # Flag -rdynamic does not exist in MSYS2
+        if(NOT MSYS)
+            string(APPEND CMAKE_CXX_FLAGS " -rdynamic")
+            string(APPEND CMAKE_EXE_LINKER_FLAGS " -rdynamic")
+        endif()
+        
     endif()
-
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG} -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE} ")
+    
+    # Generates debug symbols for gdb or valgrynd to use
+    string(APPEND CMAKE_CXX_FLAGS_DEBUG " -g")
 
 elseif (MSVC)
 
     if (CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
         string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+        string(APPEND CMAKE_CXX_FLAGS " /W4")
     endif()
 
 endif()
@@ -38,7 +50,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 find_package( Libevent2 REQUIRED )
 include_directories(${LIBEVENT2_INCLUDE_DIR})
 
-# sockets
+# native sockets library for Windows
 if(WIN32)
   set(DAKARA_SOCKETS "ws2_32")
 else()
