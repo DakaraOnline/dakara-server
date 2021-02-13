@@ -1,6 +1,5 @@
-Travis (Linux): [![Build Status](https://travis-ci.org/DakaraOnline/dakara-server.svg?branch=master)](https://travis-ci.org/DakaraOnline/dakara-server)
-
-AppVeyor (Windows): [![Build status](https://ci.appveyor.com/api/projects/status/thbn4jv0wie078g3)](https://ci.appveyor.com/project/alejolp/dakara-server)
+![Build for Ubuntu](https://github.com/joaquinodz/DakaraOnline/workflows/Build%20for%20Ubuntu/badge.svg)
+![Build for Windows MinGW](https://github.com/joaquinodz/DakaraOnline/workflows/Build%20for%20Windows%20MinGW/badge.svg)
 
 Coverity: [![Coverity](https://scan.coverity.com/projects/5284/badge.svg)](https://scan.coverity.com/projects/dakaraonline-dakara-server)
 
