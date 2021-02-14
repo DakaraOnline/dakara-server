@@ -1,0 +1,54 @@
+name: Build for Windows & Ubuntu
+
+on: [push]
+
+jobs:
+  job:
+    name: Build  for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: windows-latest
+            triplet: x64-windows
+            vcpkgCommitId: 'f79c681fc2b42f9c7c5024459b5a867d56ac6123'
+            vcpkgPackages: 'libevent boost-date-time boost-system boost-filesystem boost-locale'
+          - os: ubuntu-latest
+            triplet: x64-linux
+            vcpkgCommitId: 'f79c681fc2b42f9c7c5024459b5a867d56ac6123'
+            vcpkgPackages: 'libevent boost-date-time boost-system boost-filesystem boost-locale'
+            
+    steps:
+      - name: Get source code from repository
+        uses: actions/checkout@v2.0.0
+      
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Restore artifacts, or run vcpkg, build and cache artifacts
+        uses: lukka/run-vcpkg@main
+        id: runvcpkg
+        with:
+          vcpkgArguments: '${{ matrix.vcpkgPackages }}'
+          vcpkgTriplet: '${{ matrix.triplet }}'
+          vcpkgDirectory: '${{ runner.workspace }}/build'
+          vcpkgGitCommitId: '${{ matrix.vcpkgCommitId }}'
+        
+      - name: CMake - Configure & Build for Visual Studio 2019
+        if: contains( matrix.os, 'windows')
+        uses: lukka/run-cmake@main
+        with:
+          cmakeGenerator: 'VS16Win64'
+          useVcpkgToolchainFile: true
+          buildDirectory: "${{ github.workspace }}/build/${{ matrix.os }}"
+          
+      - name: CMake - Configure & Build for Unix-based OS's
+        if: contains( matrix.os, 'windows') == false
+        uses: lukka/run-cmake@main
+        with:
+          cmakeGenerator: 'UnixMakefiles'
+          useVcpkgToolchainFile: true
+          buildDirectory: "${{ github.workspace }}/build/${{ matrix.os }}"

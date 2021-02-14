@@ -1,0 +1,30 @@
+name: Build for windows-MinGW
+
+on: [push]
+
+jobs:
+  autotools:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - uses: actions/checkout@v2.0.0
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: make mingw-w64-x86_64-cmake mingw-w64-x86_64-gcc mingw-w64-x86_64-boost mingw-w64-x86_64-libevent
+          
+      - name: Dump GCC Version
+        run: gcc -v
+      
+      - name: CMake - Configure
+        run: cmake -G "MSYS Makefiles" -Bbuild -H.
+      
+      - name: CMake - Build
+        run: cmake --build build/ --target all
+        env:
+          MAKEFLAGS: "-j2"

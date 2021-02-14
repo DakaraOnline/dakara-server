@@ -1,0 +1,76 @@
+name: Build for Ubuntu
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      
+    # install and cache dependencies
+    - name: Cache boost
+      uses: actions/cache@v1.0.3
+      id: cache-boost
+      with:
+        path: "~/boost"
+        key: libboost-dev
+
+    - name: Cache libevent
+      uses: actions/cache@v1.0.3
+      id: cache-libevent
+      with:
+        path: "~/libevent"
+        key: libevent-dev
+
+    - name: Install boost
+      env:
+        CACHE_HIT: ${{steps.cache-boost.outputs.cache-hit}}
+      run: |
+        if [[ "$CACHE_HIT" == 'true' ]]; then
+          sudo cp --force --recursive ~/boost/* /
+        else
+          sudo apt-get update && sudo apt-get install -yq libboost-date-time-dev libboost-filesystem-dev libboost-system-dev libboost-locale-dev
+          mkdir -p ~/boost
+          for dep in libboost-date-time-dev; do
+              dpkg -L $dep | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/boost/
+          done
+          for dep in libboost-filesystem-dev; do
+              dpkg -L $dep | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/boost/
+          done
+          for dep in libboost-system-dev; do
+              dpkg -L $dep | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/boost/
+          done
+          for dep in libboost-locale-dev; do
+              dpkg -L $dep | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/boost/
+          done
+        fi
+        
+    - name: Install libevent
+      env:
+        CACHE_HIT: ${{steps.cache-libevent.outputs.cache-hit}}
+      run: |
+        if [[ "$CACHE_HIT" == 'true' ]]; then
+          sudo cp --force --recursive ~/libevent/* /
+        else
+          sudo apt-get update && sudo apt-get install -yq libevent-dev
+          mkdir -p ~/libevent
+          for dep in libevent-dev; do
+              dpkg -L $dep | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/libevent/
+          done
+        fi
+        
+    # build project
+    - name: mkdir
+      run: mkdir build
+      
+    - name: cmake build
+      run: cmake -Bbuild -H.
+      
+    - name: cmake make
+      run: cmake --build build/ --target all
+      env:
+        MAKEFLAGS: "-j2"
