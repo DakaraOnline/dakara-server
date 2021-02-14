@@ -27,7 +27,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"
         string(APPEND CMAKE_EXE_LINKER_FLAGS " -ggdb -fstack-protector")
         
         # Flag -rdynamic does not exist in MSYS2
-        if(NOT MSYS)
+        if(NOT MSYS AND NOT MINGW)
             string(APPEND CMAKE_CXX_FLAGS " -rdynamic")
             string(APPEND CMAKE_EXE_LINKER_FLAGS " -rdynamic")
         endif()
