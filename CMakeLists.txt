@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 # Use Microsoft's package manager (vcpkg) if the `VCPKG_ROOT` environment variable is set
 # VERY useful for Windows developers
-# I put it in here because you can use vcpkg on both Linux and MacOD as well so its not necesarily platform/compiler specific
+# I put it in here because you can use vcpkg on both Linux and MacOS as well so its not necesarily platform/compiler specific
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
     message(" [INFO] Using Microsoft's vcpkg package manager!")
