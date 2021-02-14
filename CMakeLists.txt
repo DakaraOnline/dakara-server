@@ -5,7 +5,7 @@ project (dakaraserver)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/Modules)
 
 # Version of C++ standard to use.
-set(CMAKE_CXX_STANDARD, 11)
+set(CMAKE_CXX_STANDARD 11)
 
 # Add compiler/linker flags depending of what compiler we're using
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
