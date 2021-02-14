@@ -1,4 +1,13 @@
 cmake_minimum_required (VERSION 3.4)
+
+# Use Microsoft's package manager (vcpkg) if the `VCPKG_ROOT` environment variable is set
+# VERY useful for Windows developers
+# I put it in here because you can use vcpkg on both Linux and MacOS as well so its not necesarily platform/compiler specific
+if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+    message(" [INFO] Using Microsoft's vcpkg package manager!")
+endif()
+
 project (dakaraserver)
 
 # Allow third-party CMake scripts to find modules.
@@ -7,13 +16,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/Modules)
 # Version of C++ standard to use.
 set(CMAKE_CXX_STANDARD 11)
 
-# Use Microsoft's package manager (vcpkg) if the `VCPKG_ROOT` environment variable is set
-# VERY useful for Windows developers
-# I put it in here because you can use vcpkg on both Linux and MacOS as well so its not necesarily platform/compiler specific
-if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-  set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
-    message(" [INFO] Using Microsoft's vcpkg package manager!")
-endif()
 
 # Add compiler/linker flags depending of what compiler we're using
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
